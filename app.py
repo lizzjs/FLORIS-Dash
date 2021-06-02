@@ -18,16 +18,22 @@ app.layout = html.Div([
                     html.P('Tip Speed Ratio:'),
                     dcc.Input(id="input-TSR", type="number", min=0, max=20, placeholder='TSR input'
                     ),
+                    html.Div(id='TSR-numeric-input-output'),
                 #Blade Count
                     html.P('Blade Count:'),
-                    html.Div(dcc.Slider(min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1, 
+                    html.Div(dcc.Slider(id="slider-bladecount",min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1, 
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
-                    
+                    html.Div(id='updatemode-output-bladecount', style={'margin-left': 450}),
                 #Blade Pitch
                     html.P('Blade Pitch:'),
-
+                    dcc.Input(id="input-bladepitch", type="number", min=0, max=20, placeholder='Blade pitch input'
+                    ),
+                    html.Div(id='bladepitch-numeric-input-output'),
                 #Generator Efficiency
                     html.P('Generator Efficiency:'),
+                    dcc.Input(id="input-genEff", type="number", min=0, max=20, placeholder='Generator Efficiency input'
+                    ),
+                    html.Div(id='genEff-numeric-input-output'),
                     
                 #Hub Height
                     html.P('Hub Height:'),
@@ -41,13 +47,25 @@ app.layout = html.Div([
 
                 #ngrid
                     html.P('ngrid:'),
+                    html.Div(dcc.Slider(id="slider-ngrid",min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1, 
+                    ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
+                    html.Div(id='updatemode-output-ngrid', style={'margin-left': 450}),
 
                 #pP
                     html.P('pP:'),
+                    dcc.Input(id="input-pP", type="number", min=0, max=20, step=0.01,placeholder='pP input'
+                    ),
+                    html.Div(id='pP-numeric-input-output'),
                 #pT
                     html.P('pT:'),
+                    dcc.Input(id="input-pT", type="number", min=0, max=20, step=0.01,placeholder='pT input'
+                    ),
+                    html.Div(id='pT-numeric-input-output'),
                 #rloc
                     html.P('rloc:'),
+                    dcc.Input(id="input-rloc", type="number", min=0, max=20, step=0.01,placeholder='rloc input'
+                    ),
+                    html.Div(id='rloc-numeric-input-output'),
                 #Tilt Angle
                     html.P('Tilt Angle:'),
                     dcc.Input(
@@ -102,14 +120,34 @@ app.layout = html.Div([
         ]),
     ]),
 ])
-
-@app.callback(Output('input-TSR', 'value'),
+#TAB1-TSR
+@app.callback(Output('TSR-numeric-input-output', 'children'),
               Input('input-TSR', 'value'))
 def GeomTab_TSR_output(input_value):
     print(input_value)
-    return input_value #fix this later
+    # return input_value
 
+#TAB1-Blade count
+@app.callback(Output('updatemode-output-bladecount', 'children'),
+              Input('slider-bladecount', 'value'))
+def GeomTab_bladecount_display_value(value):
+    return 'Blades: {}'.format(value)
 
+#TAB1-Blade pitch
+@app.callback(Output('bladepitch-numeric-input-output', 'children'),
+              Input('input-bladepitch', 'value'))
+def GeomTab_Bladepitch_output(input_value):
+    print(input_value)
+    # return input_value
+
+#TAB1-Generator efficiency
+@app.callback(Output('genEff-numeric-input-output', 'children'),
+              Input('input-genEff', 'value'))
+def GeomTab_genEff_output(input_value):
+    print(input_value)
+    # return input_value
+
+#TAB1-Hub height
 @app.callback(Output('input-hubheight', 'value'),
               Output('slider-hubheight', 'value'),
                 Input('input-hubheight', 'value'),
@@ -122,6 +160,34 @@ def GeomTab_hubheight_output(input_value, slider_value):
             print(ctx.triggered)
             return value, value
 
+#TAB1-ngrid
+@app.callback(Output('updatemode-output-ngrid', 'children'),
+              Input('slider-ngrid', 'value'))
+def GeomTab_bladecount_display_value(value):
+    return 'ngrid: {}'.format(value)
+
+#TAB1-pP
+@app.callback(Output('pP-numeric-input-output', 'children'),
+              Input('input-pP', 'value'))
+def GeomTab_pP_output(input_value):
+    print(input_value)
+    # return input_value
+
+#TAB1-pT
+@app.callback(Output('pT-numeric-input-output', 'children'),
+              Input('input-pT', 'value'))
+def GeomTab_pT_output(input_value):
+    print(input_value)
+    # return input_value
+
+#TAB1-rloc
+@app.callback(Output('rloc-numeric-input-output', 'children'),
+              Input('input-rloc', 'value'))
+def GeomTab_rloc_output(input_value):
+    print(input_value)
+    # return input_value
+
+#TAB1-Tilt angle
 @app.callback(Output('input-tiltang', 'value'),
               Output('slider-tiltang', 'value'),
                 Input('input-tiltang', 'value'),
@@ -134,6 +200,7 @@ def GeomTab_tiltang_output(input_value, slider_value):
             print(ctx.triggered)
             return value, value
 
+#TAB1-Yaw angle
 @app.callback(Output('input-yawang', 'value'),
               Output('slider-yawang', 'value'),
                 Input('input-yawang', 'value'),
@@ -146,6 +213,7 @@ def GeomTab_yawang_output(input_value, slider_value):
             print(ctx.triggered)
             return value, value
 
+#TAB1-Rotor Diameter
 @app.callback(Output('input-rotordiam', 'value'),
               Output('slider-rotordiam', 'value'),
                 Input('input-rotordiam', 'value'),
