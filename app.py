@@ -9,14 +9,15 @@ import pandas as pd
 import dash_table as dt
 import plotly.express as px
 import base64
-import datetime
 import io
+import plotly.graph_objs as go
+
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
+colors = {"graphBackground": "#F5F5F5", "background": "#ffffff", "text": "#000000"}
 app.layout = html.Div([
     dcc.Tabs(id='tabs-example', value='tab-1', children=[
         dcc.Tab(label='Geometry', children=[
@@ -212,7 +213,10 @@ app.layout = html.Div([
                     },
                     # Allow multiple files to be uploaded
                     multiple=True #change to true if you want multiple files 
-                ), html.Div(id='dummy-output'),
+            ), 
+            dcc.Graph(id="Mygraph1"),
+            dcc.Graph(id="Mygraph2"),
+            # html.Div(id="output-data-upload"),
 
             
             # dcc.Graph(
@@ -232,8 +236,8 @@ app.layout = html.Div([
 @app.callback(Output('TSR-numeric-input-output', 'children'),
               Input('input-TSR', 'value'))
 def GeomTab_TSR_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-Blade count
 @app.callback(Output('updatemode-output-bladecount', 'children'),
@@ -245,27 +249,27 @@ def GeomTab_bladecount_display_value(value):
 @app.callback(Output('bladepitch-numeric-input-output', 'children'),
               Input('input-bladepitch', 'value'))
 def GeomTab_Bladepitch_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-Generator efficiency
 @app.callback(Output('genEff-numeric-input-output', 'children'),
               Input('input-genEff', 'value'))
 def GeomTab_genEff_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-Hub height
 @app.callback(Output('input-hubheight', 'value'),
               Output('slider-hubheight', 'value'),
-                Input('input-hubheight', 'value'),
-                Input('slider-hubheight', 'value'))    
+              Input('input-hubheight', 'value'),
+              Input('slider-hubheight', 'value'))    
 def GeomTab_hubheight_output(input_value, slider_value):
             ctx = dash.callback_context
             trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
             value = input_value if trigger_id == "input-hubheight" else slider_value
-            print(input_value, slider_value, value)
-            print(ctx.triggered)
+            # print(input_value, slider_value, value)
+            # print(ctx.triggered)
             return value, value
 
 #TAB1-ngrid
@@ -278,22 +282,22 @@ def GeomTab_bladecount_display_value(value):
 @app.callback(Output('pP-numeric-input-output', 'children'),
               Input('input-pP', 'value'))
 def GeomTab_pP_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-pT
 @app.callback(Output('pT-numeric-input-output', 'children'),
               Input('input-pT', 'value'))
 def GeomTab_pT_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-rloc
 @app.callback(Output('rloc-numeric-input-output', 'children'),
               Input('input-rloc', 'value'))
 def GeomTab_rloc_output(input_value):
-    print(input_value)
-    # return input_value
+    # print(input_value)
+    return input_value
 
 #TAB1-Tilt angle
 @app.callback(Output('input-tiltang', 'value'),
@@ -304,8 +308,8 @@ def GeomTab_tiltang_output(input_value, slider_value):
             ctx = dash.callback_context
             trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
             value = input_value if trigger_id == "input-tiltang" else slider_value
-            print(input_value, slider_value, value)
-            print(ctx.triggered)
+            # print(input_value, slider_value, value)
+            # print(ctx.triggered)
             return value, value
 
 #TAB1-Points on Perimeter
@@ -316,7 +320,7 @@ def GeomTab_radiobutton_value(value):
         value = True
     else:
         value = False
-    print(value)
+    # print(value)
 
 #TAB1-Yaw angle
 @app.callback(Output('input-yawang', 'value'),
@@ -327,8 +331,8 @@ def GeomTab_yawang_output(input_value, slider_value):
             ctx = dash.callback_context
             trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
             value = input_value if trigger_id == "input-yawang" else slider_value
-            print(input_value, slider_value, value)
-            print(ctx.triggered)
+            # print(input_value, slider_value, value)
+            # print(ctx.triggered)
             return value, value
 
 #TAB1-Rotor Diameter
@@ -340,22 +344,55 @@ def GeomTab_rotordiam_output(input_value, slider_value):
             ctx = dash.callback_context
             trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
             value = input_value if trigger_id == "input-rotordiam" else slider_value
-            print(input_value, slider_value, value)
-            print(ctx.triggered)
+            # print(input_value, slider_value, value)
+            # print(ctx.triggered)
             return value, value
 
 #TAB2
-@app.callback(Output('dummy-output', 'value'),
-              Input('upload-data', 'value'))
-def parse_contents(contents):
-    print(contents)
+@app.callback(Output('Mygraph1', 'figure'),
+            #   Output('Mygraph2', 'figure') 
+              [Input('upload-data', 'contents'),
+              Input('upload-data', 'filename')])
+def update_graph(contents, filename):
+    print('inside update_graph')
+    x = []
+    y1 = []
+    y2 = []
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_contents(contents, filename)
+        # df = df.set_index(df.columns[0])
+        x=df['Wind Speed']
+        y1=df['Cp']
+        y2=df['Ct']
+    fig1 = go.Figure(
+            data=[
+                go.Scatter(
+                    x=x, 
+                    y=y1, 
+                    mode='lines+markers')],
+            # layout=go.Layout(
+            #     plot_bgcolor=colors["graphBackground"],
+            #     paper_bgcolor=colors["graphBackground"])
+    )
+    # fig2 = go.Figure(
+    #         data=[
+    #             go.Scatter(
+    #                 x=x, 
+    #                 y=y2, 
+    #                 mode='lines+markers')],
+    #         layout=go.Layout(
+    #             plot_bgcolor=colors["graphBackground"],
+    #             paper_bgcolor=colors["graphBackground"]
+    # ))
+    return fig1
+
+
+def parse_contents(contents, filename):
+    print('*')
+    # print(contents)
     content_type, content_string = contents.split(',')
-
-
-
-
-
-
     decoded = base64.b64decode(content_string)
     print('****************')
     try:
@@ -365,13 +402,19 @@ def parse_contents(contents):
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
+        # elif "txt" or "tsv" in filename:
+        #     # Assume that the user upl, delimiter = r'\s+'oaded an excel file
+        #     df = pd.read_csv(io.StringIO(decoded.decode("utf-8")), delimiter=r"\s+")
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
+    print('after exception')
+    return df
     
-    # for i in range 3 in df.column[i]:
+
+    # for i in range 3:
     #     if df.column[i] == 'Cp':
     #         cp_data = df['Cp'],
     #     elif df.column[i] == 'Ct':
@@ -383,7 +426,7 @@ def parse_contents(contents):
     #             "File does not match expected 'Cp', 'Ct' and 'Wind Speed' column names."
     #         ])
 
-    print(df['Cp'])
+    # print(df['Cp'])
 
     # line_graph1 = px.line(x=ws_data, y=cp_data)
     # line_graph2 = px.line(x=ws_data, y=ct_data)
@@ -391,9 +434,9 @@ def parse_contents(contents):
     # return dcc.Graph(figure=line_graph1), dcc.Graph(figure=line_graph2) 
      
 
-    return html.Div([
-        html.H5(filename),
-
+    # return html.Div([
+    #     html.H5(filename),
+#Can Delete
         # html.H6(datetime.datetime.fromtimestamp(date)),
         # html.P("Inset X axis data"),
         # dcc.Dropdown(id='xaxis-data',
@@ -410,16 +453,16 @@ def parse_contents(contents):
         #     page_size=15
         # ),
 
-        dcc.Store(id='stored-data', data=df.to_dict('records')),
-
+        # dcc.Store(id='stored-data', data=df.to_dict('records')),
+#Can Delete
         # # For debugging, display the raw contents provided by the web browser
         # html.Div('Raw Content'),
         # html.Pre(contents[0:200] + '...', style={
         #     'whiteSpace': 'pre-wrap',
         #     'wordBreak': 'break-all'
         # })
-    ])
-
+    # ])
+#Can Delete
 # @app.callback(Output('output-datatable', 'children'),
 #               Input('upload-data', 'contents'),
 #               State('upload-data', 'filename'),
