@@ -4,8 +4,14 @@ import dash
 # import dash_daq as daq
 import dash_html_components as html
 import dash_core_components as dcc
+from dash.dependencies import Input, Output, State
+import pandas as pd
+import dash_table as dt
+import plotly.express as px
+import base64
+import datetime
+import io
 
-from dash.dependencies import Input, Output
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -14,88 +20,147 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div([
     dcc.Tabs(id='tabs-example', value='tab-1', children=[
         dcc.Tab(label='Geometry', children=[
-                #TSR
-                    html.P('Tip Speed Ratio:'),
-                    dcc.Input(id="input-TSR", type="number", min=0, max=20, placeholder='TSR input'
-                    ),
-                    html.Div(id='TSR-numeric-input-output'),
-                #Blade Count
-                    html.P('Blade Count:'),
-                    html.Div(dcc.Slider(id="slider-bladecount",min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1, 
+            #TSR
+                html.P('Tip Speed Ratio:'),
+                dcc.Input(
+                    id="input-TSR", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    placeholder='TSR input'
+                ),
+                html.Div(id='TSR-numeric-input-output'),
+            #Blade Count
+                html.P('Blade Count:'),
+                html.Div(
+                    dcc.Slider(
+                        id="slider-bladecount",
+                        min=1, 
+                        max=9, 
+                        marks={i: '{}'.format(i) for i in range(10)}, 
+                        value=1, 
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
-                    html.Div(id='updatemode-output-bladecount', style={'margin-left': 450}),
-                #Blade Pitch
-                    html.P('Blade Pitch:'),
-                    dcc.Input(id="input-bladepitch", type="number", min=0, max=20, placeholder='Blade pitch input'
-                    ),
-                    html.Div(id='bladepitch-numeric-input-output'),
-                #Generator Efficiency
-                    html.P('Generator Efficiency:'),
-                    dcc.Input(id="input-genEff", type="number", min=0, max=20, placeholder='Generator Efficiency input'
-                    ),
-                    html.Div(id='genEff-numeric-input-output'),
-                    
-                #Hub Height
-                    html.P('Hub Height:'),
-                    dcc.Input(id="input-hubheight", type="number", min=0, max=20, value=3 
-                    ),
-                    html.Div(dcc.Slider(
+                html.Div(id='updatemode-output-bladecount', style={'margin-left': 450}),
+            #Blade Pitch
+                html.P('Blade Pitch:'),
+                dcc.Input(
+                    id="input-bladepitch", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    placeholder='Blade pitch input'
+                ),
+                html.Div(id='bladepitch-numeric-input-output'),
+            #Generator Efficiency
+                html.P('Generator Efficiency:'),
+                dcc.Input(
+                    id="input-genEff", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    placeholder='Generator Efficiency input'
+                ),
+                html.Div(id='genEff-numeric-input-output'),
+                
+            #Hub Height
+                html.P('Hub Height:'),
+                dcc.Input(
+                    id="input-hubheight", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    value=3 
+                ),
+                html.Div(
+                    dcc.Slider(
                         id="slider-hubheight", min=0, max=20, 
                         marks={i: str(i) for i in range(21)}, 
                         value=3
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
 
-                #ngrid
-                    html.P('ngrid:'),
-                    html.Div(dcc.Slider(id="slider-ngrid",min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1, 
+            #ngrid
+                html.P('ngrid:'),
+                html.Div(
+                    dcc.Slider(
+                        id="slider-ngrid",
+                        min=1, 
+                        max=9, 
+                        marks={i: '{}'.format(i) for i in range(10)}, 
+                        value=1, 
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
-                    html.Div(id='updatemode-output-ngrid', style={'margin-left': 450}),
+                html.Div(id='updatemode-output-ngrid', style={'margin-left': 450}),
 
-                #pP
-                    html.P('pP:'),
-                    dcc.Input(id="input-pP", type="number", min=0, max=20, step=0.01,placeholder='pP input'
-                    ),
-                    html.Div(id='pP-numeric-input-output'),
-                #pT
-                    html.P('pT:'),
-                    dcc.Input(id="input-pT", type="number", min=0, max=20, step=0.01,placeholder='pT input'
-                    ),
-                    html.Div(id='pT-numeric-input-output'),
-                #rloc
-                    html.P('rloc:'),
-                    dcc.Input(id="input-rloc", type="number", min=0, max=20, step=0.01,placeholder='rloc input'
-                    ),
-                    html.Div(id='rloc-numeric-input-output'),
-                #Tilt Angle
-                    html.P('Tilt Angle:'),
-                    dcc.Input(
-                        id="input-tiltang", type="number", min=0, max=20, value=0.0
-                    ),
-                    html.Div(dcc.Slider(
-                        id="slider-tiltang", min=0, max=20, 
+            #pP
+                html.P('pP:'),
+                dcc.Input(
+                    id="input-pP", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    step=0.01,
+                    placeholder='pP input'
+                ),
+                html.Div(id='pP-numeric-input-output'),
+            #pT
+                html.P('pT:'),
+                dcc.Input(
+                    id="input-pT", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    step=0.01,
+                    placeholder='pT input'
+                ),
+                html.Div(id='pT-numeric-input-output'),
+            #rloc
+                html.P('rloc:'),
+                dcc.Input(
+                    id="input-rloc", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    step=0.01,
+                    placeholder='rloc input'
+                ),
+                html.Div(id='rloc-numeric-input-output'),
+            #Tilt Angle
+                html.P('Tilt Angle:'),
+                dcc.Input(
+                    id="input-tiltang", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    value=0.0
+                ),
+                html.Div(
+                    dcc.Slider(
+                        id="slider-tiltang", 
+                        min=0, 
+                        max=20, 
                         marks={i: str(i) for i in range(21)}, 
                         value=0.0,
                         step=0.01,
                         updatemode='drag'
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
 
-                #Use points on perimeter
-                    html.P('Use points on perimeter:'),
-                    dcc.RadioItems(
-                            id = 'radio-input',
-                            options=[
-                                {'label': 'Yes', 'value': 1},
-                                {'label': 'No', 'value': 0},
-                            ],
-                        ), 
-                        html.Div(id='radio-output'),
+            #Use points on perimeter
+                html.P('Use points on perimeter:'),
+                dcc.RadioItems(
+                    id = 'radio-input',
+                    options=[
+                        {'label': 'Yes', 'value': 1},
+                        {'label': 'No', 'value': 0},
+                    ]
+                ), 
+                html.Div(id='radio-output'),
 
-                #Yaw Angle
-                    html.P('Yaw Angle:'),
-                    dcc.Input(
-                        id="input-yawang", type="number", min=0, max=20, value=0.0
-                    ),
-                    html.Div(dcc.Slider(
+            #Yaw Angle
+                html.P('Yaw Angle:'),
+                dcc.Input(
+                    id="input-yawang", type="number", min=0, max=20, value=0.0
+                ),
+                html.Div(
+                    dcc.Slider(
                         id="slider-yawang", min=0, max=20, 
                         marks={i: str(i) for i in range(21)}, 
                         value=0.0,
@@ -103,29 +168,64 @@ app.layout = html.Div([
                         updatemode='drag'
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
 
-                #Rotor Diameter
-                    html.P('Rotor Diameter:'),
-                    dcc.Input(
-                        id="input-rotordiam", type="number", min=0, max=20, value=3
-                    ),
-                    html.Div(dcc.Slider(
+            #Rotor Diameter
+                html.P('Rotor Diameter:'),
+                dcc.Input(
+                    id="input-rotordiam", 
+                    type="number", 
+                    min=0, 
+                    max=20, 
+                    value=3
+                ),
+                html.Div(
+                    dcc.Slider(
                         id="slider-rotordiam", min=0, max=20, 
                         marks={i: str(i) for i in range(21)}, 
                         value=3
                     ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
-                
+            
         ]),
         dcc.Tab(label='Cp/Ct Table', children=[
-            dcc.Graph(
-                figure={
-                    'data': [
-                        {'x': [1, 2, 3], 'y': [1, 4, 1],
-                            'type': 'bar', 'name': 'SF'},
-                        {'x': [1, 2, 3], 'y': [1, 2, 3],
-                         'type': 'bar', 'name': u'Montréal'},
-                    ]
-                }
-            )
+            # html.Div([
+            #     html.H1('Dash Upload Component'),
+            #     dcc.Upload(id='upload'),
+            #     dt.DataTable(
+            #         id='datatable',
+            #         rows=[{}]
+            #     )], className="container"
+            # ),
+            dcc.Upload(
+                id='upload-data', 
+                children=html.Div([
+                            'Drag and Drop or ',
+                            html.A('Select Files')
+                    ]),
+                    style={
+                        'width': '20%',
+                        'height': '60px',
+                        'lineHeight': '60px',
+                        'borderWidth': '1px',
+                        'borderStyle': 'dashed',
+                        'borderRadius': '5px',
+                        'textAlign': 'center',
+                        'margin': '10px'
+                    },
+                    # Allow multiple files to be uploaded
+                    multiple=True #change to true if you want multiple files 
+                ),
+                html.Div(id='output-div'),
+                html.Div(id='output-datatable'),
+            
+            # dcc.Graph(
+            #     figure={
+            #         'data': [
+            #             {'x': [1, 2, 3], 'y': [1, 4, 1],
+            #                 'type': 'bar', 'name': 'SF'},
+            #             {'x': [1, 2, 3], 'y': [1, 2, 3],
+            #              'type': 'bar', 'name': u'Montréal'},
+            #         ]
+            #     }
+            # )
         ]),
     ]),
 ])
@@ -244,6 +344,80 @@ def GeomTab_rotordiam_output(input_value, slider_value):
             print(input_value, slider_value, value)
             print(ctx.triggered)
             return value, value
+
+#TAB2
+def parse_contents(contents, filename, date):
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+
+    return html.Div([
+        html.H5(filename),
+        # html.H6(datetime.datetime.fromtimestamp(date)),
+        html.P("Inset X axis data"),
+        dcc.Dropdown(id='xaxis-data',
+                     options=[{'label':x, 'value':x} for x in df.columns]),
+        html.P("Inset Y axis data"),
+        dcc.Dropdown(id='yaxis-data',
+                     options=[{'label':x, 'value':x} for x in df.columns]),
+        html.Button(id="submit-button", children="Create Graph"),
+        html.Hr(),
+
+        dt.DataTable(
+            data=df.to_dict('records'),
+            columns=[{'name': i, 'id': i} for i in df.columns],
+            page_size=15
+        ),
+        dcc.Store(id='stored-data', data=df.to_dict('records')),
+
+        html.Hr(),  # horizontal line
+
+        # For debugging, display the raw contents provided by the web browser
+        html.Div('Raw Content'),
+        html.Pre(contents[0:200] + '...', style={
+            'whiteSpace': 'pre-wrap',
+            'wordBreak': 'break-all'
+        })
+    ])
+
+@app.callback(Output('output-datatable', 'children'),
+              Input('upload-data', 'contents'),
+              State('upload-data', 'filename'),
+              State('upload-data', 'last_modified'))
+def update_output(list_of_contents, list_of_names, list_of_dates):
+    if list_of_contents is not None:
+        children = [
+            parse_contents(c, n, d) for c, n, d in
+            zip(list_of_contents, list_of_names, list_of_dates)]
+        return children
+
+
+@app.callback(Output('output-div', 'children'),
+              Input('submit-button','n_clicks'),
+              State('stored-data','data'),
+              State('xaxis-data','value'),
+              State('yaxis-data', 'value'))
+def make_graphs(n, data, x_data, y_data):
+    if n is None:
+        return dash.no_update
+    else:
+        line_graph1 = px.line(data, x=x_data, y=y_data)
+        # print(data)
+        return dcc.Graph(figure=line_graph1), dcc.Graph(figure=line_graph1)
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
