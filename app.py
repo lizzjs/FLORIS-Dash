@@ -81,6 +81,15 @@ app.layout = html.Div([
 
                 #Use points on perimeter
                     html.P('Use points on perimeter:'),
+                    dcc.RadioItems(
+                            id = 'radio-input',
+                            options=[
+                                {'label': 'Yes', 'value': 1},
+                                {'label': 'No', 'value': 0},
+                            ],
+                        ), 
+                        html.Div(id='radio-output'),
+
                 #Yaw Angle
                     html.P('Yaw Angle:'),
                     dcc.Input(
@@ -199,6 +208,16 @@ def GeomTab_tiltang_output(input_value, slider_value):
             print(input_value, slider_value, value)
             print(ctx.triggered)
             return value, value
+
+#TAB1-Points on Perimeter
+@app.callback(Output('radio-output', 'children'),
+              [Input('radio-input', 'value')])
+def GeomTab_radiobutton_value(value):
+    if value == 1:
+        value = True
+    else:
+        value = False
+    print(value)
 
 #TAB1-Yaw angle
 @app.callback(Output('input-yawang', 'value'),
