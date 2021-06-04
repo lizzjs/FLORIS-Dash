@@ -165,145 +165,119 @@ def GeomTab_rotordiam_output(input_value, slider_value):
     # print(ctx.triggered)
     return value, value
 
-#TAB2
+#TAB2-Text input
 @app.callback(
     Output('Mygraph1', 'figure'),
     Output('Mygraph2', 'figure'),
-    Input('upload-data', 'filename')
+    Input('textarea-state-example-button', 'n_clicks'),
+    State('textarea-state-example', 'value')
 )
-def update_graphs(filename):
+def textinput_graphs(n_clicks, value):
+    if n_clicks > 0:
+        #trial 1: save input as .txt file and convert to df
+        # text_file = open("Temp.txt", "w")
+        # text_file.write(value)
+        # text_file.close()
+        # df = pd.read_csv(text_file, delimiter=",")
+        # print(df)
 
-    # Multiple selections are allowed in the browser's filesystem search prompt, so take the first one
-    filename = filename[0]
+        #trial 2: use in-memory buffer to save input and convert to df
+        data = io.StringIO(value)
+        df = pd.read_csv(data, sep=",")
+        # print(df)
+
+        #Plot graphs
+        x = df['Wind Speed']
+        y1 = df['Cp']
+        y2 = df['Ct']
+
+        fig1 = go.Figure(
+            data=[
+                go.Scatter(
+                    x=x, 
+                    y=y1, 
+                    mode='lines+markers')
+                ],
+                layout=go.Layout(
+                    plot_bgcolor=colors["graphBackground"],
+                #     paper_bgcolor=colors["graphBackground"]
+                )
+        )
+        fig2 = go.Figure(
+            data=[
+                go.Scatter(
+                    x=x, 
+                    y=y2, 
+                    mode='lines+markers')],
+                layout=go.Layout(
+                    plot_bgcolor=colors["graphBackground"],
+                #     paper_bgcolor=colors["graphBackground"]
+                )
+        )
+        return fig1, fig2
+
+
+# #TAB2-Upload file
+# @app.callback(
+#     Output('Mygraph1', 'figure'),
+#     Output('Mygraph2', 'figure'),
+#     Input('upload-data', 'filename')
+# )
+# def update_graphs(filename):
+#     print(filename)
+
+#     # Multiple selections are allowed in the browser's filesystem search prompt, so take the first one
+#     filename = filename[0]
     
-    df = parse_contents(filename)
-        # df = df.set_index(df.columns[0])
-    x=df['Wind Speed']
-    y1=df['Cp']
-    y2=df['Ct']
+#     df = parse_contents(filename)
+#     x = df['Wind Speed']
+#     y1 = df['Cp']
+#     y2 = df['Ct']
 
-    fig1 = go.Figure(
-        data=[
-            go.Scatter(
-                x=x, 
-                y=y1, 
-                mode='lines+markers')
-            ],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-                paper_bgcolor=colors["graphBackground"]
-            )
-    )
-    fig2 = go.Figure(
-        data=[
-            go.Scatter(
-                x=x, 
-                y=y2, 
-                mode='lines+markers')],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-                paper_bgcolor=colors["graphBackground"]
-            )
-    )
-    return fig1, fig2
-
-
-def parse_contents(filepath) -> pd.DataFrame:
-
-    try:
-        if 'csv' in filepath:
-            df = pd.read_csv(filepath)
-        elif 'xls' in filepath:
-            df = pd.read_excel(filepath=filepath)
-        # elif "txt" or "tsv" in filename:
-        #     # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-        #     df = pd.read_csv(io.StringIO(decoded.decode("utf-8")), delimiter=r"\s+")
-        else:
-            # TODO @Lizz
-            pass
-
-    except Exception as e:
-        # TODO @Lizz can you get this code to run? As in, force the Dash app to trigger an error that gets into here.
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
-    print('after exception')
-    return df
-    
-
-    # for i in range 3:
-    #     if df.column[i] == 'Cp':
-    #         cp_data = df['Cp'],
-    #     elif df.column[i] == 'Ct':
-    #         ct_data = df['Ct']
-    #     elif df.column[i] == 'Wind Speed':
-    #         ws_data = df['Wind Speed']
-    #     else:
-    #         return html.Div([
-    #             "File does not match expected 'Cp', 'Ct' and 'Wind Speed' column names."
-    #         ])
-
-    # print(df['Cp'])
-
-    # line_graph1 = px.line(x=ws_data, y=cp_data)
-    # line_graph2 = px.line(x=ws_data, y=ct_data)
-    # # print(data)
-    # return dcc.Graph(figure=line_graph1), dcc.Graph(figure=line_graph2) 
-     
-
-    # return html.Div([
-    #     html.H5(filename),
-#Can Delete
-        # html.H6(datetime.datetime.fromtimestamp(date)),
-        # html.P("Inset X axis data"),
-        # dcc.Dropdown(id='xaxis-data',
-        #              options=[{'label':x, 'value':x} for x in df.columns]),
-        # html.P("Inset Y axis data"),
-        # dcc.Dropdown(id='yaxis-data',
-        #              options=[{'label':x, 'value':x} for x in df.columns]),
-        # html.Button(id="submit-button", children="Create Graph"),
-        # html.Hr(),
-
-        # dt.DataTable(
-        #     data=df.to_dict('records'),
-        #     columns=[{'name': i, 'id': i} for i in df.columns],
-        #     page_size=15
-        # ),
-
-        # dcc.Store(id='stored-data', data=df.to_dict('records')),
-#Can Delete
-        # # For debugging, display the raw contents provided by the web browser
-        # html.Div('Raw Content'),
-        # html.Pre(contents[0:200] + '...', style={
-        #     'whiteSpace': 'pre-wrap',
-        #     'wordBreak': 'break-all'
-        # })
-    # ])
-#Can Delete
-# @app.callback(Output('output-datatable', 'children'),
-#               Input('upload-data', 'contents'),
-#               State('upload-data', 'filename'),
-#               State('upload-data', 'last_modified'))
-# def update_output(list_of_contents, list_of_names, list_of_dates):
-#     if list_of_contents is not None:
-#         children = [
-#             parse_contents(c, n, d) for c, n, d in
-#             zip(list_of_contents, list_of_names, list_of_dates)]
-#         return children
+#     fig1 = go.Figure(
+#         data=[
+#             go.Scatter(
+#                 x=x, 
+#                 y=y1, 
+#                 mode='lines+markers')
+#             ],
+#             layout=go.Layout(
+#                 plot_bgcolor=colors["graphBackground"],
+#             #     paper_bgcolor=colors["graphBackground"]
+#             )
+#     )
+#     fig2 = go.Figure(
+#         data=[
+#             go.Scatter(
+#                 x=x, 
+#                 y=y2, 
+#                 mode='lines+markers')],
+#             layout=go.Layout(
+#                 plot_bgcolor=colors["graphBackground"],
+#             #     paper_bgcolor=colors["graphBackground"]
+#             )
+#     )
+#     return fig1, fig2
 
 
-# @app.callback(Output('output-div', 'children'),
-#               Input('submit-button','n_clicks'),
-#               State('stored-data','data'),
-#               State('xaxis-data','value'),
-#               State('yaxis-data', 'value'))
-# def make_graphs(n, data, cp_data, ct_data, ws_data):
-#     if n is None:
-#         return dash.no_update
+# def parse_contents(filepath) -> pd.DataFrame:
+
+#     if 'csv' in filepath:
+#         df = pd.read_csv(filepath)
+#     elif 'xls' in filepath:
+#         df = pd.read_excel(filepath=filepath)
+#     elif "txt" in filepath:
+#         # Assume that the user upl, delimiter = r'\s+'oaded an excel file
+#         df = pd.read_csv(filepath, delimiter=",")
 #     else:
-        
+#         # TODO @Lizz
+#         pass
+#         # print('inside else')
+#         # return html.Div([
+#         #     html.H5("File is not in a supported format.")
+#         # ])
 
+#     return df
 
 if __name__ == '__main__':
     app.run_server(debug=True)
