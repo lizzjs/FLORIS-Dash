@@ -170,114 +170,82 @@ def GeomTab_rotordiam_output(input_value, slider_value):
     Output('Mygraph1', 'figure'),
     Output('Mygraph2', 'figure'),
     Input('textarea-state-example-button', 'n_clicks'),
-    State('textarea-state-example', 'value')
+    Input('upload-data', 'filename'),
+    State('textarea-state-example', 'value'),
 )
-def textinput_graphs(n_clicks, value):
-    if n_clicks > 0:
-        #trial 1: save input as .txt file and convert to df
-        # text_file = open("Temp.txt", "w")
-        # text_file.write(value)
-        # text_file.close()
-        # df = pd.read_csv(text_file, delimiter=",")
-        # print(df)
+def textinput_graphs(n_clicks, filename, value):
 
-        #trial 2: use in-memory buffer to save input and convert to df
+    # TODO: Why check for clicks?
+    # if n_clicks > 0:
+
+    ctx = dash.callback_context
+    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if filename is not None and trigger_id == "upload-data":
+        filename = filename[0]
+        df = pd.read_csv(filename)
+
+    elif value is not None and trigger_id == "textarea-state-example-button":
         data = io.StringIO(value)
         df = pd.read_csv(data, sep=",")
-        # print(df)
 
-        #Plot graphs
-        x = df['Wind Speed']
-        y1 = df['Cp']
-        y2 = df['Ct']
+    else:
+        df = pd.DataFrame({
+            "Wind Speed": [],
+            "Cp": [],
+            "Ct": [],
+        })
 
-        fig1 = go.Figure(
-            data=[
-                go.Scatter(
-                    x=x, 
-                    y=y1, 
-                    mode='lines+markers')
-                ],
-                layout=go.Layout(
-                    plot_bgcolor=colors["graphBackground"],
-                #     paper_bgcolor=colors["graphBackground"]
-                )
-        )
-        fig2 = go.Figure(
-            data=[
-                go.Scatter(
-                    x=x, 
-                    y=y2, 
-                    mode='lines+markers')],
-                layout=go.Layout(
-                    plot_bgcolor=colors["graphBackground"],
-                #     paper_bgcolor=colors["graphBackground"]
-                )
-        )
-        return fig1, fig2
+    fig1, fig2 = plot_data(df)
 
+    return fig1, fig2
 
-# #TAB2-Upload file
-# @app.callback(
-#     Output('Mygraph1', 'figure'),
-#     Output('Mygraph2', 'figure'),
-#     Input('upload-data', 'filename')
-# )
-# def update_graphs(filename):
-#     print(filename)
-
-#     # Multiple selections are allowed in the browser's filesystem search prompt, so take the first one
-#     filename = filename[0]
-    
-#     df = parse_contents(filename)
-#     x = df['Wind Speed']
-#     y1 = df['Cp']
-#     y2 = df['Ct']
-
-#     fig1 = go.Figure(
-#         data=[
-#             go.Scatter(
-#                 x=x, 
-#                 y=y1, 
-#                 mode='lines+markers')
-#             ],
-#             layout=go.Layout(
-#                 plot_bgcolor=colors["graphBackground"],
-#             #     paper_bgcolor=colors["graphBackground"]
-#             )
-#     )
-#     fig2 = go.Figure(
-#         data=[
-#             go.Scatter(
-#                 x=x, 
-#                 y=y2, 
-#                 mode='lines+markers')],
-#             layout=go.Layout(
-#                 plot_bgcolor=colors["graphBackground"],
-#             #     paper_bgcolor=colors["graphBackground"]
-#             )
-#     )
-#     return fig1, fig2
+def plot_data(df: pd.DataFrame) -> (go.Figure):
+    x = df['Wind Speed']
+    y1 = df['Cp']
+    y2 = df['Ct']
+    fig1 = go.Figure(
+        data=[
+            go.Scatter(
+                x=x, 
+                y=y1, 
+                mode='lines+markers')
+            ],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+            #     paper_bgcolor=colors["graphBackground"]
+            )
+    )
+    fig2 = go.Figure(
+        data=[
+            go.Scatter(
+                x=x, 
+                y=y2, 
+                mode='lines+markers')],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+            #     paper_bgcolor=colors["graphBackground"]
+            )
+    )
+    return (fig1, fig2)
 
 
-# def parse_contents(filepath) -> pd.DataFrame:
+def parse_contents(filepath) -> pd.DataFrame:
+    if 'csv' in filepath:
+        df = pd.read_csv(filepath)
+    elif 'xls' in filepath:
+        df = pd.read_excel(filepath=filepath)
+    elif "txt" in filepath:
+        df = pd.read_csv(filepath, delimiter=",")
+    else:
+        # TODO @Lizz
+        # maybe raise ValueError?
+        pass
+    return df
 
-#     if 'csv' in filepath:
-#         df = pd.read_csv(filepath)
-#     elif 'xls' in filepath:
-#         df = pd.read_excel(filepath=filepath)
-#     elif "txt" in filepath:
-#         # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-#         df = pd.read_csv(filepath, delimiter=",")
-#     else:
-#         # TODO @Lizz
-#         pass
-#         # print('inside else')
-#         # return html.Div([
-#         #     html.H5("File is not in a supported format.")
-#         # ])
 
-#     return df
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
