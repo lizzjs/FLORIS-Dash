@@ -168,62 +168,62 @@ def GeomTab_rotordiam_output(input_value, slider_value):
 #TAB2
 @app.callback(
     Output('Mygraph1', 'figure'),
-    # Output('Mygraph2', 'figure') 
-    [Input('upload-data', 'contents'),
-    Input('upload-data', 'filename')])
-def update_graph(contents, filename):
-    print('inside update_graph')
-    x = []
-    y1 = []
-    y2 = []
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        df = parse_contents(contents, filename)
+    Output('Mygraph2', 'figure'),
+    Input('upload-data', 'filename')
+)
+def update_graphs(filename):
+
+    # Multiple selections are allowed in the browser's filesystem search prompt, so take the first one
+    filename = filename[0]
+    
+    df = parse_contents(filename)
         # df = df.set_index(df.columns[0])
-        x=df['Wind Speed']
-        y1=df['Cp']
-        y2=df['Ct']
+    x=df['Wind Speed']
+    y1=df['Cp']
+    y2=df['Ct']
+
     fig1 = go.Figure(
-            data=[
-                go.Scatter(
-                    x=x, 
-                    y=y1, 
-                    mode='lines+markers')],
-            # layout=go.Layout(
-            #     plot_bgcolor=colors["graphBackground"],
-            #     paper_bgcolor=colors["graphBackground"])
+        data=[
+            go.Scatter(
+                x=x, 
+                y=y1, 
+                mode='lines+markers')
+            ],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+                paper_bgcolor=colors["graphBackground"]
+            )
     )
-    # fig2 = go.Figure(
-    #         data=[
-    #             go.Scatter(
-    #                 x=x, 
-    #                 y=y2, 
-    #                 mode='lines+markers')],
-    #         layout=go.Layout(
-    #             plot_bgcolor=colors["graphBackground"],
-    #             paper_bgcolor=colors["graphBackground"]
-    # ))
-    return fig1
+    fig2 = go.Figure(
+        data=[
+            go.Scatter(
+                x=x, 
+                y=y2, 
+                mode='lines+markers')],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+                paper_bgcolor=colors["graphBackground"]
+            )
+    )
+    return fig1, fig2
 
 
-def parse_contents(contents, filename):
-    print('*')
-    # print(contents)
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-    print('****************')
+def parse_contents(filepath) -> pd.DataFrame:
+
     try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV file
-            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
+        if 'csv' in filepath:
+            df = pd.read_csv(filepath)
+        elif 'xls' in filepath:
+            df = pd.read_excel(filepath=filepath)
         # elif "txt" or "tsv" in filename:
         #     # Assume that the user upl, delimiter = r'\s+'oaded an excel file
         #     df = pd.read_csv(io.StringIO(decoded.decode("utf-8")), delimiter=r"\s+")
+        else:
+            # TODO @Lizz
+            pass
+
     except Exception as e:
+        # TODO @Lizz can you get this code to run? As in, force the Dash app to trigger an error that gets into here.
         print(e)
         return html.Div([
             'There was an error processing this file.'
