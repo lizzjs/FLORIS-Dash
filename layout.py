@@ -155,7 +155,11 @@ main_layout = html.Div([
             #Yaw Angle
             html.P('Yaw Angle:'),
             dcc.Input(
-                id="input-yawang", type="number", min=0, max=20, value=0.0
+                id="input-yawang", 
+                type="number", 
+                min=0, 
+                max=20, 
+                value=0.0
             ),
             html.Div(
                 dcc.Slider(
@@ -188,15 +192,23 @@ main_layout = html.Div([
         ]),
 
         dcc.Tab(label='Cp/Ct Table', children=[
-            # html.Div([
-            #     html.H1('Dash Upload Component'),
-            #     dcc.Upload(id='upload'),
-            #     dt.DataTable(
-            #         id='datatable',
-            #         rows=[{}]
-            #     )], className="container"
-            # ),
-
+            dcc.Textarea(
+                id='textarea-state-example',
+                placeholder='Paste Cp/Ct table values here',
+                style={'width': '30%', 'height': 300},
+            ),
+            html.Button('Submit', 
+                id='textarea-state-example-button', 
+                n_clicks=0,
+                style={'margin': '10px'}
+            ),
+            html.Div(
+                id='textarea-state-example-output', 
+                style={'whiteSpace': 'pre-line'},
+            ),
+            html.Div(
+                html.Hr(style={'width': '40%','margin': '10px'}),
+            ),
             dcc.Upload(
                 id='upload-data', 
                 children=html.Div([
@@ -216,12 +228,9 @@ main_layout = html.Div([
                 # Allow multiple files to be uploaded
                 multiple=True #change to true if you want multiple files 
             ),
-
-
+            html.Div(id='output-div'),
             dcc.Graph(id="Mygraph1"),
-            dcc.Graph(id="Mygraph2"),
-            # html.Div(id="output-data-upload"),
-            
+            dcc.Graph(id="Mygraph2"),            
             # dcc.Graph(
             #     figure={
             #         'data': [
