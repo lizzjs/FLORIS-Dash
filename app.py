@@ -13,7 +13,7 @@ import io
 import plotly.graph_objs as go
 
 
-from layout import main_layout
+from layout import main_layout, farm_layout
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -21,7 +21,12 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 colors = {"graphBackground": "#F5F5F5", "background": "#ffffff", "text": "#000000"}
 
-app.layout = main_layout
+# Initialize with the first page layout and dynamically set in routing table
+# app.layout = main_layout
+app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
+    html.Div(id='page-content')
+])
 
 #TAB1-TSR
 @app.callback(
@@ -244,7 +249,17 @@ def parse_contents(filepath) -> pd.DataFrame:
     return df
 
 
-
+@app.callback(Output('page-content', 'children'),
+              Input('url', 'pathname'))
+def display_page(pathname):
+    if pathname == '/':
+        return main_layout
+    if pathname == '/builder/turbine':
+        return main_layout
+    elif pathname == '/builder/farm':
+        return farm_layout
+    else:
+        return '404'
 
 
 if __name__ == '__main__':

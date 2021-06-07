@@ -2,7 +2,14 @@
 import dash_html_components as html
 import dash_core_components as dcc
 
-main_layout = html.Div([
+main_layout = html.Div(
+    
+    id="main_layout",
+    children=[
+
+    html.Div(
+        style={'margin': '50px 50px 50px 800px'},
+        children=[
 
     dcc.Tabs(id='tabs-example', value='tab-1', children=[
     
@@ -243,4 +250,21 @@ main_layout = html.Div([
             # )
         ]),
     ]),
+]),
+       
+dcc.Link('Next', href='/builder/farm'),
+
 ])
+
+farm_layout = html.Div(
+    
+    id="farm_layout",
+    children=[
+
+        html.Div(
+          "farm"
+        ),
+
+    ]
+
+)
