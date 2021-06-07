@@ -180,9 +180,10 @@ def textinput_graphs(n_clicks, filename, value):
             "Cp": [],
             "Ct": [],
         })
-    #TODO Rafael: Check whether floris needs the columns to equal the same length
-    #CHECK IF COLUMN LENGTHS ARE =
-    #RAISE VALUE ERROR IF NOT
+
+    # FLORIS requires that the Cp and Ct table lengths be equal to the number of wind speed measurements.
+    if len(df["Cp"]) != len(df["Wind Speed"]) or len(df["Ct"]) != len(df["Wind Speed"]):
+        raise ValueError("Cp and Ct curves must contain equal number of points as wind speed measurements.")
 
     fig1, fig2 = plot_data(df)
 
