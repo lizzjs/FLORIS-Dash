@@ -82,9 +82,7 @@ main_layout = html.Div(
             html.P('ngrid:'),
             html.Div(
                 dcc.Slider(
-                    id="slider-ngrid",
-                    min=1, 
-                    max=9, 
+                    id="slider-ngrid", min=1, max=9, 
                     marks={i: '{}'.format(i) for i in range(10)}, 
                     value=1, 
                 ), style={'width': '40%', 'padding': '0px 20px 20px 20px'}),
@@ -236,18 +234,8 @@ main_layout = html.Div(
                 multiple=True #change to true if you want multiple files 
             ),
             html.Div(id='output-div'),
-            dcc.Graph(id="Mygraph1"),
+            dcc.Graph(id="Mygraph1",),
             dcc.Graph(id="Mygraph2"),            
-            # dcc.Graph(
-            #     figure={
-            #         'data': [
-            #             {'x': [1, 2, 3], 'y': [1, 4, 1],
-            #                 'type': 'bar', 'name': 'SF'},
-            #             {'x': [1, 2, 3], 'y': [1, 2, 3],
-            #              'type': 'bar', 'name': u'Montréal'},
-            #         ]
-            #     }
-            # )
         ]),
     ]),
 ]),

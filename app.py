@@ -195,11 +195,15 @@ def textinput_graphs(n_clicks, filename, value):
         df = pd.read_csv(data, sep=",")
 
     else:
+        #Web app initialization
         df = pd.DataFrame({
             "Wind Speed": [],
             "Cp": [],
             "Ct": [],
         })
+    #TODO Rafael: Check whether floris needs the columns to equal the same length
+    #CHECK IF COLUMN LENGTHS ARE =
+    #RAISE VALUE ERROR IF NOT
 
     fig1, fig2 = plot_data(df)
 
@@ -233,20 +237,6 @@ def plot_data(df: pd.DataFrame) -> (go.Figure):
             )
     )
     return (fig1, fig2)
-
-
-def parse_contents(filepath) -> pd.DataFrame:
-    if 'csv' in filepath:
-        df = pd.read_csv(filepath)
-    elif 'xls' in filepath:
-        df = pd.read_excel(filepath=filepath)
-    elif "txt" in filepath:
-        df = pd.read_csv(filepath, delimiter=",")
-    else:
-        # TODO @Lizz
-        # maybe raise ValueError?
-        pass
-    return df
 
 
 @app.callback(Output('page-content', 'children'),
