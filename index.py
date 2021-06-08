@@ -8,17 +8,16 @@ from app import app
 from apps.model_builder import turbine, farm
 
 
-progress_card = dbc.Card(
-    dbc.ListGroup(
-        [
-            dbc.ListGroupItem("Turbine"),
-            dbc.ListGroupItem("Farm"),
-            dbc.ListGroupItem("Atmospheric Conditions"),
-            dbc.ListGroupItem("Wake Model"),
-            dbc.ListGroupItem("Calculate"),
-            dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/builder/farm") ),
-        ],
-    ),
+progress_card = dbc.Nav(
+    [
+        dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
+        dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),
+        dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
+        dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
+        dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
+    ],
+    vertical=True,
+    pills=True,
 )
 
 app.layout = dbc.Container(
@@ -27,7 +26,11 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 # Progress tracker
-                dbc.Col(progress_card, width=2),
+                dbc.Col(
+                    [
+                        progress_card,
+                        dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/build/farm") ),
+                    ], width=2),
 
                 # Input area
                 dbc.Col(id="input-area", children=[])
@@ -44,9 +47,9 @@ app.layout = dbc.Container(
     Input('url', 'pathname')
 )
 def display_page(pathname):
-    if pathname == '/' or pathname == '/builder/turbine':
+    if pathname == '/' or pathname == '/build/turbine':
         return turbine.layout
-    elif pathname == '/builder/farm':
+    elif pathname == '/build/farm':
         return farm.layout
     else:
         return '404'
