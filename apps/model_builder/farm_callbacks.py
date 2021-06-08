@@ -6,10 +6,8 @@ import pandas as pd
 
 from app import app, colors
 
-#FARM LAYOUT CALLBACKS
 @app.callback(
     Output('farm-graph', 'figure'),
-    # Output('textarea-farm-output'),
     Input('textarea-farm-layout-button', 'n_clicks'),
     State('textarea-farm-layout', 'value'),
 )
