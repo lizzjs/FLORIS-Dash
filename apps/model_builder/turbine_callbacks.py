@@ -45,17 +45,10 @@ def GeomTab_genEff_output(input_value):
 #TAB1-Hub height
 @app.callback(
     Output('input-hubheight', 'value'),
-    Output('slider-hubheight', 'value'),
     Input('input-hubheight', 'value'),
-    Input('slider-hubheight', 'value')
 )
-def GeomTab_hubheight_output(input_value, slider_value):
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    value = input_value if trigger_id == "input-hubheight" else slider_value
-    # print(input_value, slider_value, value)
-    # print(ctx.triggered)
-    return value, value
+def GeomTab_hubheight_output(input_value):
+    return input_value
 
 #TAB1-ngrid
 @app.callback(
@@ -94,18 +87,11 @@ def GeomTab_rloc_output(input_value):
 
 #TAB1-Tilt angle
 @app.callback(
-    Output('input-tiltang', 'value'),
     Output('slider-tiltang', 'value'),
-    Input('input-tiltang', 'value'),
     Input('slider-tiltang', 'value')
 )
-def GeomTab_tiltang_output(input_value, slider_value):
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    value = input_value if trigger_id == "input-tiltang" else slider_value
-    # print(input_value, slider_value, value)
-    # print(ctx.triggered)
-    return value, value
+def GeomTab_tiltang_output(slider_value):
+    return slider_value
 
 #TAB1-Points on Perimeter
 @app.callback(
@@ -121,33 +107,19 @@ def GeomTab_radiobutton_value(value):
 
 #TAB1-Yaw angle
 @app.callback(
-    Output('input-yawang', 'value'),
     Output('slider-yawang', 'value'),
-    Input('input-yawang', 'value'),
     Input('slider-yawang', 'value')
 )
-def GeomTab_yawang_output(input_value, slider_value):
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    value = input_value if trigger_id == "input-yawang" else slider_value
-    # print(input_value, slider_value, value)
-    # print(ctx.triggered)
-    return value, value
+def GeomTab_yawang_output(slider_value):
+    return slider_value
 
 #TAB1-Rotor Diameter
 @app.callback(
     Output('input-rotordiam', 'value'),
-    Output('slider-rotordiam', 'value'),
     Input('input-rotordiam', 'value'),
-    Input('slider-rotordiam', 'value')
 )
-def GeomTab_rotordiam_output(input_value, slider_value):
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    value = input_value if trigger_id == "input-rotordiam" else slider_value
-    # print(input_value, slider_value, value)
-    # print(ctx.triggered)
-    return value, value
+def GeomTab_rotordiam_output(input_value):
+    return input_value
 
 #TAB2-Text input
 @app.callback(
@@ -190,14 +162,11 @@ def textinput_graphs(n_clicks, filename, value):
     return fig1, fig2
 
 def plot_data(df: pd.DataFrame) -> (go.Figure):
-    x = df['Wind Speed']
-    y1 = df['Cp']
-    y2 = df['Ct']
     fig1 = go.Figure(
         data=[
             go.Scatter(
-                x=x, 
-                y=y1, 
+                x=df['Wind Speed'],
+                y=df['Cp'],
                 mode='lines+markers')
             ],
             layout=go.Layout(
@@ -208,8 +177,8 @@ def plot_data(df: pd.DataFrame) -> (go.Figure):
     fig2 = go.Figure(
         data=[
             go.Scatter(
-                x=x, 
-                y=y2, 
+                x=df['Wind Speed'],
+                y=df['Ct'],
                 mode='lines+markers')],
             layout=go.Layout(
                 plot_bgcolor=colors["graphBackground"],
