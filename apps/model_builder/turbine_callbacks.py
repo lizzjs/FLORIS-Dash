@@ -130,10 +130,6 @@ def GeomTab_rotordiam_output(input_value):
     State('textarea-state-example', 'value'),
 )
 def textinput_graphs(n_clicks, filename, value):
-
-    # TODO: Why check for clicks?
-    # if n_clicks > 0:
-
     ctx = dash.callback_context
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
 

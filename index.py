@@ -5,19 +5,39 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps.model_builder import turbine, farm
+from apps.model_builder import turbine, farm, home
 
+SIDEBAR_STYLE = {
+    # "position": "fixed",
+    "top": 200,
+    "left": 0,
+    "bottom": 0,
+    "width": "23.5rem",
+    "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
 
-progress_card = dbc.Nav(
+progress_card = html.Div(
     [
-        dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
-        dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),
-        dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
-        dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
-        dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
+        html.H2("Model Builder", className="display-4"),
+        html.Hr(),
+        html.P(
+            "FLORIS data input:", className="lead"
+        ),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Home", active="exact", href="/home")),
+                dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
+                dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),
+                dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
+                dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
+                dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
+            ],
+            vertical=True,
+            pills=True,
+        ),
     ],
-    vertical=True,
-    pills=True,
+    style=SIDEBAR_STYLE,
 )
 
 app.layout = dbc.Container(
@@ -29,6 +49,8 @@ app.layout = dbc.Container(
                 dbc.Col(
                     [
                         progress_card,
+                        #TODO Consider moving next bar into the tubrine, farm, etc. layouts. Next button is fixed to 
+                        #route path to farm 
                         dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/build/farm") ),
                     ], width=2),
 
@@ -47,12 +69,18 @@ app.layout = dbc.Container(
     Input('url', 'pathname')
 )
 def display_page(pathname):
-    if pathname == '/' or pathname == '/build/turbine':
+    if pathname == '/' or pathname == '/home':
+        return home.layout
+    elif pathname == '/build/turbine':
         return turbine.layout
     elif pathname == '/build/farm':
         return farm.layout
     else:
-        return '404'
+        return dbc.Jumbotron([
+                html.H1("404: Not found", className="text-danger"),
+                html.Hr(),
+                html.P(f"The pathname {pathname} was not recognised..."),
+            ])
 
 
 if __name__ == '__main__':
