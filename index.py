@@ -5,7 +5,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps.model_builder import turbine, farm, home
+from apps.model_builder import turbine, farm, home, atmos_cond, wake
 
 SIDEBAR_STYLE = {
     # "position": "fixed",
@@ -42,7 +42,13 @@ progress_card = html.Div(
 
 app.layout = dbc.Container(
     [
-        dbc.Row( dbc.Col( dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3") ) ) ),
+        dbc.Row( 
+            dbc.Col( 
+                dbc.Jumbotron( 
+                    html.H1("FLORIS Dashboard", className="display-3") 
+                ) 
+            ) 
+        ),
         dbc.Row(
             [
                 # Progress tracker
@@ -51,7 +57,9 @@ app.layout = dbc.Container(
                         progress_card,
                         #TODO Consider moving next bar into the tubrine, farm, etc. layouts. Next button is fixed to 
                         #route path to farm 
-                        dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/build/farm") ),
+                        # dbc.ListGroupItem( 
+                            dbc.Button("Next", color="primary", href="/build/farm") 
+                        # ),
                     ], width=2),
 
                 # Input area
@@ -75,6 +83,10 @@ def display_page(pathname):
         return turbine.layout
     elif pathname == '/build/farm':
         return farm.layout
+    elif pathname == '/build/windrose':
+        return atmos_cond.layout
+    elif pathname == '/build/wakemodel':
+        return wake.layout
     else:
         return dbc.Jumbotron([
                 html.H1("404: Not found", className="text-danger"),
