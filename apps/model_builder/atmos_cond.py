@@ -2,10 +2,14 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
+from pandas import DataFrame
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.atmos_cond_callbacks
 
+
+dummy_df = DataFrame({})
 
 atmos_cond_inputs = dbc.Card(
     dbc.CardBody(
@@ -35,7 +39,20 @@ atmos_cond_inputs = dbc.Card(
                                 # Allow multiple files to be uploaded
                                 multiple=True #change to true if you want multiple files 
                             ),
-                            html.Div(id='wind-table-data-output'),
+                            dash_table.DataTable(
+                                id = 'wind-datatable-interactivity',
+                                data=dummy_df.to_dict("rows"),
+                                columns=[{"name": i, "id": i} for i in dummy_df.columns],
+                                editable=True,
+                                # cell_selectable=True,
+                                # column_selectable="multi",  # allow users to select 'multi' or 'single' columns
+                                # row_selectable="multi",     # allow users to select 'multi' or 'single' rows
+                                # row_deletable=True,         # choose if user can delete a row (True) or not (False)
+                                # selected_columns=[],        # ids of columns that user selects
+                                # selected_rows=[],           # indices of rows that user selects
+                                # page_action="none",         # all data is passed to the table up-front or not ('none')
+                                style_table={'height': '300px', 'overflowY': 'auto'},
+                            ),
                         ]
                     ),
                     dbc.Col(
