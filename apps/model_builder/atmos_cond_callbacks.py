@@ -23,7 +23,7 @@ def display_table_windrose(contents, filename):
         _module_df = parse_contents(contents, filename)
 
     columns = [{"name": i, "id": i} for i in _module_df.columns]
-    return _module_df.to_dict("rows"), columns # table #, fig
+    return _module_df.to_dict("rows"), columns
     
 
 @app.callback(
