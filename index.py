@@ -7,6 +7,9 @@ from dash.dependencies import Input, Output
 from app import app
 from apps.model_builder import turbine, farm, home, atmos_cond, wake
 
+from apps.floris_input_defaults import default_input_dict
+from floris.tools.floris_interface import FlorisInterface
+
 SIDEBAR_STYLE = {
     # "position": "fixed",
     "top": 200,
@@ -87,11 +90,39 @@ def display_page(pathname):
         return atmos_cond.layout
     elif pathname == '/build/wakemodel':
         return wake.layout
+    elif pathname == '/calculate':
+        fi = FlorisInterface(input_dict=default_input_dict)
+        fi.calculate_wake()
+        turbines = fi.floris.farm.turbines
+
+        cts = []
+        powers = []
+        ave_vels = []
+        ais = []
+
+        for i in range(len(turbines)):
+            cts.append(turbines[i].Ct)
+            powers.append(turbines[i].power)
+            ave_vels.append(turbines[i].average_velocity)
+            ais.append(turbines[i].aI)
+
+        results = dbc.Card(
+            dbc.CardBody([
+                dbc.Row([ dbc.Col([ html.H3("FLORIS Results", className="card-text") ]) ]),
+                dbc.Row([ dbc.Col([ html.Div(cts) ]) ]),
+                dbc.Row([ dbc.Col([ html.Div(powers) ]) ]),
+                dbc.Row([ dbc.Col([ html.Div(ave_vels) ]) ]),
+                dbc.Row([ dbc.Col([ html.Div(ais) ]) ])
+            ]),
+            className="mt-3",
+        )
+        return html.Div([results])
+
     else:
         return dbc.Jumbotron([
                 html.H1("404: Not found", className="text-danger"),
                 html.Hr(),
-                html.P(f"The pathname {pathname} was not recognised..."),
+                html.P(f"The pathname {pathname} was not recognized..."),
             ])
 
 
