@@ -6,6 +6,11 @@ import io
 import pandas as pd
 
 from app import app, colors
+import base64
+import apps.model_builder.home_callbacks
+import plotly.express as px
+
+_mod_df = pd.DataFrame({'x': [1,2,3],'y' : [4,5,6]})
 
 #TAB1-TSR
 @app.callback(
@@ -121,64 +126,46 @@ def GeomTab_yawang_output(slider_value):
 def GeomTab_rotordiam_output(input_value):
     return input_value
 
-#TAB2-Text input
+
+
+
+#TAB2
 @app.callback(
     Output('Mygraph1', 'figure'),
     Output('Mygraph2', 'figure'),
-    Input('textarea-state-example-button', 'n_clicks'),
-    Input('upload-data', 'filename'),
-    State('textarea-state-example', 'value'),
+    Input('performance-datatable', 'data')
 )
-def textinput_graphs(n_clicks, filename, value):
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+def display_graphs(data):
+    fig1 = px.line(
+        pd.DataFrame(data),
+        template="seaborn",
+    )
 
-    if filename is not None and trigger_id == "upload-data":
-        filename = filename[0]
-        df = pd.read_csv(filename)
-
-    elif value is not None and trigger_id == "textarea-state-example-button":
-        data = io.StringIO(value)
-        df = pd.read_csv(data, sep=",")
-
-    else:
-        #Web app initialization
-        df = pd.DataFrame({
-            "Wind Speed": [],
-            "Cp": [],
-            "Ct": [],
-        })
-
-    # FLORIS requires that the Cp and Ct table lengths be equal to the number of wind speed measurements.
-    if len(df["Cp"]) != len(df["Wind Speed"]) or len(df["Ct"]) != len(df["Wind Speed"]):
-        raise ValueError("Cp and Ct curves must contain equal number of points as wind speed measurements.")
-
-    fig1, fig2 = plot_data(df)
-
+    fig2 = px.line(
+        pd.DataFrame(data),
+        template="seaborn",
+    )
     return fig1, fig2
 
-def plot_data(df: pd.DataFrame) -> (go.Figure):
-    fig1 = go.Figure(
-        data=[
-            go.Scatter(
-                x=df['Wind Speed'],
-                y=df['Cp'],
-                mode='lines+markers')
-            ],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-            #     paper_bgcolor=colors["graphBackground"]
-            )
-    )
-    fig2 = go.Figure(
-        data=[
-            go.Scatter(
-                x=df['Wind Speed'],
-                y=df['Ct'],
-                mode='lines+markers')],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-            #     paper_bgcolor=colors["graphBackground"]
-            )
-    )
-    return (fig1, fig2)
+@app.callback(
+    [Output('performance-datatable', 'data'),
+    Output('performance-datatable', 'columns')],
+    Input("performance-tab", "value")
+)
+def performance_display_table(data):
+    _module_df = pd.DataFrame({'x': [1,2,3],'y' : [4,5,6]})
+    columns = [{"name": i, "id": i} for i in _module_df.columns]
+    return _module_df.to_dict("rows"), columns
+
+def parse_contents(contents, filename):
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    if 'xls' in filename:
+        # Assume that the user uploaded an excel file
+        df = pd.read_excel(io.BytesIO(decoded), sheet_name='cpctws')
+    elif 'json' in filename:
+        df = pd.read_json(decoded)
+    else:
+        raise ValueError("The file imported was not in the expected file format.")
+
+    return df
