@@ -7,6 +7,7 @@ import pandas as pd
 
 import base64
 import dash_html_components as html
+import json
 
 from app import app
 
@@ -29,19 +30,22 @@ def display_table(contents, filename, jcontents, jfilename):
         contents = jcontents[0]
         filename = jfilename[0]
         _module_df = parse_contents(contents, filename)
-
+    # print(_module_df)
     columns = [{"name": i, "id": i} for i in _module_df.columns]
     return _module_df.to_dict("rows"), columns
 
 def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
-    print(decoded)
+    # print(decoded)
     if 'xls' in filename:
         # Assume that the user uploaded an excel file
         df = pd.read_excel(io.BytesIO(decoded), sheet_name='cpctws')
     elif 'json' in filename:
-        df = pd.read_json(decoded)
+        data = json.loads(decoded)
+
+        df = pd.DataFrame(data["turbine"]["properties"]["power_thrust_table"])
+
     else:
         raise ValueError("The file imported was not in the expected file format.")
 
