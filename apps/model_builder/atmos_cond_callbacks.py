@@ -7,7 +7,7 @@ import base64
 import dash_html_components as html
 import plotly.express as px
 
-
+#TODO Remove upload option and display editable datatable instead 
 @app.callback(
     [Output('wind-datatable-interactivity', 'data'),
     Output('wind-datatable-interactivity', 'columns')],
@@ -23,7 +23,7 @@ def display_table_windrose(contents, filename):
         _module_df = parse_contents(contents, filename)
 
     columns = [{"name": i, "id": i} for i in _module_df.columns]
-    return _module_df.to_dict("rows"), columns # table #, fig
+    return _module_df.to_dict("rows"), columns
     
 
 @app.callback(
@@ -47,7 +47,9 @@ def parse_contents(contents, filename):
     if 'xls' in filename:
         # Assume that the user uploaded an excel file
         df = pd.read_excel(io.BytesIO(decoded))
-
+    elif 'json' in filename:
+        df = pd.read_json(decoded)
+        print(df)
     else:
         pass
 

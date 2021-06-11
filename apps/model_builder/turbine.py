@@ -6,6 +6,8 @@ from app import app, colors
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.turbine_callbacks
+import dash_table
+from pandas import DataFrame
 
 geometry_inputs = dbc.Card(
     dbc.CardBody(
@@ -112,6 +114,18 @@ geometry_inputs = dbc.Card(
 
 dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/builder/farm") ),
 
+dummy_df = DataFrame({})
+table =dbc.Row(
+    [   
+        dash_table.DataTable(
+            id = 'performance-datatable',
+            data=dummy_df.to_dict("rows"),
+            columns=[{"name": i, "id": i} for i in dummy_df.columns],
+            style_table={'height': '300px', 'overflowY': 'auto'},
+        )
+    ]
+)
+
 performance_inputs = dbc.Card(
     dbc.CardBody(
         [
@@ -121,39 +135,13 @@ performance_inputs = dbc.Card(
                 [
                     dbc.Col(
                         [
-                            dcc.Upload(
-                                id='upload-data', 
-                                children=[dbc.Button("Select File", color="primary")],
-                                style={
-                                    # 'width': '20%',
-                                    # 'height': '60px',
-                                    'lineHeight': '60px',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'dashed',
-                                    'borderRadius': '5px',
-                                    'textAlign': 'center',
-                                    # 'margin': '10px'
-                                },
-                                # Allow multiple files to be uploaded
-                                multiple=True #change to true if you want multiple files 
-                            ),
-                            dcc.Textarea(
-                                id='textarea-state-example',
-                                placeholder='Paste Cp/Ct table values here',
-                                style={'width': '100%', 'height': 300},
-                            ),
-                            html.Button('Submit', 
-                                id='textarea-state-example-button', 
-                                n_clicks=0,
-                                style={'margin': '10px'}
-                            ),
+                            table,
                         ],
                         width=3
                     ),
 
                     dbc.Col(
                         [
-                            html.Div(id='output-div'),
                             dcc.Graph(id="Mygraph1"),
                             dcc.Graph(id="Mygraph2"),
 
@@ -177,12 +165,14 @@ tabs = dbc.Tabs(
             ),
             label="Geometry"
         ),
-        dbc.Tab(
-            dbc.Container(
-                [
-                    dbc.Row([dbc.Col(performance_inputs, width=12)])
-                ]
-            ),
+        dbc.Tab( id="performance-tab", children=
+            [
+                dbc.Container(
+                    [
+                        dbc.Row([dbc.Col(performance_inputs, width=12)])
+                    ]
+                )
+            ],
             label="Performance"
         ),
     ]
