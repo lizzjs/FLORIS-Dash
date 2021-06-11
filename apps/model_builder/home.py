@@ -6,30 +6,6 @@ import dash_table
 
 from pandas import DataFrame
 
-import_spreadsheet_card = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H5("Import Spreadsheet", className="card-title"),
-            html.P("Import spreadsheet with turbine, farm, atmospheric conditions, and wake model parameters."),
-            dcc.Upload(
-                id='home-upload-list-data', 
-                children=[dbc.Button("Select File", color="primary")],
-                style={
-                    # 'width': '20%',
-                    # 'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    # 'margin': '10px'
-                },
-                # Allow multiple files to be uploaded
-                multiple=True
-            ),
-        ]
-    )
-)
 
 import_json_card = dbc.Card(
     dbc.CardBody(
@@ -69,17 +45,8 @@ continue_card = dbc.Card(
 
 cards = dbc.Row(
     [
-        dbc.Col(
-            [
-                import_spreadsheet_card,
-                import_json_card
-            ],
-            width=5
-        ),
-        dbc.Col(
-            continue_card,
-            width=7
-        )
+        dbc.Col(import_json_card, width=5),
+        dbc.Col(continue_card, width=7)
     ]
 )
 
