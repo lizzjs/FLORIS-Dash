@@ -1,4 +1,43 @@
 
+user_defined_dict = {
+    "floris_version": "v2.3.0",
+    "name": "floris_input_file_Example",
+    "description": "Example FLORIS Input file",
+    "type": "floris_input",
+    "logging": {
+        "console": {
+            "enable": True,
+            "level": "INFO"
+        },
+        "file": {
+            "enable": False,
+            "level": "INFO"
+        }
+    },
+
+    "farm": {
+        "description": "Example 2x2 Wind Farm",
+        "name": "farm_example_2x2",
+        "type": "farm",
+        "properties": {},
+    },
+
+    "turbine": {
+        "description": "NREL 5MW",
+        "name": "nrel_5mw",
+        "type": "turbine",
+        "properties": {},
+    },
+    
+    "wake": {
+        "description": "wake",
+        "name": "wake_default",
+        "type": "wake",
+        "properties": {},
+    }
+
+}
+
 default_input_dict = {
     "floris_version": "v2.3.0",
     "name": "floris_input_file_Example",
