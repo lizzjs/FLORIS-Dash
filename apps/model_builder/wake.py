@@ -50,7 +50,7 @@ turbulance_radio = dbc.FormGroup(
 )
 combination_radio = dbc.FormGroup(
     [
-        dbc.Label("Deflection"),
+        dbc.Label("Combination"),
         dbc.RadioItems(
             options=[
                 {"label": "SOSFS", "value": 1},
