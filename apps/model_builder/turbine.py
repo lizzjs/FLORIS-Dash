@@ -2,180 +2,178 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from app import app, colors
+import dash_table
+import apps.floris_data
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.turbine_callbacks
-import dash_table
-from pandas import DataFrame
 
 geometry_inputs = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H3("How does your wind turbine look?", className="card-text"),
+    dbc.CardBody([
+        html.H3("Turbine geometry definition.", className="card-text"),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Tip speed ratio"),
-                    dbc.Input(id="input-TSR", type="number", min=0, max=20),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Rotor diameter"),
+            dbc.Input(
+                id="input-rotordiam",
+                type="number",
+                min=0,
+                max=500,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["rotor_diameter"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Blade count"),
-                    dcc.Slider(id="slider-bladecount", min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Hub height"),
+            dbc.Input(
+                id="input-hubheight",
+                type="number",
+                min=0,
+                max=500,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["hub_height"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Blade pitch"),
-                    dbc.Input(id="input-bladepitch", type="number", min=0, max=20),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Yaw angle"),
+            dcc.Slider(
+                id="slider-yawang",
+                min=0,
+                max=14,
+                marks={i: '{}'.format(i) for i in range(15)},
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["yaw_angle"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Generator efficiency"),
-                    dbc.Input(id="input-genEff", type="number", min=0, max=20),
-                ]
-            ),
+        dbc.FormGroup([
+            dbc.Label("Tilt angle"),
+            dcc.Slider(
+                id="slider-tiltang",
+                min=0,
+                max=14,
+                marks={i: '{}'.format(i) for i in range(15)},
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["tilt_angle"]
+            )
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Hub height"),
-                    dbc.Input(id="input-hubheight", type="number", min=0, max=500),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Tip speed ratio"),
+            dbc.Input(
+                id="input-TSR",
+                type="number",
+                min=0,
+                max=20,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["TSR"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Turbine grid point count (ngrid)"),
-                    dcc.Slider(id="slider-ngrid", min=1, max=9, marks={i: '{}'.format(i) for i in range(10)}, value=1),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Generator efficiency"),
+            dbc.Input(
+                id="input-genEff",
+                type="number",
+                min=0,
+                max=20,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["generator_efficiency"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("pP"),
-                    dbc.Input(id="input-pP", type="number", min=0, max=3, step=0.01),
-                ]
+        dbc.FormGroup([
+            dbc.Label("pP"),
+            dbc.Input(
+                id="input-pP",
+                type="number",
+                min=0,
+                max=3,
+                step=0.01,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["pP"]
             ),
-            dbc.FormGroup(
-                [
-                    dbc.Label("pT"),
-                    dbc.Input(id="input-pT", type="number", min=0, max=3, step=0.01),
-                ]
-            ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("rloc"),
-                    dbc.Input(id="input-rloc", type="number", min=0, max=3, step=0.01),
-                ]
+        dbc.FormGroup([
+            dbc.Label("pT"),
+            dbc.Input(
+                id="input-pT",
+                type="number",
+                min=0,
+                max=3,
+                step=0.01,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["pT"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Tilt angle"),
-                    dcc.Slider(id="slider-tiltang", min=1, max=15, marks={i: '{}'.format(i) for i in range(15)}, value=1),
-                ]
+        dbc.FormGroup([
+            dbc.Label("Turbine grid point count (ngrid)"),
+            dcc.Slider(
+                id="slider-ngrid",
+                min=1,
+                max=9,
+                marks={i: '{}'.format(i) for i in range(10)},
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["ngrid"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Label("Yaw angle"),
-                    dcc.Slider(id="slider-yawang", min=1, max=15, marks={i: '{}'.format(i) for i in range(15)}, value=1),
-                ]
+        dbc.FormGroup([
+            dbc.Label("rloc"),
+            dbc.Input(
+                id="input-rloc",
+                type="number",
+                min=0,
+                max=3,
+                step=0.01,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["rloc"]
             ),
+        ]),
 
-            dbc.FormGroup(
-                [
-                    dbc.Checklist(
-                        options=[{"label": "Use points on perimeter", "value": 1}],
-                        value=[],
-                        id="switches-perimeter-points",
-                        switch=True,
-                    ),
-                ]
+        dbc.FormGroup([
+            dbc.Checklist(
+                options=[{"label": "Use points on perimeter", "value": 1}],
+                id="switch-perimeter-points",
+                switch=True,
+                value=apps.floris_data.user_defined_dict["turbine"]["properties"]["use_points_on_perimeter"]
             ),
-
-            dbc.FormGroup(
-                [
-                    dbc.Label("Rotor diameter"),
-                    dbc.Input(id="input-rotordiam", type="number", min=0, max=500),
-                ]
-            ),
-        ]
-    ),
+        ]),
+    ]),
     className="mt-3",
 )
 
-dbc.ListGroupItem( dbc.Button("Next", color="primary", href="/builder/farm") ),
-
-dummy_df = DataFrame({})
-table =dbc.Row(
-    [   
-        dash_table.DataTable(
-            id = 'performance-datatable',
-            data=dummy_df.to_dict("rows"),
-            columns=[{"name": i, "id": i} for i in dummy_df.columns],
-            style_table={'height': '300px', 'overflowY': 'auto'},
-        )
-    ]
+table = dash_table.DataTable(
+    id = 'turbine-performance-datatable',
+    editable=True,
+    # data=[],
+    # columns=[{"name": i, "id": i} for i in ["Wind Speed", "Cp", "Ct"]],
+    style_table={'height': '600px', 'overflowY': 'auto'},
 )
 
 performance_inputs = dbc.Card(
-    dbc.CardBody(
-        [
-            html.H3("How does your wind turbine perform?", className="card-text"),
-
-            dbc.Row(
-                [
-                    dbc.Col(
-                        [
-                            table,
-                        ],
-                        width=3
-                    ),
-
-                    dbc.Col(
-                        [
-                            dcc.Graph(id="Mygraph1"),
-                            dcc.Graph(id="Mygraph2"),
-
-                        ]
-                    )
-                    
-                ]
+    dbc.CardBody([
+        dbc.Row(
+            dbc.Col(
+                html.H3("Turbine performance definition.", className="card-text")
             )
-        ]
-    ),
+        ),
+
+        dbc.Row([
+            dbc.Col(
+                table,
+                width=4
+            ),
+
+            dbc.Col(
+                [
+                    dcc.Graph(id="CpU"),
+                    dcc.Graph(id="CtU"),
+                ],
+                width=8
+            )
+        ])
+    ]),
     className="mt-3",
 )
 
-tabs = dbc.Tabs(
-    [
-        dbc.Tab(
-            dbc.Container(
-                [
-                    dbc.Row([dbc.Col(geometry_inputs, width=6)])
-                ]
-            ),
-            label="Geometry"
-        ),
-        dbc.Tab( id="performance-tab", children=
-            [
-                dbc.Container(
-                    [
-                        dbc.Row([dbc.Col(performance_inputs, width=12)])
-                    ]
-                )
-            ],
-            label="Performance"
-        ),
-    ]
-)
-
-layout = html.Div([tabs])
+layout = html.Div([
+    dbc.Row([
+        dbc.Col(geometry_inputs, width=3),
+        dbc.Col(performance_inputs, width=9)
+    ])
+])

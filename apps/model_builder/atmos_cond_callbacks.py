@@ -1,56 +1,39 @@
 
-from dash.dependencies import Input, Output, State
-import io
+from dash.dependencies import Input, Output
 import pandas as pd
-from app import app, colors
-import base64
-import dash_html_components as html
 import plotly.express as px
 
-#TODO Remove upload option and display editable datatable instead 
-@app.callback(
-    [Output('wind-datatable-interactivity', 'data'),
-    Output('wind-datatable-interactivity', 'columns')],
-    [Input('wind-upload-data', 'contents'),
-    Input('wind-upload-data', 'filename')]
-)
-def display_table_windrose(contents, filename):
-    _module_df = pd.DataFrame({})
+from app import app
+import apps.floris_data
 
-    if contents is not None:
-        contents = contents[0]
-        filename = filename[0]
-        _module_df = parse_contents(contents, filename)
-
-    columns = [{"name": i, "id": i} for i in _module_df.columns]
-    return _module_df.to_dict("rows"), columns
-    
 
 @app.callback(
-    Output('wind-rose-chart', 'figure'),
-    Input('wind-datatable-interactivity', 'data')
+    Output('wind-rose-graph', 'figure'),
+    Input('wind-rose-datatable', 'data')
 )
-def display_figure_windrose(data):
-    return px.bar_polar(
-        pd.DataFrame(data),
+def create_wind_rose_plot(data):
+    df = pd.DataFrame(data)
+    fig = px.bar_polar(
+        df,
         r="frequency",
         theta="direction",
         color="strength",
         template="seaborn",
-        color_discrete_sequence=px.colors.sequential.Plasma_r
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+        title="Wind Rose"
     )
+    return fig
 
-def parse_contents(contents, filename):
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-    
-    if 'xls' in filename:
-        # Assume that the user uploaded an excel file
-        df = pd.read_excel(io.BytesIO(decoded))
-    elif 'json' in filename:
-        df = pd.read_json(decoded)
-        print(df)
+@app.callback(
+    [Output('wind-rose-datatable', 'data'),
+    Output('wind-rose-datatable', 'columns')],
+    Input('wind-rose-datatable', 'data')
+)
+def get_wind_rose_table_data(data):
+    if data is None:
+        df = pd.DataFrame(apps.floris_data.wind_rose_data)
     else:
-        pass
+        df = pd.DataFrame(data)
 
-    return df
+    columns = [{"name": i, "id": i} for i in df.columns]
+    return df.to_dict("rows"), columns
