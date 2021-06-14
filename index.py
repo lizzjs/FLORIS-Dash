@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 from app import app
 from apps.model_builder import turbine, farm, home, atmos_cond, wake
 from apps.floris_connection.run_floris import calculate_wake
-from apps.floris_inputs import user_defined_dict, default_input_dict
+import apps.floris_data
 
 
 NAVIGATION_ITEMS = [
