@@ -14,7 +14,7 @@ import_json_card = dbc.Card(
             html.P("Import JSON file with turbine, farm, atomospheric conditions, and wake model parameters."),
             dcc.Upload(
                 id='json-upload-input-file', 
-                children=[dbc.Button("Select File", color="primary")],
+                children=[dbc.Button("Select File", color="primary", id="jupload-button")],
                 style={
                     # 'width': '20%',
                     # 'height': '60px',
@@ -28,7 +28,7 @@ import_json_card = dbc.Card(
                 # Allow multiple files to be uploaded
                 multiple=True #change to true if you want multiple files 
             ),
-            
+            dbc.Spinner(html.Div(id="jloading-output")),
         ]
     )
 )
@@ -38,7 +38,7 @@ continue_card = dbc.Card(
         [
             html.H5("Getting started", className="card-title"),
             html.P("Begin the Model Builder with no prepopulated data and enter all parameters directly."),
-            dbc.Button("Continue", color="primary", href="/build/turbine"),
+            dbc.Button("Continue", color="primary", href="/build/windrose"),
         ]
     )
 )
@@ -66,7 +66,7 @@ layout = dbc.Card(
             [
                 html.Div([
                     cards,
-                    datatable,
+                    # datatable,
                 ])
             ]
         )
