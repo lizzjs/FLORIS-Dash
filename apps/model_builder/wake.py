@@ -54,17 +54,31 @@ combination_radio = dbc.FormGroup([
     ),
 ])
 
-layout = html.Div([
+layout = html.Div(
     dbc.Card(
-        dbc.CardBody([
-            html.H3("Define the wake model.", className="card-text"),
-            dbc.Row([
-                dbc.Col( velocity_radio ),
-                dbc.Col( deflection_radio ),
-                dbc.Col( turbulance_radio ),
-                dbc.Col( combination_radio )
-            ]),
-        ]),
+        [
+            dbc.CardHeader(
+                    html.H2(
+                        dbc.Button(
+                            "Define the wake model",
+                            color="link",
+                            id="collapse-button",
+                        )
+                    )
+            ),
+            dbc.Collapse(
+                    dbc.CardBody(
+                        dbc.Row([
+                            dbc.Col( velocity_radio ),
+                            dbc.Col( deflection_radio ),
+                            dbc.Col( turbulance_radio ),
+                            dbc.Col( combination_radio )
+                        ]),
+                    ),
+                    id="collapse-all",
+                    is_open=False,
+            ),
+        ],
         className="mt-3",
     )
-])
+)
