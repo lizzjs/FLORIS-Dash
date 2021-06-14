@@ -33,25 +33,41 @@ geometry_inputs = dbc.Card(
                 value=apps.floris_data.user_defined_dict["turbine"]["properties"]["hub_height"]
             ),
         ]),
-
+        
         dbc.FormGroup([
             dbc.Label("Yaw angle"),
-            dcc.Slider(
-                id="slider-yawang",
+            dbc.Input(
+                id="input-yawangle",
+                type="number",
                 min=0,
                 max=14,
-                marks={i: '{}'.format(i) for i in range(15)},
+                step=0.01,
+        # dbc.FormGroup([
+        #     dbc.Label("Yaw angle"),
+        #     dcc.Slider(
+        #         id="slider-yawang",
+        #         min=0,
+        #         max=14,
+        #         marks={i: '{}'.format(i) for i in range(15)},
                 value=apps.floris_data.user_defined_dict["turbine"]["properties"]["yaw_angle"]
             ),
         ]),
 
         dbc.FormGroup([
             dbc.Label("Tilt angle"),
-            dcc.Slider(
-                id="slider-tiltang",
+            dbc.Input(
+                id="input-tiltangle",
+                type="number",
                 min=0,
                 max=14,
-                marks={i: '{}'.format(i) for i in range(15)},
+                step=0.01,
+        # dbc.FormGroup([
+        #     dbc.Label("Tilt angle"),
+        #     dcc.Slider(
+        #         id="slider-tiltang",
+        #         min=0,
+        #         max=14,
+        #         marks={i: '{}'.format(i) for i in range(15)},
                 value=apps.floris_data.user_defined_dict["turbine"]["properties"]["tilt_angle"]
             )
         ]),
