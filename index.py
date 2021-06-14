@@ -5,10 +5,9 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps.model_builder import turbine, farm, home, atmos_cond, wake
+from apps.model_builder import turbine, farm, home, atmos_cond, wake, review
 from apps.floris_connection.run_floris import calculate_wake
 from apps.floris_inputs import user_defined_dict, default_input_dict
-
 
 NAVIGATION_ITEMS = [
     "/",
@@ -16,6 +15,7 @@ NAVIGATION_ITEMS = [
     "/build/farm",
     "/build/windrose",
     "/build/wakemodel",
+    "/build/review",
     "/calculate",
 ]
 
@@ -40,6 +40,7 @@ progress_card = html.Div(
                 dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),
                 dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
                 dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
+                dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
                 dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
             ],
             vertical=True,
@@ -117,6 +118,8 @@ def display_page(pathname):
         layout = atmos_cond.layout
     elif pathname == '/build/wakemodel':
         layout = wake.layout
+    elif pathname == '/build/review':
+        layout = review.layout
     return layout, next_nav
 
 if __name__ == '__main__':
