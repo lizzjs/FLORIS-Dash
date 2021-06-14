@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 from app import app
 from apps.model_builder import turbine, farm, home, atmos_cond, wake, review
 from apps.floris_connection.run_floris import calculate_wake
-from apps.floris_inputs import user_defined_dict, default_input_dict
+import apps.floris_data
 
 NAVIGATION_ITEMS = [
     "/",
@@ -65,17 +65,16 @@ app.layout = dbc.Container(
                 dbc.Button("Next", id="next-button", color="primary", href="/")
             ], width=2),
 
-            # Input area
-            dbc.Col(id="input-area", children=[])
+            # Content area
+            dbc.Col(id="page-content")
         ]),
         dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content'),
     ],
     fluid=True,
 )
 
 @app.callback(
-    Output('input-area', 'children'),
+    Output('page-content', 'children'),
     Output('next-button', 'href'),
     Input('url', 'pathname')
 )
@@ -92,7 +91,7 @@ def display_page(pathname):
     if pathname == '/calculate':
         # TODO: ensure the input dict is valid
         
-        cts, powers, ave_vels, ais = calculate_wake(default_input_dict)
+        cts, powers, ave_vels, ais = calculate_wake(apps.floris_data.default_input_dict)
         results = dbc.Card(
             dbc.CardBody([
                 dbc.Row([ dbc.Col([ html.H3("FLORIS Results", className="card-text") ]) ]),
@@ -107,6 +106,7 @@ def display_page(pathname):
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav
 
+    apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
     if pathname == '/':
         layout = home.layout
