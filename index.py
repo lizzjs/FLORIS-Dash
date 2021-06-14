@@ -11,9 +11,9 @@ import apps.floris_data
 
 NAVIGATION_ITEMS = [
     "/",
+    "/build/windrose",
     "/build/turbine",
     "/build/farm",
-    "/build/windrose",
     "/build/wakemodel",
     "/build/review",
     "/calculate",
@@ -36,9 +36,9 @@ progress_card = html.Div(
         dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
-                dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
-                dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),
                 dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
+                dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
+                dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
                 dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
                 dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
                 dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
@@ -61,7 +61,6 @@ app.layout = dbc.Container(
             # Progress tracker
             dbc.Col([
                 progress_card,
-                # TODO Consider moving next bar into the turbine, farm, etc. layouts
                 dbc.Button("Next", id="next-button", color="primary", href="/")
             ], width=2),
 
