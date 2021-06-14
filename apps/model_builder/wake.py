@@ -37,7 +37,7 @@ turbulance_radio = dbc.FormGroup([
         options=[
             {"label": "Crespo-Hernandez", "value": "crespo_hernandez"},
         ],
-        value="crespo",
+        value="crespo_hernandez",
         id="radio-turbulence",
     ),
 ])

@@ -4,13 +4,13 @@ import dash_html_components as html
 import dash_table
 
 import apps.model_builder.review_callbacks
-from apps.floris_inputs import default_input_dict
+import apps.floris_data
 from pandas import DataFrame
 import json
 
 display_json = html.Div(
     json.dumps(
-        default_input_dict, 
+        apps.floris_data.user_defined_dict,
         indent = 4, 
         # sort_keys=True
         ),

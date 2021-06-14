@@ -106,7 +106,9 @@ def display_page(pathname):
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav
 
+    # TODO: REMOVE THIS
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
+
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
     if pathname == '/':
         layout = home.layout
