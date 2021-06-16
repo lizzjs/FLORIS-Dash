@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+import dash_table as dt
 import dash_html_components as html
 
 # Imported but not used. This loads the callback functions into the web page.
@@ -54,6 +55,12 @@ combination_radio = dbc.FormGroup([
     ),
 ])
 
+velocity_datatable = dt.DataTable(
+    id = 'velocity-parameter-datatable',
+    editable=True,
+    # style_table={'height': '600px', 'overflowY': 'auto'},
+)
+
 layout = html.Div(
     dbc.Card(
         [
@@ -62,7 +69,7 @@ layout = html.Div(
                         dbc.Button(
                             "Define the wake model",
                             color="link",
-                            id="collapse-button",
+                            id="collapse-model-button",
                         )
                     )
             ),
@@ -75,8 +82,29 @@ layout = html.Div(
                             dbc.Col( combination_radio )
                         ]),
                     ),
-                    id="collapse-all",
-                    is_open=False,
+                    id="collapse-models",
+                    is_open=True,
+            ),
+            dbc.CardHeader(
+                    html.H2(
+                        dbc.Button(
+                            "Define the wake model",
+                            color="link",
+                            id="collapse-parameter-button",
+                        )
+                    )
+            ),
+            dbc.Collapse(
+                    dbc.CardBody(
+                        dbc.Row([
+                            dbc.Col( velocity_datatable ),
+                            dbc.Col( id="deflection_parameters" ),
+                            dbc.Col( id="turbulence_parameters" ),
+                            dbc.Col( id="combination_parameters" ),
+                        ]),
+                    ),
+                    id="collapse-parameters",
+                    is_open=True,
             ),
         ],
         className="mt-3",
