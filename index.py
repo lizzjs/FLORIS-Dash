@@ -5,7 +5,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from apps.model_builder import turbine, farm, home, atmos_cond, wake, review
+from apps.model_builder import turbine_layout, farm_layout, home_layout, atmos_cond_layout, wake_layout, review_layout
 from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 
@@ -111,17 +111,17 @@ def display_page(pathname):
 
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
     if pathname == '/':
-        layout = home.layout
+        layout = home_layout.layout
     elif pathname == '/build/turbine':
-        layout = turbine.layout
+        layout = turbine_layout.layout
     elif pathname == '/build/farm':
-        layout = farm.layout
+        layout = farm_layout.layout
     elif pathname == '/build/windrose':
-        layout = atmos_cond.layout
+        layout = atmos_cond_layout.layout
     elif pathname == '/build/wakemodel':
-        layout = wake.layout
+        layout = wake_layout.layout
     elif pathname == '/build/review':
-        layout = review.layout
+        layout = review_layout.layout
     return layout, next_nav
 
 if __name__ == '__main__':
