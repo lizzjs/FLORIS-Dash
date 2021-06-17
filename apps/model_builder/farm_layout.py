@@ -13,11 +13,31 @@ layout_table = dash_table.DataTable(
     style_table={'height': '600px', 'overflowY': 'auto'},
 )
 
+boundary_input = html.Div(
+    children=[
+        dcc.Textarea(
+            id='textarea-boundary',
+            placeholder='Insert boundary points here',
+            style={'width': '100%', 'height': 200},
+        ),
+        html.Button('Submit', 
+            id='textarea-boundary-button', 
+            n_clicks=0,
+            style={'margin': '10px'}
+        ),
+    ]
+)
+
 farm_layout_inputs = dbc.Card(
     dbc.CardBody([
         html.H3("Wind farm layout.", className="card-text"),
         dbc.Row([
-            dbc.Col( layout_table, width=3 ),
+            dbc.Col(
+                [
+                    boundary_input,
+                    layout_table
+                ],width=3 
+            ),
             dbc.Col( dcc.Graph(id="farm-layout-graph") )
         ])
     ]),

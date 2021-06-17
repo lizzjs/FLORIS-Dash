@@ -1,24 +1,43 @@
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.graph_objs as go
 
 from app import app, colors
 import apps.floris_data
+import matplotlib.pyplot as plt
+import dash
+import io
 
 
 @app.callback(
     Output('farm-layout-graph', 'figure'),
-    Input('farm-layout-datatable', 'data')
+    Input('farm-layout-datatable', 'data'),
+    Input('textarea-boundary-button', 'n_clicks'),
+    State('textarea-boundary', 'value'),
 )
-def create_farm_layout_plots(data):
-    df = pd.DataFrame(data)
+def create_farm_layout_plots(farm_data, n, boundary_data):
+    df = pd.DataFrame(farm_data)
+
+    ctx = dash.callback_context
+    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if boundary_data is not None and trigger_id == "textarea-boundary-button":
+        boundary_data = io.StringIO(boundary_data)
+        df_b = pd.read_csv(boundary_data, sep=",")
+        df2 = pd.DataFrame(df_b) #df_b does not have .append attribute
+        df2 = df2.append(df2.iloc[0,:], ignore_index=True)
+
     fig = go.Figure(
         data=[
             go.Scatter(
                 x=df['layout_x'],
                 y=df['layout_y'],
                 mode='markers'
+            ),
+            go.Line(
+                x=df2['boundary_x'],
+                y=df2['boundary_y'],
             )
         ],
         layout=go.Layout(
