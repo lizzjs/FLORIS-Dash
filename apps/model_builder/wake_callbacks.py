@@ -1,6 +1,8 @@
 
 import dash
 from dash.dependencies import Input, Output, State
+import plotly.graph_objects as go
+import numpy as np
 
 from app import app
 import apps.floris_data
@@ -70,3 +72,32 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
         is_open = not is_open
 
     return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open
+
+@app.callback(
+    Output("wake-model-preview-graph", "figure"),
+    Input('radio-deficit', 'value'),
+    Input('radio-deflection', 'value'),
+    Input('radio-turbulence', 'value'),
+    Input('radio-combination', 'value'),
+)
+def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
+
+    # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
+    fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
+    fi.calculate_wake(yaw_angles=[10.0, 0.0])
+    horizontal_slice = fi.get_hor_plane()
+
+    minSpeed = horizontal_slice.df.u.min()
+    maxSpeed = horizontal_slice.df.u.max()
+
+    # Reshape to 2d for plotting
+    # x1_mesh = horizontal_slice.df.x1.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
+    # x2_mesh = horizontal_slice.df.x2.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
+    u_mesh = horizontal_slice.df.u.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0]).astype(np.float64)
+
+    fig = go.Figure(
+        data=go.Contour(
+            z = u_mesh
+        )
+    )
+    return fig

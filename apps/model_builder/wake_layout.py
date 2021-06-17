@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 import dash_table as dt
 import dash_html_components as html
 
@@ -73,19 +74,17 @@ turbulence_datatable = dt.DataTable(
     style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
 )
 
-layout = html.Div(
-    dbc.Card(
-        [
-            dbc.CardHeader(
-                    html.H2(
-                        dbc.Button(
-                            "Define the wake model:",
-                            color="link",
-                            id="collapse-model-button",
-                        )
+layout = html.Div([
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button(
+                        "Define the wake model",
+                        id="collapse-model-button",
                     )
-            ),
-            dbc.Collapse(
+                ),
+                dbc.Collapse(
                     dbc.CardBody(
                         dbc.Row([
                             dbc.Col( velocity_radio),
@@ -96,17 +95,21 @@ layout = html.Div(
                     ),
                     id="collapse-models",
                     is_open=True,
-            ),
-            dbc.CardHeader(
-                    html.H2(
-                        dbc.Button(
-                            "Wake model parameters:",
-                            color="link",
-                            id="collapse-parameter-button",
-                        )
+                )
+            ])
+        )
+    ),
+    html.Br(),
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button(
+                        "Wake model parameters",
+                        id="collapse-parameter-button",
                     )
-            ),
-            dbc.Collapse(
+                ),
+                dbc.Collapse(
                     dbc.CardBody(
                         dbc.Row([
                             dbc.Col( velocity_datatable, width=3,),
@@ -117,8 +120,30 @@ layout = html.Div(
                     ),
                     id="collapse-parameters",
                     is_open=True,
-            ),
-        ],
-        className="mt-3",
+                )
+            ])
+        )
+    ),
+    html.Br(),
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button(
+                        "Flow field preview",
+                        id="collapse-preview-button",
+                    )
+                ),
+                dbc.Collapse(
+                    dbc.CardBody(
+                        dbc.Row(
+                            dbc.Col( dcc.Graph(id="wake-model-preview-graph") )
+                        )
+                    ),
+                    id="collapse-preview",
+                    is_open=True,
+                ),
+            ])
+        )
     )
-)
+])
