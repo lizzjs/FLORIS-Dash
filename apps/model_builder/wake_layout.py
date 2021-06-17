@@ -58,7 +58,19 @@ combination_radio = dbc.FormGroup([
 velocity_datatable = dt.DataTable(
     id = 'velocity-parameter-datatable',
     editable=True,
-    # style_table={'height': '600px', 'overflowY': 'auto'},
+    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+)
+
+deflection_datatable = dt.DataTable(
+    id = 'deflection-parameter-datatable',
+    editable=True,
+    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+)
+
+turbulence_datatable = dt.DataTable(
+    id = 'turbulence-parameter-datatable',
+    editable=True,
+    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
 )
 
 layout = html.Div(
@@ -67,7 +79,7 @@ layout = html.Div(
             dbc.CardHeader(
                     html.H2(
                         dbc.Button(
-                            "Define the wake model",
+                            "Define the wake model:",
                             color="link",
                             id="collapse-model-button",
                         )
@@ -76,10 +88,10 @@ layout = html.Div(
             dbc.Collapse(
                     dbc.CardBody(
                         dbc.Row([
-                            dbc.Col( velocity_radio ),
-                            dbc.Col( deflection_radio ),
+                            dbc.Col( velocity_radio),
+                            dbc.Col( deflection_radio),
                             dbc.Col( turbulance_radio ),
-                            dbc.Col( combination_radio )
+                            dbc.Col( combination_radio),
                         ]),
                     ),
                     id="collapse-models",
@@ -88,7 +100,7 @@ layout = html.Div(
             dbc.CardHeader(
                     html.H2(
                         dbc.Button(
-                            "Define the wake model",
+                            "Wake model parameters:",
                             color="link",
                             id="collapse-parameter-button",
                         )
@@ -97,10 +109,10 @@ layout = html.Div(
             dbc.Collapse(
                     dbc.CardBody(
                         dbc.Row([
-                            dbc.Col( velocity_datatable ),
-                            dbc.Col( id="deflection_parameters" ),
-                            dbc.Col( id="turbulence_parameters" ),
-                            dbc.Col( id="combination_parameters" ),
+                            dbc.Col( velocity_datatable, width=3,),
+                            dbc.Col( deflection_datatable, width=3),
+                            dbc.Col( turbulence_datatable, width=3),
+                            dbc.Col( width=3,),
                         ]),
                     ),
                     id="collapse-parameters",

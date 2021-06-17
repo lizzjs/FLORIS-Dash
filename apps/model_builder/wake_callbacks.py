@@ -58,9 +58,10 @@ def toggle_model(n, velocity_value, deflection_value, turbulence_value, combinat
 @app.callback(
     Output('velocity-parameter-datatable', 'data'),
     Output('velocity-parameter-datatable', 'columns'),
-    # Output('radio-deflection', 'value'),
-    # Output('radio-turbulence', 'value'),
-    # Output('radio-combination', 'value'),
+    Output('deflection-parameter-datatable', 'data'),
+    Output('deflection-parameter-datatable', 'columns'),
+    Output('turbulence-parameter-datatable', 'data'),
+    Output('turbulence-parameter-datatable', 'columns'),
     Output("collapse-parameters", "is_open"),
     Input("collapse-parameter-button", "n_clicks"),
     Input('radio-deficit', 'value'),
@@ -73,18 +74,26 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
 
     fi = FlorisInterface(input_dict=apps.floris_data.default_input_dict)
     params = fi.get_model_parameters()
+
+    print(params)
     
     apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_value
     apps.floris_data.user_defined_dict["wake"]["properties"]["deflection_model"] = deflection_value
     apps.floris_data.user_defined_dict["wake"]["properties"]["turbulence_model"] = turbulence_value
     apps.floris_data.user_defined_dict["wake"]["properties"]["combination_model"] = combination_value
 
-    columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
-    values = [ {"Parameter": k, "Value": v} for k, v in params["Wake Velocity Parameters"].items() ]
+    vel_columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
+    vel_values = [ {"Parameter": k, "Value": v} for k, v in params["Wake Velocity Parameters"].items() ]
+
+    def_columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
+    def_values = [ {"Parameter": k, "Value": v} for k, v in params["Wake Deflection Parameters"].items() ]
+
+    turb_columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
+    turb_values = [ {"Parameter": k, "Value": v} for k, v in params["Wake Turbulence Parameters"].items() ]
 
     ctx = dash.callback_context
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if trigger_id == "collapse-parameter-button":
         is_open = not is_open
 
-    return values, columns, is_open # deflection_value, turbulence_value, combination_value, is_open
+    return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open # deflection_value, turbulence_value, combination_value, is_open
