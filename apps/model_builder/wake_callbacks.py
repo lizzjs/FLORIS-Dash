@@ -8,7 +8,6 @@ from app import app
 import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
 
-
 @app.callback(
     Output('radio-deficit', 'value'),
     Output('radio-deflection', 'value'),

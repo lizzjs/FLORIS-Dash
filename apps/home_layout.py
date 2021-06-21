@@ -19,7 +19,7 @@ import_json_card = dbc.Card(
                 'textAlign': 'center',
             },
         ),
-        dbc.Spinner(html.Div(id="jloading-output")),
+        dbc.Spinner(html.Div(id="jloading-output")), #We can remove dbc.Spinner if we dont use it, and remove the time.sleep(1) in the callback
     ])
 )
 
@@ -33,6 +33,10 @@ continue_card = dbc.Card(
 
 layout = html.Div(
     dbc.Row([
+        dbc.Jumbotron([
+                html.H1("Under Construction", className="text-danger"),
+                html.Hr(),
+            ]),
         dbc.Col(import_json_card, width=6),
         dbc.Col(continue_card, width=6)
     ])

@@ -5,6 +5,7 @@ import dash_html_components as html
 import json
 
 from app import app
+import time
 
 
 @app.callback(
@@ -19,6 +20,7 @@ def load_json_input_file(contents, filename):
 
     content_type, content_string = contents.split(',')
     try:
+        time.sleep(1)
         decoded = base64.b64decode(content_string).decode('utf-8')
         data = json.loads(decoded)
         return data, html.Div([f'Successfully uploaded {filename}'])

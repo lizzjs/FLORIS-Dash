@@ -6,11 +6,11 @@ from dash.dependencies import Input, Output, State
 from flask.globals import current_app
 
 from app import app
-from apps.model_builder import turbine_layout, farm_layout, home_layout, atmos_cond_layout, wake_layout, review_layout
+from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout, import_layout  
 from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 import dash
-# import apps.dashboard
+from apps import home_layout #, dashboard
 
 SIDEBAR_STYLE = {
     "position": "fixed",
@@ -24,6 +24,7 @@ SIDEBAR_STYLE = {
 
 NAVIGATION_ITEMS = [
     "/",
+    "/build/getting-started",
     "/build/windrose",
     "/build/turbine",
     "/build/farm",
@@ -33,27 +34,64 @@ NAVIGATION_ITEMS = [
     "/floris-dashboard"
 ]
 
-MB_progress_card = html.Div(
+home_page = html.Div(
     [
         dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
+            ],
+            pills=True
+        ),
+    ],
+)
+
+MB_progress_card = html.Div(
+    [
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Getting Started", active="exact", href="/build/getting-started")),
                 dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
                 dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
                 dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
                 dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
                 dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
                 dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
-                dbc.NavItem(dbc.NavLink("Floris Dashboard", active="exact", href="/floris-dashboard")),
             ],
             vertical=True,
             pills=True,
         ),
     ],
-    # style={'width': 'auto'}
+)
+
+FLORIS_dashboard = html.Div(
+    [
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink("Floris Dashboard", active="exact", href="/floris-dashboard")),
+            ],
+            pills=True,
+        ),
+    ],
 )
 
 submenu_1 = [
+    html.Li(
+        dbc.Row(
+            [
+                dbc.Col("Home"),
+            ],
+            className="my-1",
+        ),
+        style={"cursor": "pointer"},
+        id="submenu-1",
+    ),
+    dbc.Collapse([home_page],
+        id="submenu-1-collapse",
+        is_open=True
+    ),
+]
+
+submenu_2 = [
     html.Li(
         dbc.Row(
             [
@@ -62,18 +100,15 @@ submenu_1 = [
             className="my-1",
         ),
         style={"cursor": "pointer"},
-        id="submenu-1",
+        id="submenu-2",
     ),
-    dbc.Collapse(
-        [
-            MB_progress_card,
-        ],
-        id="submenu-1-collapse",
+    dbc.Collapse([MB_progress_card,],
+        id="submenu-2-collapse",
         is_open=True,
     ),
 ]
 
-submenu_2 = [
+submenu_3 = [
     html.Li(
         dbc.Row(
             [
@@ -82,14 +117,16 @@ submenu_2 = [
             className="my-1",
         ),
         style={"cursor": "pointer"},
-        id="submenu-2",
+        id="submenu-3",
     ),
     dbc.Collapse(
         [
+            FLORIS_dashboard,
             dbc.NavLink("Page 2.1", href="/page-2/1"),
             dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
-        id="submenu-2-collapse",
+        id="submenu-3-collapse",
+        is_open=True
     ),
 ]
 
@@ -105,7 +142,7 @@ sidebar = html.Div(
     [
         html.H2("Navigation Menu", className="display-6"),
         html.Hr(),
-        dbc.Nav(submenu_1 + submenu_2 + next_button, vertical=True),
+        dbc.Nav(submenu_1 + submenu_2 + submenu_3 + next_button, vertical=True),
     ],
     style=SIDEBAR_STYLE,
     id="sidebar",
@@ -139,7 +176,8 @@ def toggle_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
-for i in [1,2]:
+
+for i in [1,2,3]:
     app.callback(
         Output(f"submenu-{i}-collapse", "is_open"),
         [Input(f"submenu-{i}", "n_clicks")],
@@ -147,11 +185,10 @@ for i in [1,2]:
     )(toggle_collapse)
 
 
-
 @app.callback(
     Output('page-content', 'children'),
     Output('next-button', 'href'),
-    Input('url', 'pathname')
+    Input('url', 'pathname'), 
 )
 def display_page(pathname):
     """
@@ -162,6 +199,7 @@ def display_page(pathname):
         html.Div: layout of the current page
         str: url of the next page for navigation button
     """
+    print(NAVIGATION_ITEMS)
     if pathname not in NAVIGATION_ITEMS:
         layout = dbc.Jumbotron([
                 html.H1("404: Not found", className="text-danger"),
@@ -171,7 +209,11 @@ def display_page(pathname):
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav
 
-    if pathname == '/calculate':
+    if pathname == '/':
+        layout = home_layout.layout
+        next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
+        return layout, next_nav
+    elif pathname == '/calculate':
         # TODO: ensure the input dict is valid
         
         cts, powers, ave_vels, ais = calculate_wake(apps.floris_data.default_input_dict)
@@ -187,11 +229,11 @@ def display_page(pathname):
         )
         layout = html.Div([results])
         next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-        print(next_nav)
         return layout, next_nav
     elif pathname == '/floris-dashboard':
         layout = html.Div(
             [
+                # dbc.Row("Loading..."),
                 "Loading",
                 dbc.Spinner(color="primary", type="grow"),
                 dbc.Spinner(color="secondary", type="grow"),
@@ -209,8 +251,8 @@ def display_page(pathname):
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
 
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-    if pathname == '/':
-        layout = home_layout.layout
+    if pathname == '/build/getting-started':
+        layout = import_layout.layout
     elif pathname == '/build/turbine':
         layout = turbine_layout.layout
     elif pathname == '/build/farm':
@@ -221,6 +263,7 @@ def display_page(pathname):
         layout = wake_layout.layout
     elif pathname == '/build/review':
         layout = review_layout.layout
+    
     return layout, next_nav
 
 
