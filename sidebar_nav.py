@@ -10,14 +10,62 @@ from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, w
 from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 import dash
-from apps import home_layout #, dashboard
+from apps import home_layout, dashboard
+
+#TODO Cleanup & consider separating sidebar and webpage layout --> move layout to index.py
+
+# Previous sidebar style without toggling
+# SIDEBAR_STYLE = {
+#     "position": "fixed",
+#     "top": 0,
+#     "left": 0,
+#     "bottom": 200,
+#     "width": "20rem",
+#     "padding": "2rem 1rem",
+#     "background-color": "#f8f9fa",
+# }
+
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    "top": 0,
+    "top": 62.5,
     "left": 0,
-    "bottom": 200,
+    "bottom": 0,
     "width": "20rem",
+    "height": "100%",
+    "z-index": 1,
+    "overflow-x": "hidden",
+    "transition": "all 0.5s",
+    "padding": "0.5rem 1rem",
+    "background-color": "#f8f9fa",
+}
+
+SIDEBAR_HIDEN = {
+    "position": "fixed",
+    "top": 62.5,
+    "left": "-20rem",
+    "bottom": 0,
+    "width": "20rem",
+    "height": "100%",
+    "z-index": 1,
+    "overflow-x": "hidden",
+    "transition": "all 0.5s",
+    "padding": "0rem 0rem",
+    "background-color": "#f8f9fa",
+}
+
+CONTENT_STYLE = {
+    "transition": "margin-left .5s",
+    "margin-left": "14rem",
+    # "margin-right": "rem",
+    # "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
+
+CONTENT_STYLE1 = {
+    "transition": "margin-left .5s",
+    "margin-left": "2rem",
+    "margin-right": "2rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
@@ -112,7 +160,7 @@ submenu_3 = [
     html.Li(
         dbc.Row(
             [
-                dbc.Col("FLORIS Dashboard"),
+                dbc.Col("AEP Results"),
             ],
             className="my-1",
         ),
@@ -122,14 +170,15 @@ submenu_3 = [
     dbc.Collapse(
         [
             FLORIS_dashboard,
-            dbc.NavLink("Page 2.1", href="/page-2/1"),
-            dbc.NavLink("Page 2.2", href="/page-2/2"),
+            # dbc.NavLink("Page 2.1", href="/page-2/1"),
+            # dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
         id="submenu-3-collapse",
         is_open=True
     ),
 ]
 
+##### Maybe this should be moved to index.py #####
 next_button = [html.Li(
         dbc.Row(
             [
@@ -147,28 +196,79 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
     id="sidebar",
 )
+content = html.Div(
+    id="page-content",
+    style=CONTENT_STYLE)
 
 app.layout = dbc.Container(
     [
-        dbc.Row(
-            dbc.Col(
-                dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3") )
-            )
-        ),
-        dbc.Row([
-            # Progress tracker
-            dbc.Col([
-                sidebar,
-                
-            ], width=2),
-            # Content area
-            dbc.Col(id="page-content"),
-        ]),
-        dcc.Location(id='url', refresh=False),
-        dcc.Store(id='floris-inputs'),
-    ],
-    fluid=True,
+        # html.Div(
+        # [
+            dbc.Button("Sidebar", outline=True, color="secondary", className="mr-1", id="btn_sidebar"),
+            sidebar,
+            content,
+            dcc.Store(id='side_click'),
+            dcc.Location(id="url"),
+        # ],
+        # )
+    ]
+
 )
+
+###########
+
+#Previous layout before toggling sidebar
+# app.layout = dbc.Container(
+#     [
+#         dbc.Row(
+#             dbc.Col(
+#                 dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3") )
+#             )
+#         ),
+#         dbc.Row([
+#             # Progress tracker
+#             dbc.Col([
+#                 sidebar,
+                
+#             ], width=2),
+#             # Content area
+#             dbc.Col(id="page-content"),
+#         ]),
+#         dcc.Location(id='url', refresh=False),
+#         dcc.Store(id='floris-inputs'),
+#     ],
+#     fluid=True,
+# )
+
+
+@app.callback(
+    [
+        Output("sidebar", "style"),
+        Output("page-content", "style"),
+        Output("side_click", "data"),
+    ],
+
+    [Input("btn_sidebar", "n_clicks")],
+    [
+        State("side_click", "data"),
+    ]
+)
+def toggle_sidebar(n, nclick):
+    if n:
+        if nclick == "SHOW":
+            sidebar_style = SIDEBAR_HIDEN
+            content_style = CONTENT_STYLE1
+            cur_nclick = "HIDDEN"
+        else:
+            sidebar_style = SIDEBAR_STYLE
+            content_style = CONTENT_STYLE
+            cur_nclick = "SHOW"
+    else:
+        sidebar_style = SIDEBAR_STYLE
+        content_style = CONTENT_STYLE
+        cur_nclick = 'SHOW'
+
+    return sidebar_style, content_style, cur_nclick
 
 
 # this function is used to toggle the is_open property of each Collapse
@@ -199,7 +299,6 @@ def display_page(pathname):
         html.Div: layout of the current page
         str: url of the next page for navigation button
     """
-    print(NAVIGATION_ITEMS)
     if pathname not in NAVIGATION_ITEMS:
         layout = dbc.Jumbotron([
                 html.H1("404: Not found", className="text-danger"),
@@ -207,11 +306,6 @@ def display_page(pathname):
                 html.P(f"The pathname {pathname} was not recognized..."),
             ])
         next_nav = NAVIGATION_ITEMS[0]
-        return layout, next_nav
-
-    if pathname == '/':
-        layout = home_layout.layout
-        next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
         return layout, next_nav
     elif pathname == '/calculate':
         # TODO: ensure the input dict is valid
@@ -232,17 +326,12 @@ def display_page(pathname):
         return layout, next_nav
     elif pathname == '/floris-dashboard':
         layout = html.Div(
-            [
-                # dbc.Row("Loading..."),
-                "Loading",
-                dbc.Spinner(color="primary", type="grow"),
-                dbc.Spinner(color="secondary", type="grow"),
-                dbc.Spinner(color="success", type="grow"),
-                dbc.Spinner(color="warning", type="grow"),
-                dbc.Spinner(color="danger", type="grow"),
-                dbc.Spinner(color="info", type="grow"),
-                dbc.Spinner(color="dark", type="grow"),
-            ], id="Link-to-dashboard"
+            dbc.Row([
+                dbc.Jumbotron([
+                        html.H1("Under Construction", className="text-danger"),
+                        html.Hr(),
+                    ]),
+            ])
         )
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav
@@ -251,7 +340,9 @@ def display_page(pathname):
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
 
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-    if pathname == '/build/getting-started':
+    if pathname == '/':
+        layout = home_layout.layout
+    elif pathname == '/build/getting-started':
         layout = import_layout.layout
     elif pathname == '/build/turbine':
         layout = turbine_layout.layout
@@ -263,9 +354,11 @@ def display_page(pathname):
         layout = wake_layout.layout
     elif pathname == '/build/review':
         layout = review_layout.layout
+    # elif pathname == '/floris-dashboard':
+    #     layout == dashboard.layout
     
     return layout, next_nav
 
 
 if __name__ == "__main__":
-    app.run_server(port=8888, debug=True)
+    app.run_server(debug=True)

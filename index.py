@@ -38,7 +38,7 @@ progress_card = html.Div(
         html.Hr(),
         dbc.Nav(
             [
-                # dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
+                dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
                 dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
                 dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
                 dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
@@ -64,7 +64,6 @@ app.layout = dbc.Container(
         dbc.Row([
             # Progress tracker
             dbc.Col([
-                dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
                 progress_card,
                 dbc.Button("Next", id="next-button", color="primary", href="/")
             ], width=2),

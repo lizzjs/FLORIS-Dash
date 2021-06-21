@@ -36,9 +36,9 @@ farm_layout_inputs = dbc.Card(
                 [
                     boundary_input,
                     layout_table
-                ],width=3 
+                ], #width=3 
             ),
-            dbc.Col( dcc.Graph(id="farm-layout-graph") )
+            dbc.Col([dcc.Graph(id="farm-layout-graph")],width=9 )
         ])
     ]),
     className="mt-3",
