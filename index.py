@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 
 from app import app
 from apps.model_builder import turbine_layout, farm_layout, home_layout, atmos_cond_layout, wake_layout, review_layout
+from apps.dashboard import aep_layout
 from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 
@@ -16,7 +17,7 @@ NAVIGATION_ITEMS = [
     "/build/farm",
     "/build/wakemodel",
     "/build/review",
-    "/calculate",
+    "/dashboard/aep",
 ]
 
 sidebar_style = {
@@ -41,7 +42,7 @@ progress_card = html.Div(
                 dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
                 dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
                 dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
-                dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
+                dbc.NavItem(dbc.NavLink("Results", active="exact", href="/dashboard/aep")),
             ],
             vertical=True,
             pills=True,
@@ -88,23 +89,9 @@ def display_page(pathname):
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav
 
-    if pathname == '/calculate':
-        # TODO: ensure the input dict is valid
-        
-        cts, powers, ave_vels, ais = calculate_wake(apps.floris_data.default_input_dict)
-        results = dbc.Card(
-            dbc.CardBody([
-                dbc.Row([ dbc.Col([ html.H3("FLORIS Results", className="card-text") ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(cts) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(powers) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(ave_vels) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(ais) ]) ])
-            ]),
-            className="mt-3",
-        )
-        layout = html.Div([results])
+    if pathname == '/dashboard/aep':        
         next_nav = NAVIGATION_ITEMS[0]
-        return layout, next_nav
+        return aep_layout.layout, next_nav
 
     # TODO: REMOVE THIS
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
