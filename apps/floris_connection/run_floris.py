@@ -1,15 +1,14 @@
 
 from floris.tools.floris_interface import FlorisInterface
-
+import time
 
 def calculate_wake(input_dict):
     fi = FlorisInterface(input_dict=input_dict)
+
+    start = time.perf_counter()
     fi.calculate_wake()
-    turbines = fi.floris.farm.turbines
+    end = time.perf_counter()
 
-    cts = [t.Ct for t in turbines]
-    powers = [t.power for t in turbines]
-    ave_vels = [t.average_velocity for t in turbines]
-    ais = [t.aI for t in turbines]
+    computation_time = end - start
 
-    return cts, powers, ave_vels, ais
+    return computation_time

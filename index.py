@@ -70,6 +70,7 @@ app.layout = dbc.Container(
         ]),
         dcc.Location(id='url', refresh=False),
         dcc.Store(id='floris-inputs'),
+        dcc.Store(id='floris-outputs'),
     ],
     fluid=True,
 )
