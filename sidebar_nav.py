@@ -12,20 +12,6 @@ import apps.floris_data
 import dash
 from apps import home_layout, dashboard
 
-#TODO Cleanup & consider separating sidebar and webpage layout --> move layout to index.py
-
-# Previous sidebar style without toggling
-# SIDEBAR_STYLE = {
-#     "position": "fixed",
-#     "top": 0,
-#     "left": 0,
-#     "bottom": 200,
-#     "width": "20rem",
-#     "padding": "2rem 1rem",
-#     "background-color": "#f8f9fa",
-# }
-
-
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 62.5,
@@ -57,8 +43,8 @@ SIDEBAR_HIDEN = {
 CONTENT_STYLE = {
     "transition": "margin-left .5s",
     "margin-left": "14rem",
-    # "margin-right": "rem",
-    # "padding": "2rem 1rem",
+    "margin-right": "rem",
+    "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
@@ -178,69 +164,6 @@ submenu_3 = [
     ),
 ]
 
-##### Maybe this should be moved to index.py #####
-next_button = [html.Li(
-        dbc.Row(
-            [
-                dbc.Col(dbc.Button("Next", id="next-button", color="primary", href="/", style={"top": '500',}))
-            ])
-        )]
-
-
-sidebar = html.Div(
-    [
-        html.H2("Navigation Menu", className="display-6"),
-        html.Hr(),
-        dbc.Nav(submenu_1 + submenu_2 + submenu_3 + next_button, vertical=True),
-    ],
-    style=SIDEBAR_STYLE,
-    id="sidebar",
-)
-content = html.Div(
-    id="page-content",
-    style=CONTENT_STYLE)
-
-app.layout = dbc.Container(
-    [
-        # html.Div(
-        # [
-            dbc.Button("Sidebar", outline=True, color="secondary", className="mr-1", id="btn_sidebar"),
-            sidebar,
-            content,
-            dcc.Store(id='side_click'),
-            dcc.Location(id="url"),
-        # ],
-        # )
-    ]
-
-)
-
-###########
-
-#Previous layout before toggling sidebar
-# app.layout = dbc.Container(
-#     [
-#         dbc.Row(
-#             dbc.Col(
-#                 dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3") )
-#             )
-#         ),
-#         dbc.Row([
-#             # Progress tracker
-#             dbc.Col([
-#                 sidebar,
-                
-#             ], width=2),
-#             # Content area
-#             dbc.Col(id="page-content"),
-#         ]),
-#         dcc.Location(id='url', refresh=False),
-#         dcc.Store(id='floris-inputs'),
-#     ],
-#     fluid=True,
-# )
-
-
 @app.callback(
     [
         Output("sidebar", "style"),
@@ -358,7 +281,3 @@ def display_page(pathname):
     #     layout == dashboard.layout
     
     return layout, next_nav
-
-
-if __name__ == "__main__":
-    app.run_server(debug=True)
