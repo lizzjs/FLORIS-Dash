@@ -29,7 +29,8 @@ def create_farm_layout_plots(farm_data, n, boundary_data):
             mode='markers'
         )
     ]
-
+    
+    #TODO connect boundary input data to floris_data
     if boundary_data is not None and trigger_id == "textarea-boundary-button":
         boundary_data = io.StringIO(boundary_data)
         df_b = pd.read_csv(boundary_data, sep=",")
