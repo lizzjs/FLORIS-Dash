@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.CardBody import CardBody
 from dash_bootstrap_components._components.Row import Row
 import dash_core_components as dcc
 import dash_html_components as html
@@ -17,18 +18,21 @@ navbar = dbc.NavbarSimple(
     [
         dbc.Row(
             [
-                sidebar_toggle,
-                next_button
+                dbc.Col([
+                    sidebar_toggle,
+                    next_button
+                ])
             ]
         )   
     ],
-    brand="Nav Bar",
+    # brand="Nav Bar",
     color="dark",
     dark=True,
     fluid=True,
+    style={}
 )
 
-sidebar = html.Div(
+sidebar = dbc.Card(
     [
         html.H2("Navigation Menu", className="display-6"),
         html.Hr(),
@@ -37,25 +41,25 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
     id="sidebar",
 )
-content = html.Div(
+content = dbc.Card(
     id="page-content",
     style=CONTENT_STYLE)
 
 app.layout = dbc.Container(
     [
+        
 
-        # dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3")),
+        dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3")),
         navbar,
-        html.Div(
-        [
-            
+        # dbc.CardBody([
             sidebar,
             content,
             dcc.Store(id='side_click'),
             dcc.Location(id="url"),
-        ],
-        )
-    ]
+        # ])
+
+
+    ], fluid=True
 
 )
 

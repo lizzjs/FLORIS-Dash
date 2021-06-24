@@ -14,7 +14,7 @@ from apps import home_layout, dashboard
 
 SIDEBAR_STYLE = {
     "position": "fixed",
-    "top": 62.5,
+    "top": 159,
     "left": 0,
     "bottom": 0,
     "width": "20rem",
@@ -28,7 +28,7 @@ SIDEBAR_STYLE = {
 
 SIDEBAR_HIDEN = {
     "position": "fixed",
-    "top": 62.5,
+    "top": 159,
     "left": "-20rem",
     "bottom": 0,
     "width": "20rem",
@@ -42,16 +42,16 @@ SIDEBAR_HIDEN = {
 
 CONTENT_STYLE = {
     "transition": "margin-left .5s",
-    "margin-left": "14rem",
-    "margin-right": "rem",
+    "margin-left": "18.5rem",
+    "margin-right": "0rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
 CONTENT_STYLE1 = {
     "transition": "margin-left .5s",
-    "margin-left": "2rem",
-    "margin-right": "2rem",
+    "margin-left": "0rem",
+    "margin-right": "0rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
