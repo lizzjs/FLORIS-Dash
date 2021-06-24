@@ -65,7 +65,7 @@ NAVIGATION_ITEMS = [
     "/build/wakemodel",
     "/build/review",
     "/calculate",
-    "/floris-dashboard"
+    "/aep-results"
 ]
 
 home_page = html.Div(
@@ -101,7 +101,7 @@ FLORIS_dashboard = html.Div(
     [
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink("Floris Dashboard", active="exact", href="/floris-dashboard")),
+                dbc.NavItem(dbc.NavLink("AEP Results", active="exact", href="/aep-results")),
             ],
             pills=True,
         ),
@@ -112,7 +112,9 @@ submenu_1 = [
     html.Li(
         dbc.Row(
             [
-                dbc.Col("Home"),
+                dbc.Col([
+                    html.H2("Home", style={'font-size':'14px'}),
+                ])
             ],
             className="my-1",
         ),
@@ -129,7 +131,10 @@ submenu_2 = [
     html.Li(
         dbc.Row(
             [
-                dbc.Col("Model Builder"),
+                dbc.Col([
+                    html.Hr(),
+                    html.H2("Model Builder", style={'font-size':'14px'}),
+                ]),
             ],
             className="my-1",
         ),
@@ -146,7 +151,10 @@ submenu_3 = [
     html.Li(
         dbc.Row(
             [
-                dbc.Col("AEP Results"),
+                dbc.Col([
+                    html.Hr(),
+                    html.H2("Floris Dashboard", style={'font-size':'14px'}),
+                ]),
             ],
             className="my-1",
         ),
@@ -156,8 +164,6 @@ submenu_3 = [
     dbc.Collapse(
         [
             FLORIS_dashboard,
-            # dbc.NavLink("Page 2.1", href="/page-2/1"),
-            # dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
         id="submenu-3-collapse",
         is_open=True
@@ -193,8 +199,6 @@ def toggle_sidebar(n, nclick):
 
     return sidebar_style, content_style, cur_nclick
 
-
-# this function is used to toggle the is_open property of each Collapse
 def toggle_collapse(n, is_open):
     if n:
         return not is_open
@@ -211,6 +215,7 @@ for i in [1,2,3]:
 @app.callback(
     Output('page-content', 'children'),
     Output('next-button', 'href'),
+    Output('back-button', 'href'),
     Input('url', 'pathname'), 
 )
 def display_page(pathname):
@@ -228,8 +233,14 @@ def display_page(pathname):
                 html.Hr(),
                 html.P(f"The pathname {pathname} was not recognized..."),
             ])
+        back_nav = NAVIGATION_ITEMS[0]
         next_nav = NAVIGATION_ITEMS[0]
-        return layout, next_nav
+        return layout, next_nav, back_nav
+    elif pathname == '/':
+        layout = home_layout.layout
+        back_nav = NAVIGATION_ITEMS[0]
+        next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
+        return layout, next_nav, back_nav
     elif pathname == '/calculate':
         # TODO: ensure the input dict is valid
         
@@ -245,9 +256,10 @@ def display_page(pathname):
             className="mt-3",
         )
         layout = html.Div([results])
+        back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
         next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-        return layout, next_nav
-    elif pathname == '/floris-dashboard':
+        return layout, next_nav, back_nav
+    elif pathname == '/aep-results':
         layout = html.Div(
             dbc.Row([
                 dbc.Jumbotron([
@@ -256,16 +268,16 @@ def display_page(pathname):
                     ]),
             ])
         )
+        back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
         next_nav = NAVIGATION_ITEMS[0]
-        return layout, next_nav
+        return layout, next_nav, back_nav
 
     # TODO: REMOVE THIS
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
-
+    back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-    if pathname == '/':
-        layout = home_layout.layout
-    elif pathname == '/build/getting-started':
+    
+    if pathname == '/build/getting-started':
         layout = import_layout.layout
     elif pathname == '/build/turbine':
         layout = turbine_layout.layout
@@ -280,4 +292,4 @@ def display_page(pathname):
     # elif pathname == '/floris-dashboard':
     #     layout == dashboard.layout
     
-    return layout, next_nav
+    return layout, next_nav, back_nav

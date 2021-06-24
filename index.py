@@ -8,11 +8,17 @@ from flask.globals import current_app
 
 from app import app
 from sidebar_nav import submenu_1, submenu_2, submenu_3, SIDEBAR_STYLE, CONTENT_STYLE
-from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 
-next_button = dbc.Button("Next", id="next-button", color="primary", href="/", style={"top": '500',}) #style={'order':'last'}
-sidebar_toggle = dbc.Button("Sidebar", outline=True, color="secondary", className="mr-1", id="btn_sidebar") #style={'order':'first'} #we can make this a hamburger menu icon later
+nav_button = dbc.ButtonGroup(
+    [
+        dbc.Button("Back", id="back-button", color="primary", href="/", style={"top": '500',}),
+        dbc.Button("Next", id="next-button", color="primary", href="/", style={"top": '500',}), 
+    ],
+    size="md",
+    className="mr-1",
+)
+sidebar_toggle = dbc.Button(children=[html.Img(src="/assets/bars.png", style={'width':'25px'})], className="btn-dark btn-lg", outline='light', id="btn_sidebar") 
 
 navbar = dbc.NavbarSimple(
     [
@@ -20,22 +26,18 @@ navbar = dbc.NavbarSimple(
             [
                 dbc.Col([
                     sidebar_toggle,
-                    next_button
-                ])
+                    nav_button
+                ],)
             ]
         )   
     ],
-    # brand="Nav Bar",
     color="dark",
     dark=True,
     fluid=True,
-    style={}
 )
 
 sidebar = dbc.Card(
     [
-        html.H2("Navigation Menu", className="display-6"),
-        html.Hr(),
         dbc.Nav(submenu_1 + submenu_2 + submenu_3, vertical=True),
     ],
     style=SIDEBAR_STYLE,
@@ -51,12 +53,10 @@ app.layout = dbc.Container(
 
         dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3")),
         navbar,
-        # dbc.CardBody([
-            sidebar,
-            content,
-            dcc.Store(id='side_click'),
-            dcc.Location(id="url"),
-        # ])
+        sidebar,
+        content,
+        dcc.Store(id='side_click'),
+        dcc.Location(id="url"),
 
 
     ], fluid=True
