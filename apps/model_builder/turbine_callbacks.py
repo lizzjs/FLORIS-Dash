@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 
 from app import app
-import apps.model_builder.home_callbacks
+import apps.model_builder.import_callbacks
 import apps.floris_data
 
 

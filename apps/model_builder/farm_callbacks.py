@@ -39,6 +39,7 @@ def create_farm_layout_plots(farm_data, n, boundary_data):
             go.Line(
                 x=df2['boundary_x'],
                 y=df2['boundary_y'],
+                name='Boundary'
             )
         )
 

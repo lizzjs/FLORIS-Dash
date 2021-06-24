@@ -19,7 +19,7 @@ atmos_cond_inputs = dbc.Card(
     dbc.CardBody([
         html.H3("Wind farm atmospheric conditions.", className="card-text"),
         dbc.Row([
-            dbc.Col(wind_rose_table, width=3),
+            dbc.Col(wind_rose_table),
             dbc.Col( dcc.Graph(id="wind-rose-graph") )
         ])
     ]),

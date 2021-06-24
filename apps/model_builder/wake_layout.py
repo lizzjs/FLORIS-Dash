@@ -82,6 +82,7 @@ layout = html.Div([
                     dbc.Button(
                         "Define the wake model",
                         id="collapse-model-button",
+                        # block=True,
                     )
                 ),
                 dbc.Collapse(
@@ -107,6 +108,8 @@ layout = html.Div([
                     dbc.Button(
                         "Wake model parameters",
                         id="collapse-parameter-button",
+                        # block=True,
+                        # style={'text-align': 'left'}
                     )
                 ),
                 dbc.Collapse(
@@ -132,6 +135,7 @@ layout = html.Div([
                     dbc.Button(
                         "Flow field preview",
                         id="collapse-preview-button",
+                        # block=True,
                     )
                 ),
                 dbc.Collapse(
@@ -146,4 +150,4 @@ layout = html.Div([
             ])
         )
     )
-])
+],)

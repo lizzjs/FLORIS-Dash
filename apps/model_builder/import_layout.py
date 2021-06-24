@@ -19,7 +19,7 @@ import_json_card = dbc.Card(
                 'textAlign': 'center',
             },
         ),
-        dbc.Spinner(html.Div(id="jloading-output")),
+        dbc.Spinner(html.Div(id="jloading-output")), #We can remove dbc.Spinner if we dont use it, and remove the time.sleep(1) in the callback
     ])
 )
 
