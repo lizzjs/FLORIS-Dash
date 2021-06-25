@@ -7,7 +7,6 @@ from dash.dependencies import Input, Output
 from app import app
 from apps.model_builder import turbine_layout, farm_layout, home_layout, atmos_cond_layout, wake_layout, review_layout
 from apps.dashboard import aep_layout
-from apps.floris_connection.run_floris import calculate_wake
 import apps.floris_data
 
 NAVIGATION_ITEMS = [

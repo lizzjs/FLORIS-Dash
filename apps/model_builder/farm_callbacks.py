@@ -1,13 +1,12 @@
 
+import dash
 from dash.dependencies import Input, Output, State
+import io
 import pandas as pd
 import plotly.graph_objs as go
 
 from app import app, colors
 import apps.floris_data
-import matplotlib.pyplot as plt
-import dash
-import io
 
 
 @app.callback(
@@ -51,6 +50,7 @@ def create_farm_layout_plots(farm_data, n, boundary_data):
         )
     )
     return fig
+
 
 @app.callback(
     [Output('farm-layout-datatable', 'data'),

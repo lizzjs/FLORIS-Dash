@@ -2,11 +2,6 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-
-from app import app
-from apps.floris_connection.run_floris import calculate_wake
-import apps.floris_data
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.dashboard.aep_callbacks

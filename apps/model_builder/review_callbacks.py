@@ -1,18 +1,16 @@
 
-import dash
 from dash.dependencies import Input, Output, State
-import dash_html_components as html
 import numpy as np
-import pandas as pd
-
-from app import app
 import time
 
-from floris.tools.floris_interface import FlorisInterface
-import floris.tools.wind_rose as rose
+from app import app
 import apps.floris_data
+
+from floris.tools.floris_interface import FlorisInterface
 from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRose
 import floris.tools.power_rose as pr
+import floris.tools.wind_rose as rose
+
 
 @app.callback(
     # Output("loading-output", "children"),
@@ -20,7 +18,7 @@ import floris.tools.power_rose as pr
     Input("submit-button", "n_clicks"),
     State("floris-outputs", "data")
 )
-def load_output(n, floris_output_data):
+def run_floris(n, floris_output_data):
 
     if not n:
         return
