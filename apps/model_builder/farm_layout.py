@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Card import Card
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -10,22 +11,13 @@ import apps.model_builder.farm_callbacks
 layout_table = dash_table.DataTable(
     id = 'farm-layout-datatable',
     editable=True,
-    style_table={'height': '600px', 'overflowY': 'auto'},
+    style_table={'height': '300px', 'overflowY': 'auto'},
 )
 
-boundary_input = html.Div(
-    children=[
-        dcc.Textarea(
-            id='textarea-boundary',
-            placeholder='Insert boundary points here',
-            style={'width': '100%', 'height': 200},
-        ),
-        html.Button('Submit', 
-            id='textarea-boundary-button', 
-            n_clicks=0,
-            style={'margin': '10px'}
-        ),
-    ]
+boundary_table = dash_table.DataTable(
+    id = 'boundary-layout-datatable',
+    editable=True,
+    style_table={'height': '300px', 'overflowY': 'auto'}
 )
 
 farm_layout_inputs = dbc.Card(
@@ -34,11 +26,13 @@ farm_layout_inputs = dbc.Card(
         dbc.Row([
             dbc.Col(
                 [
-                    boundary_input,
+                    html.H6("Boundary data", className="card-text"),
+                    boundary_table,
+                    html.H6("Farm data", className="card-text"),
                     layout_table
-                ], #width=3 
+                ], width=3
             ),
-            dbc.Col([dcc.Graph(id="farm-layout-graph")],width=9 )
+            dbc.Col([dcc.Graph(id="farm-layout-graph")], )
         ])
     ]),
     className="mt-3",

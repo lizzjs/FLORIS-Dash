@@ -13,27 +13,22 @@ import io
 @app.callback(
     Output('farm-layout-graph', 'figure'),
     Input('farm-layout-datatable', 'data'),
-    Input('textarea-boundary-button', 'n_clicks'),
-    State('textarea-boundary', 'value'),
+    Input('boundary-layout-datatable', 'data'),
 )
-def create_farm_layout_plots(farm_data, n, boundary_data):
+def create_farm_layout_plots(farm_data, boundary_data):
     df = pd.DataFrame(farm_data)
-
-    ctx = dash.callback_context
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     figure_data = [
         go.Scatter(
             x=df['layout_x'],
             y=df['layout_y'],
-            mode='markers'
+            mode='markers',
+            name='Wind turbines'
         )
     ]
 
-    if boundary_data is not None and trigger_id == "textarea-boundary-button":
-        boundary_data = io.StringIO(boundary_data)
-        df_b = pd.read_csv(boundary_data, sep=",")
-        df2 = pd.DataFrame(df_b) #df_b does not have .append attribute
+    if boundary_data is not None: 
+        df2 = pd.DataFrame(boundary_data)
         df2 = df2.append(df2.iloc[0,:], ignore_index=True)
         figure_data.append(
             go.Line(
@@ -59,14 +54,33 @@ def create_farm_layout_plots(farm_data, n, boundary_data):
 )
 def get_layout_table_data(data):
     if data is None:
-        df = pd.DataFrame(
+        df_farm = pd.DataFrame(
             {
                 'layout_x': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_x"],
                 'layout_y': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_y"]
             }
         )
     else:
-        df = pd.DataFrame(data)
+        df_farm = pd.DataFrame(data)
 
-    columns = [{"name": i, "id": i} for i in df.columns]
-    return df.to_dict("rows"), columns
+    columns = [{"name": i, "id": i} for i in df_farm.columns]
+    return df_farm.to_dict("rows"), columns
+
+@app.callback(
+    [Output('boundary-layout-datatable', 'data'),
+    Output('boundary-layout-datatable', 'columns')],
+    Input('boundary-layout-datatable', 'data')
+)
+def get_boundary_table_data(boundary_data):
+    if boundary_data is None:
+        df_boundary = pd.DataFrame(
+            {
+                'boundary_x': apps.floris_data.boundary_data["boundary_x"],
+                'boundary_y': apps.floris_data.boundary_data["boundary_y"]
+            }
+        )
+    else:
+        df_boundary = pd.DataFrame(boundary_data)
+
+    columns = [{"name": i, "id": i} for i in df_boundary.columns]
+    return df_boundary.to_dict("rows"), columns
