@@ -15,7 +15,7 @@ import floris.tools.wind_rose as rose
 @app.callback(
     # Output("loading-output", "children"),
     Output("floris-outputs", "data"),
-    Input("submit-button", "n_clicks"),
+    Input("submit-floris-button", "n_clicks"),
     State("floris-outputs", "data")
 )
 def run_floris(n, floris_output_data):

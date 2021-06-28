@@ -8,6 +8,7 @@ import apps.floris_data
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.review_callbacks
 
+
 display_json = html.Div(
     json.dumps(
         apps.floris_data.user_defined_dict,
@@ -19,7 +20,7 @@ display_json = html.Div(
 
 submit_button = html.Div([
     dbc.ListGroupItem(
-        dbc.Button("Submit", id="submit-button", block=True,color="primary", href="/dashboard/aep"),
+        dbc.Button("Submit", id="submit-floris-button", block=True, color="primary", href="/aep-results"),
     )
     # dbc.Spinner(html.Div(id="loading-output")),
 ])

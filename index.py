@@ -55,14 +55,12 @@ app.layout = dbc.Container(
         navbar,
         sidebar,
         content,
+        dcc.Location(id="url"),
         dcc.Store(id='side_click'),
         dcc.Store(id='floris-inputs'),
         dcc.Store(id='floris-outputs'),
-        dcc.Location(id="url"),
-
-
-    ], fluid=True
-
+    ],
+    fluid=True
 )
 
 if __name__ == '__main__':

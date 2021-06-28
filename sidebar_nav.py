@@ -7,7 +7,7 @@ from flask.globals import current_app
 
 from app import app
 from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout, import_layout  
-from apps.floris_connection.run_floris import calculate_wake
+from apps.dashboard import aep_layout
 import apps.floris_data
 import dash
 from apps import home_layout, dashboard
@@ -64,7 +64,6 @@ NAVIGATION_ITEMS = [
     "/build/farm",
     "/build/wakemodel",
     "/build/review",
-    "/calculate",
     "/aep-results"
 ]
 
@@ -89,7 +88,6 @@ MB_progress_card = html.Div(
                 dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
                 dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
                 dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
-                dbc.NavItem(dbc.NavLink("Calculate", active="exact", href="/calculate")),
             ],
             vertical=True,
             pills=True,
@@ -241,33 +239,8 @@ def display_page(pathname):
         back_nav = NAVIGATION_ITEMS[0]
         next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
         return layout, next_nav, back_nav
-    elif pathname == '/calculate':
-        # TODO: ensure the input dict is valid
-        
-        cts, powers, ave_vels, ais = calculate_wake(apps.floris_data.default_input_dict)
-        results = dbc.Card(
-            dbc.CardBody([
-                dbc.Row([ dbc.Col([ html.H3("FLORIS Results", className="card-text") ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(cts) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(powers) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(ave_vels) ]) ]),
-                dbc.Row([ dbc.Col([ html.Div(ais) ]) ])
-            ]),
-            className="mt-3",
-        )
-        layout = html.Div([results])
-        back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
-        next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-        return layout, next_nav, back_nav
     elif pathname == '/aep-results':
-        layout = html.Div(
-            dbc.Row([
-                dbc.Jumbotron([
-                        html.H1("Under Construction", className="text-danger"),
-                        html.Hr(),
-                    ]),
-            ])
-        )
+        layout = aep_layout.layout
         back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav, back_nav
@@ -289,7 +262,5 @@ def display_page(pathname):
         layout = wake_layout.layout
     elif pathname == '/build/review':
         layout = review_layout.layout
-    # elif pathname == '/floris-dashboard':
-    #     layout == dashboard.layout
     
     return layout, next_nav, back_nav
