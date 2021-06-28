@@ -56,6 +56,8 @@ app.layout = dbc.Container(
         sidebar,
         content,
         dcc.Store(id='side_click'),
+        dcc.Store(id='floris-inputs'),
+        dcc.Store(id='floris-outputs'),
         dcc.Location(id="url"),
 
 

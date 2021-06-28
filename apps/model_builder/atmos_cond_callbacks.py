@@ -25,8 +25,8 @@ def create_wind_rose_plot(data):
     return fig
 
 @app.callback(
-    [Output('wind-rose-datatable', 'data'),
-    Output('wind-rose-datatable', 'columns')],
+    Output('wind-rose-datatable', 'data'),
+    Output('wind-rose-datatable', 'columns'),
     Input('wind-rose-datatable', 'data')
 )
 def get_wind_rose_table_data(data):

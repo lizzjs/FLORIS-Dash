@@ -110,5 +110,4 @@ def get_performance_table_data(data):
         df = pd.DataFrame(data)
 
     columns = [{"name": i, "id": i} for i in df.columns]
-    # print(df.to_dict("rows"))
     return df.to_dict("rows"), columns
