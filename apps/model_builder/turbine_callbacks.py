@@ -76,21 +76,21 @@ def perimeter_points(value):
 def create_turbine_performance_plots(data):
     df = pd.DataFrame(data)
 
-    fig1 = px.line(
+    cpu_graph = px.line(
         x=df["Wind Speed"],
         y=df["Cp"],
         template="seaborn",
         title="Power Curve"
     )
 
-    fig2 = px.line(
+    ctu_graph = px.line(
         x=df["Wind Speed"],
         y=df["Ct"],
         template="seaborn",
         title="Thrust Curve"
     )
 
-    return fig1, fig2
+    return cpu_graph, ctu_graph
 
 @app.callback(
     [Output('turbine-performance-datatable', 'data'),
