@@ -37,14 +37,14 @@ def create_farm_layout_plots(farm_data, boundary_data):
             )
         )
 
-    fig = go.Figure(
+    wind_farm_layout = go.Figure(
         data=figure_data,
         layout=go.Layout(
             plot_bgcolor=colors["graphBackground"],
             # paper_bgcolor=colors["graphBackground"]
         )
     )
-    return fig
+    return wind_farm_layout
 
 
 @app.callback(

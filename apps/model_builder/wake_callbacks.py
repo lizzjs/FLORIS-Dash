@@ -94,9 +94,9 @@ def preview_wake_model(velocity_value, deflection_value, turbulence_value, combi
     # x2_mesh = horizontal_slice.df.x2.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
     u_mesh = horizontal_slice.df.u.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0]).astype(np.float64)
 
-    fig = go.Figure(
+    wake_contour_graph = go.Figure(
         data=go.Contour(
             z = u_mesh
         )
     )
-    return fig
+    return wake_contour_graph
