@@ -6,7 +6,7 @@ import dash_html_components as html
 
 import_json_card = dbc.Card(
     dbc.CardBody([
-        html.H5("Import FLORIS input file", className="card-title"),
+        html.H4("Import FLORIS input file", className="card-title"),
         html.P("Select a JSON file with turbine, farm, atomospheric conditions, and wake model definitions."),
         dcc.Upload(
             id='json-upload-input-file', 
@@ -20,20 +20,32 @@ import_json_card = dbc.Card(
             },
         ),
         dbc.Spinner(html.Div(id="jloading-output")), #We can remove dbc.Spinner if we dont use it, and remove the time.sleep(1) in the callback
-    ])
+    ]), className="mb-3", style={'height': "150px", 'padding': '5px'}
 )
 
 continue_card = dbc.Card(
     dbc.CardBody([
-        html.H5("Getting started", className="card-title"),
+        html.H4("Getting started", className="card-title"),
         html.P("Begin the Model Builder with no prepopulated data and enter all parameters directly."),
         dbc.Button("Continue", color="primary", href="/build/windrose"),
-    ])
+    ]), style={'height': "150px", 'padding': '20px'}
+)
+
+dashboard_card = dbc.Card(
+    dbc.CardBody([
+        html.H4("Review and analyze results", className="card-title"),
+        html.P("After importing, skip model builder and view results."),
+        dbc.Button("Continue", color="primary", href="/build/review"),
+    ]), style={'height': "150px", 'padding': '20px'}
 )
 
 layout = html.Div(
     dbc.Row([
-        dbc.Col(import_json_card, width=6),
+        dbc.Col(
+            [   
+                import_json_card,
+                dashboard_card,
+            ], width=6),
         dbc.Col(continue_card, width=6)
     ])
 )
