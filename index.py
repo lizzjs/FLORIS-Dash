@@ -13,12 +13,12 @@ import apps.floris_data
 nav_button = dbc.ButtonGroup(
     [
         dbc.Button("Back", id="back-button", color="primary", href="/", style={"top": '500',}),
-        dbc.Button("Next", id="next-button", color="primary", href="/", style={"top": '500',}), 
+        dbc.Button("Next", id="next-button", color="primary", href="/", style={"top": '500'}), 
     ],
     size="md",
     className="mr-1",
 )
-sidebar_toggle = dbc.Button(children=[html.Img(src="/assets/bars.png", style={'width':'25px'})], className="btn-dark btn-lg", outline='light', id="btn_sidebar") 
+sidebar_toggle = dbc.Button(children=[html.Img(src="/assets/bars.png", style={'width':'25px', "height": "20px"})], className="btn-dark btn-sm", outline='light', id="btn_sidebar", style={"margin-right": "7px", 'height': '32px'}) 
 
 navbar = dbc.NavbarSimple(
     [

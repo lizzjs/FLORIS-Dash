@@ -23,7 +23,7 @@ def load_json_input_file(contents, filename):
         time.sleep(1)
         decoded = base64.b64decode(content_string).decode('utf-8')
         data = json.loads(decoded)
-        return data, html.Div([f'Successfully uploaded {filename}'])
+        return data, html.Div([f'Successfully uploaded {filename}'], style={'text-align':'center', 'padding':'2px'})
     except Exception as e:
         print(e)
-        return {}, html.Div([f'There was an error processing {filename}: {e}.'])
+        return {}, html.Div([f'There was an error processing {filename}: {e}.'], style={'text-align':'center', 'padding':'2px'})
