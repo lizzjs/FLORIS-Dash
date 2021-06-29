@@ -309,7 +309,7 @@ wind_rose_data = {
 
 boundary_data = {
    "boundary_x": [-1000,1500, 1500, -1000],
-   "boundary_y": [500, 500, -500, -500] 
+   "boundary_y": [1500, 1500, -500, -500] 
 }
 
 wake_model_preview_dict = default_input_dict
