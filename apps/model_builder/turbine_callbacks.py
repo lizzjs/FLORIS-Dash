@@ -80,14 +80,16 @@ def create_turbine_performance_plots(data):
         x=df["Wind Speed"],
         y=df["Cp"],
         template="seaborn",
-        title="Power Curve"
+        title="Power Curve",
+        labels={'x':'Wind Speed', 'y':'Cp'}
     )
 
     ctu_graph = px.line(
         x=df["Wind Speed"],
         y=df["Ct"],
         template="seaborn",
-        title="Thrust Curve"
+        title="Thrust Curve",
+        labels={'x':'Wind Speed', 'y':'Ct'}
     )
 
     return cpu_graph, ctu_graph
