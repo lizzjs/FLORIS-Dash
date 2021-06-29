@@ -142,16 +142,14 @@ geometry_inputs = dbc.Card(
 table = dash_table.DataTable(
     id = 'turbine-performance-datatable',
     editable=True,
-    # data=[],
-    # columns=[{"name": i, "id": i} for i in ["Wind Speed", "Cp", "Ct"]],
-    style_table={'height': '600px', 'overflowY': 'auto'},
+    style_table={'height': '800px', 'overflowY': 'auto'},
 )
 
 performance_inputs = dbc.Card(
     dbc.CardBody([
         dbc.Row(
             dbc.Col(
-                html.H3("Turbine performance definition.", className="card-text")
+                html.H3("Turbine performance definition.", className="card-text mb-3")
             )
         ),
 

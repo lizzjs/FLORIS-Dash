@@ -22,7 +22,7 @@ boundary_table = dash_table.DataTable(
 
 farm_layout_inputs = dbc.Card(
     dbc.CardBody([
-        html.H3("Wind farm layout.", className="card-text"),
+        html.H3("Wind farm layout.", className="card-text mb-3"),
         dbc.Row([
             dbc.Col(
                 [

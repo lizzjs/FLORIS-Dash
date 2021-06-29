@@ -17,7 +17,7 @@ wind_rose_table = dash_table.DataTable(
 
 atmos_cond_inputs = dbc.Card(
     dbc.CardBody([
-        html.H3("Wind farm atmospheric conditions.", className="card-text"),
+        html.H3("Wind farm atmospheric conditions.", className="card-text mb-3"),
         dbc.Row([
             dbc.Col(wind_rose_table),
             dbc.Col( dcc.Graph(id="wind-rose-graph") )
