@@ -2,3 +2,8 @@ dash
 dash-bootstrap-components
 floris
 openpyxl
+#requirements for dash vtk
+dash-vtk
+dash[dev]>=1.15.0
+-e .
+vtk

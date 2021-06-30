@@ -7,7 +7,7 @@ from flask.globals import current_app
 
 from app import app
 from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout, import_layout  
-from apps.dashboard import aep_layout
+from apps.dashboard import aep_layout, vtk_layout
 import apps.floris_data
 import dash
 from apps import home_layout, dashboard
@@ -64,7 +64,8 @@ NAVIGATION_ITEMS = [
     "/build/farm",
     "/build/wakemodel",
     "/build/review",
-    "/aep-results"
+    "/aep-results",
+    "/vtk-floris"
 ]
 
 home_page = html.Div(
@@ -100,7 +101,9 @@ FLORIS_dashboard = html.Div(
         dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink("AEP Results", active="exact", href="/aep-results")),
+                dbc.NavItem(dbc.NavLink("Visualization", active="exact", href="/vtk-floris")), 
             ],
+            vertical=True,
             pills=True,
         ),
     ],
@@ -239,8 +242,8 @@ def display_page(pathname):
         back_nav = NAVIGATION_ITEMS[0]
         next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
         return layout, next_nav, back_nav
-    elif pathname == '/aep-results':
-        layout = aep_layout.layout
+    elif pathname == '/vtk-floris': #Last item in NAVIGATION_ITEMS goes here
+        layout = vtk_layout.layout
         back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav, back_nav
@@ -262,5 +265,6 @@ def display_page(pathname):
         layout = wake_layout.layout
     elif pathname == '/build/review':
         layout = review_layout.layout
-    
+    elif pathname == '/aep-results':
+        layout = aep_layout.layout
     return layout, next_nav, back_nav
