@@ -18,40 +18,33 @@ import plotly.graph_objs as go
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-# def get_floris_calc_cp_ct():
-#     # Initialize the FLORIS interface fi
-#     fi = ft.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+def get_floris_calc_cp_ct():
+    # Initialize the FLORIS interface fi
+    fi = ft.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
 
-#     saved_layout_y = apps.floris_data.default_input_dict["farm"]["properties"]["layout_x"]
-#     saved_layout_x = apps.floris_data.default_input_dict["farm"]["properties"]["layout_y"]
+    fi.reinitialize_flow_field(layout_array=([0], [0]))
+    cp_return_array = np.array([])
+    ct_return_array = np.array([])
 
-#     fi.reinitialize_flow_field(layout_array=([0], [0]))
-#     cp_return_array = []
-#     ct_return_array = []
+    wind_speeds = np.array(apps.floris_data.default_input_dict["turbine"]["properties"]["power_thrust_table"]["wind_speed"])
 
-#     wind_speeds = apps.floris_data.default_input_dict["turbine"]["properties"]["power_thrust_table"]["wind_speed"] 
+    for ws in wind_speeds:
+        fi.reinitialize_flow_field(wind_speed=ws)
+        fi.calculate_wake()
 
-#     for ws in wind_speeds:
-#         fi.reinitialize_flow_field(wind_speed=ws)
-#         fi.calculate_wake()
-#         ct_return_array.append(fi.get_turbine_ct()[0])
+        area = np.pi * fi.floris.farm.turbines[0].rotor_radius**2
+        cp = fi.get_turbine_power()[0] / (0.5 * fi.floris.farm.turbines[0].air_density * area * ws**3)
+        cp_return_array = np.append(cp_return_array, cp)
+        
+        ct_return_array = np.append(ct_return_array, fi.get_turbine_ct()[0])
 
-#         area = np.pi*fi.floris.rotor_radius #probably not correct
-#         cp = fi.get_turbine_power()[0]* area**3 #conversion for cp, missing stuff
-#         ct_return_array.append(cp)
+    coeff_dict = {'Wind Speed':wind_speeds, 'Cp':cp_return_array, 'Ct':ct_return_array}
 
-#     fi.reinitialize_flow_field(layout_array=(saved_layout_x, saved_layout_y))
+    df = pd.DataFrame(coeff_dict)
 
-#     ct_return_array = np.array(ct_return_array)
-#     cp_return_array = np.array(ct_return_array)
-#     wind_speed = np.array(wind_speeds)
+    del fi
 
-#     coeff_dict = {'Wind Speed':wind_speed, 'CpU':cp_return_array, 'CtU':ct_return_array}
-#     df = pd.DataFrame(coeff_dict)
-
-#     plt.plot(df['Wind Speed'], df["CpU"])
-#     plt.show()
-#     return df
+    return df
 
 @app.callback(
     # Output("loading-output", "children"),
@@ -128,8 +121,8 @@ def run_floris(n, floris_output_data):
 @app.callback(
     Output('review-windrose-graph', 'figure'),
     Output('review-wind-farm-layout', 'figure'),
-    # Output('aep-farm-graph', 'figure'),
-    # Output('aep-windrose-graph', 'figure'),
+    Output('review-cp-comparison-graph', 'figure'),
+    Output('review-ct-comparison-graph', 'figure'),
     Input("floris-outputs", "data")
 )
 def return_review_page_graphs(floris_output_data):
@@ -162,7 +155,8 @@ def return_review_page_graphs(floris_output_data):
         go.Scatter(
             x=layout_data['layout_x'],
             y=layout_data['layout_y'],
-            mode='markers'
+            mode='markers',
+            name="Turbine Markers"
         )
     ]
 
@@ -172,17 +166,58 @@ def return_review_page_graphs(floris_output_data):
             go.Line(
                 x=df_bf['boundary_x'],
                 y=df_bf['boundary_y'],
+                name="Boundary"
             )
         )
     wind_farm_figure = go.Figure(
         data=layout_plot_data,
+        layout_title_text="Wind Farm Layout",
         layout=go.Layout(
             # plot_bgcolor=colors["graphBackground"],
             # paper_bgcolor=colors["graphBackground"]
         )
     )
 
-    #Cp Ct 
-    # df_floris_calc = get_floris_calc_cp_ct()
+    #Cp Ct
 
-    return wind_rose_figure, wind_farm_figure
+    # Input
+    df_input = apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"]
+
+    # Calculated
+    df_cp_ct = get_floris_calc_cp_ct()
+
+    cp_plot_data = [
+        go.Line(
+            x=df_input["wind_speed"],
+            y=df_input["power"],
+            name="Input"
+        ),
+        go.Line(
+            x=df_cp_ct["Wind Speed"],
+            y=df_cp_ct["Cp"],
+            name="FLORIS Calculated"
+        )
+    ]
+    power_figure = go.Figure(
+        data=cp_plot_data,
+        layout_title_text="Power Curve"
+    )
+
+    ct_plot_data = [
+        go.Line(
+            x=df_input["wind_speed"],
+            y=df_input["thrust"],
+            name="Input"
+        ),
+        go.Line(
+            x=df_cp_ct["Wind Speed"],
+            y=df_cp_ct["Ct"],
+            name="FLORIS Calculated"
+        )
+    ]
+    thrust_figure = go.Figure(
+        data=ct_plot_data,
+        layout_title_text="Thrust Curve"
+    )
+
+    return wind_rose_figure, wind_farm_figure, power_figure, thrust_figure
