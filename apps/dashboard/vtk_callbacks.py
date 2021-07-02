@@ -23,7 +23,7 @@ spacing = np.round(ranges / dimensions).astype(int)
 views = dict(u=fd.u, v=fd.v, w=fd.w)
 
 def build_view_child(
-    dimensions, spacing, origin, field, enabled, i, j, k, window, level
+    dimensions, spacing, origin, field, enabled, i, window, level #j, k,
 ):
     slice_prop = {"colorWindow": window, "colorLevel": level}
     child = [
@@ -54,23 +54,23 @@ def build_view_child(
             )
         )
 
-    if "j" in enabled:
-        child.append(
-            dash_vtk.SliceRepresentation(
-                jSlice=int(round(j)),
-                property=slice_prop,
-                children=dash_vtk.ShareDataSet(),
-            )
-        )
+    # if "j" in enabled:
+    #     child.append(
+    #         dash_vtk.SliceRepresentation(
+    #             jSlice=int(round(j)),
+    #             property=slice_prop,
+    #             children=dash_vtk.ShareDataSet(),
+    #         )
+    #     )
 
-    if "k" in enabled:
-        child.append(
-            dash_vtk.SliceRepresentation(
-                kSlice=int(round(k)),
-                property=slice_prop,
-                children=dash_vtk.ShareDataSet(),
-            )
-        )
+    # if "k" in enabled:
+    #     child.append(
+    #         dash_vtk.SliceRepresentation(
+    #             kSlice=int(round(k)),
+    #             property=slice_prop,
+    #             children=dash_vtk.ShareDataSet(),
+    #         )
+    #     )
 
     return child
 @app.callback(
@@ -81,11 +81,11 @@ def build_view_child(
     Input("color-window", "value"),
     Input("color-level", "value"),
     Input("slider-slice-i", "value"),
-    Input("slider-slice-j", "value"),
-    Input("slider-slice-k", "value"),
+    # Input("slider-slice-j", "value"),
+    # Input("slider-slice-k", "value"),
 )
 def update_flow_viz(
-    selected_dim, enabled, window_coef, level_coef, slice_i, slice_j, slice_k
+    selected_dim, enabled, window_coef, level_coef, slice_i, #slice_j, slice_k
 ):
     field = views[selected_dim]
     window = (field.max() - field.min()) * window_coef
@@ -100,7 +100,7 @@ def update_flow_viz(
         field=field,
         enabled=enabled,
         i=slice_i,
-        j=slice_j,
-        k=slice_k,
+        # j=slice_j,
+        # k=slice_k,
     )
     return new_view_child, random.random()
