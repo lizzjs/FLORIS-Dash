@@ -10,13 +10,13 @@ import apps.floris_data
 import apps.model_builder.review_callbacks
 
 
-display_json = html.Div(
+display_json = html.Pre(
     json.dumps(
         apps.floris_data.user_defined_dict,
-        indent = 4, 
+        indent = 2, 
         # sort_keys=True
     ),
-    style={'whiteSpace': 'pre-line'}
+    # style={'whiteSpace': 'pre-line'}
 )
 
 submit_button = html.Div([
