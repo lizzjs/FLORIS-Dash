@@ -156,7 +156,7 @@ def return_review_page_graphs(floris_output_data):
             x=layout_data['layout_x'],
             y=layout_data['layout_y'],
             mode='markers',
-            name="Turbine Markers"
+            name="Turbine Markers",
         )
     ]
 
@@ -171,10 +171,14 @@ def return_review_page_graphs(floris_output_data):
         )
     wind_farm_figure = go.Figure(
         data=layout_plot_data,
-        layout_title_text="Wind Farm Layout",
+        # layout_title_text="Wind Farm Layout",
         layout=go.Layout(
-            # plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
+            plot_bgcolor=colors["graphBackground"],
+            title={
+                'text': "Wind Farm Layout",
+                'x':0.45,
+                'y':0.88
+            },
         )
     )
 
@@ -190,34 +194,58 @@ def return_review_page_graphs(floris_output_data):
         go.Line(
             x=df_input["wind_speed"],
             y=df_input["power"],
-            name="Input"
+            name="Input",
+            line = dict(color = 'rgb(204, 37, 8)')
         ),
         go.Line(
             x=df_cp_ct["Wind Speed"],
             y=df_cp_ct["Cp"],
-            name="FLORIS Calculated"
+            name="FLORIS Calculated",
+            line = dict(shape = 'linear', color = 'rgb(255, 182, 56)', dash = 'dot')
         )
     ]
     power_figure = go.Figure(
         data=cp_plot_data,
-        layout_title_text="Power Curve"
+        # layout_title_text="Power Curve"
+        layout=go.Layout(
+            plot_bgcolor=colors["graphBackground"],
+            title={
+                'text': "Power Curve",
+                'x':0.45,
+                'y':0.88
+            },
+            xaxis_title="Wind Speed",
+            yaxis_title="Cp",
+        )
     )
 
     ct_plot_data = [
         go.Line(
             x=df_input["wind_speed"],
             y=df_input["thrust"],
-            name="Input"
+            name="Input",
+            line = dict(color = 'rgb(69, 3, 252)')
         ),
         go.Line(
             x=df_cp_ct["Wind Speed"],
             y=df_cp_ct["Ct"],
-            name="FLORIS Calculated"
+            name="FLORIS Calculated",
+            line = dict(shape = 'linear', color = 'rgb(3, 219, 252)', dash = 'dot')
         )
     ]
     thrust_figure = go.Figure(
         data=ct_plot_data,
-        layout_title_text="Thrust Curve"
+        layout_title_text="Thrust Curve",
+        layout=go.Layout(
+            plot_bgcolor=colors["graphBackground"],
+            title={
+                # 'text': "Thrust Curve",
+                'x':0.45,
+                'y':0.88
+            },
+            xaxis_title="Wind Speed",
+            yaxis_title="Ct",
+        )
     )
 
     return wind_rose_figure, wind_farm_figure, power_figure, thrust_figure

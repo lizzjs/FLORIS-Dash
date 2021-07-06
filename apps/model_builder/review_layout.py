@@ -32,7 +32,7 @@ layout = dbc.Container([
             [
                 dbc.Card(
                     dbc.CardBody(display_json),
-                    style={"maxHeight": "1831px","overflow": "scroll"},
+                    style={"maxHeight": "1785px","overflow": "scroll"},
                 ),
                 submit_button,
             ], width=4
@@ -46,6 +46,6 @@ layout = dbc.Container([
                     dcc.Graph(id='review-ct-comparison-graph'),
                 ]),
             ),
-        ])
-    ])
+        ], width=7)
+    ],justify="center")
 ])
