@@ -1,6 +1,6 @@
 
 import dash_vtk
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State, ALL
 import floris.tools as wfct
 import numpy as np
 import random
@@ -54,25 +54,8 @@ def build_view_child(
             )
         )
 
-    # if "j" in enabled:
-    #     child.append(
-    #         dash_vtk.SliceRepresentation(
-    #             jSlice=int(round(j)),
-    #             property=slice_prop,
-    #             children=dash_vtk.ShareDataSet(),
-    #         )
-    #     )
-
-    # if "k" in enabled:
-    #     child.append(
-    #         dash_vtk.SliceRepresentation(
-    #             kSlice=int(round(k)),
-    #             property=slice_prop,
-    #             children=dash_vtk.ShareDataSet(),
-    #         )
-    #     )
-
     return child
+
 @app.callback(
     Output("vtk-view", "children"),
     Output("vtk-view", "triggerRender"),
