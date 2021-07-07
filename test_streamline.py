@@ -14,6 +14,11 @@ from dash_vtk.utils import to_mesh_state, preset_as_options
 
 import vtk
 
+import numpy as np
+import apps.floris_data
+import floris.tools as wfct
+import json
+
 random.seed(42)
 
 # -----------------------------------------------------------------------------
@@ -24,55 +29,49 @@ random.seed(42)
 class Viz:
     def __init__(self, data_directory):
         self.color_range = [0, 1]
-        # bike_filename = os.path.join(data_directory, "bike.vtp")
-        cwd = os.getcwd()
-        # tunnel_filename = os.path.join(cwd, "test_data", "tunnel.vtu")
-        
-        turbine_filename = os.path.join(cwd, "test_data", "visualize_curl.vtk")
+        bike_filename = os.path.join(data_directory, "bike.vtp")
+        tunnel_filename = os.path.join(data_directory, "tunnel.vtu")
 
         # Seeds settings
         self.resolution = 10
-        self.point1 = [11, -252, 51]
-        self.point2 = [2511, 252, 299]
+        self.point1 = [1200, 1000, 200]
+        self.point2 = [1200, 300, 200]
 
         # VTK Pipeline setup
-        # bikeReader = vtk.vtkXMLPolyDataReader()
-        # bikeReader.SetFileName(bike_filename)
-        # bikeReader.Update()
-        # self.bike_mesh = to_mesh_state(bikeReader.GetOutput())
+        bikeReader = vtk.vtkXMLPolyDataReader()
+        bikeReader.SetFileName(bike_filename)
+        bikeReader.Update()
+        self.bike_mesh = to_mesh_state(bikeReader.GetOutput())
 
-        turbine_reader = vtk.vtkStructuredPointsReader()
-        turbine_reader.DebugOn()
+        tunnelReader = vtk.vtkXMLUnstructuredGridReader()
+        tunnelReader.SetFileName(tunnel_filename)
+        tunnelReader.Update()
 
         self.lineSeed = vtk.vtkLineSource()
         self.lineSeed.SetPoint1(*self.point1)
         self.lineSeed.SetPoint2(*self.point2)
         self.lineSeed.SetResolution(self.resolution)
 
-        print("turbine_reader.GetOutputPort())", turbine_reader.GetOutputPort())
-        streamTracer = vtk.vtkStreamTracer()
-        streamTracer.DebugOn()
-        streamTracer.SetInputConnection(turbine_reader.GetOutputPort())
-        streamTracer.SetSourceConnection(self.lineSeed.GetOutputPort())
-        streamTracer.SetIntegrationDirectionToForward()
-        streamTracer.SetIntegratorTypeToRungeKutta45()
-        streamTracer.SetMaximumPropagation(3)
-        streamTracer.SetIntegrationStepUnit(2)
-        streamTracer.SetInitialIntegrationStep(0.2)
-        streamTracer.SetMinimumIntegrationStep(0.01)
-        streamTracer.SetMaximumIntegrationStep(0.5)
-        streamTracer.SetMaximumError(0.000001)
-        streamTracer.SetMaximumNumberOfSteps(2000)
-        streamTracer.SetTerminalSpeed(0.00000000001)
-        print("streamTracer", streamTracer)
-        self.tubeFilter = vtk.vtkTubeFilter()
-        self.tubeFilter.DebugOn()
-        self.tubeFilter.SetInputConnection(streamTracer.GetOutputPort())
-        self.tubeFilter.SetRadius(0.01)
-        self.tubeFilter.SetNumberOfSides(6)
-        self.tubeFilter.CappingOn()
-        self.tubeFilter.Update()
-        print("tubeFilter", self.tubeFilter)
+        # streamTracer = vtk.vtkStreamTracer()
+        # streamTracer.SetInputConnection(tunnelReader.GetOutputPort())
+        # streamTracer.SetSourceConnection(self.lineSeed.GetOutputPort())
+        # streamTracer.SetIntegrationDirectionToForward()
+        # streamTracer.SetIntegratorTypeToRungeKutta45()
+        # streamTracer.SetMaximumPropagation(3)
+        # streamTracer.SetIntegrationStepUnit(2)
+        # streamTracer.SetInitialIntegrationStep(0.2)
+        # streamTracer.SetMinimumIntegrationStep(0.01)
+        # streamTracer.SetMaximumIntegrationStep(0.5)
+        # streamTracer.SetMaximumError(0.000001)
+        # streamTracer.SetMaximumNumberOfSteps(2000)
+        # streamTracer.SetTerminalSpeed(0.00000000001)
+
+        # self.tubeFilter = vtk.vtkTubeFilter()
+        # self.tubeFilter.SetInputConnection(streamTracer.GetOutputPort())
+        # self.tubeFilter.SetRadius(0.01)
+        # self.tubeFilter.SetNumberOfSides(6)
+        # self.tubeFilter.CappingOn()
+        # self.tubeFilter.Update()
 
     def updateSeedPoints(self, p1_y, p2_y, resolution):
         self.point1[1] = p1_y
@@ -83,15 +82,12 @@ class Viz:
         self.lineSeed.SetPoint2(*self.point2)
         self.lineSeed.SetResolution(resolution)
 
-    def getTubesMesh(self, color_by_field_name):
-        self.tubeFilter.Update()
-        ds = self.tubeFilter.GetOutput()
-        # print('ds:', ds)
-        # print("colorby:", color_by_field_name)
-        mesh_state = to_mesh_state(ds, color_by_field_name)
-        # print(mesh_state)
-        self.color_range = mesh_state["field"]["dataRange"]
-        return mesh_state
+    # def getTubesMesh(self, color_by_field_name):
+    #     self.tubeFilter.Update()
+    #     ds = self.tubeFilter.GetOutput()
+    #     mesh_state = to_mesh_state(ds, color_by_field_name)
+    #     self.color_range = mesh_state["field"]["dataRange"]
+    #     return mesh_state
 
     # def getBikeMesh(self):
     #     return self.bike_mesh
@@ -119,19 +115,44 @@ viz = Viz(os.path.join(os.path.dirname(__file__), "data"))
 # 3D Viz
 # -----------------------------------------------------------------------------
 
+# Initialize the FLORIS interface fi
+fi = wfct.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+fd = fi.get_flow_data()
+
+# compute dimensions, origins and spacing based on flow data
+origin = [axis.mean().round().astype(int) for axis in [fd.x, fd.y, fd.z]]
+ranges = np.array([axis.ptp().round().astype(int) for axis in [fd.x, fd.y, fd.z]])
+dimensions = np.array([np.unique(axis).shape[0] for axis in [fd.x, fd.y, fd.z]])
+x, y, z = dimensions
+spacing = np.round(ranges / dimensions).astype(int)
+
+image_data = dash_vtk.ImageData(
+    dimensions=dimensions,
+    spacing=spacing,
+    origin=origin,
+    children=dash_vtk.PointData(
+        dash_vtk.DataArray(registration="setScalars", values=fd.u)
+    ),
+)
+
 vtk_view = dash_vtk.View(
     id="vtk-view",
+    pickingModes=["click"],
     children=[
+        dash_vtk.VolumeRepresentation(
+            id="volume-rep",
+            children=[image_data],
+        ),
         # dash_vtk.GeometryRepresentation(
         #     id="bike-rep",
         #     children=[dash_vtk.Mesh(id="bike", state=viz.getBikeMesh(),)],
         # ),
-        dash_vtk.GeometryRepresentation(
-            id="tubes-rep",
-            colorMapPreset="erdc_rainbow_bright",
-            colorDataRange=viz.getColorRange(),
-            children=[dash_vtk.Mesh(id="tubes-mesh", state=viz.getTubesMesh("UAvg"),)],
-        ),
+        # dash_vtk.GeometryRepresentation(
+        #     id="tubes-rep",
+        #     colorMapPreset="erdc_rainbow_bright",
+        #     colorDataRange=viz.getColorRange(),
+        #     children=[dash_vtk.Mesh(id="tubes-mesh", state=viz.getTubesMesh("p"),)],
+        # ),
         dash_vtk.GeometryRepresentation(
             id="seed-rep",
             property={"color": [0.8, 0, 0], "representation": 0, "pointSize": 8,},
@@ -140,6 +161,10 @@ vtk_view = dash_vtk.View(
                     id="seed-line", vtkClass="vtkLineSource", state=viz.getSeedState(),
                 )
             ],
+        ),
+        dash_vtk.GeometryRepresentation(
+            id="pick-rep",
+            
         ),
     ],
 )
@@ -231,11 +256,20 @@ app.layout = dbc.Container(
     children=[
         dbc.Row(
             [
-                dbc.Col(width=4, children=controls),
+                dbc.Col(
+                    width=4,
+                    children=[
+                        # controls,
+                        html.Pre(
+                            id="click-info-output",
+                            style={'overflowX': 'scroll'}
+                        )
+                    ]
+                ),
                 dbc.Col(
                     width=8,
                     children=[
-                        html.Div(vtk_view, style={"height": "100%", "width": "100%"})
+                        html.Div(vtk_view, style={"height": "100%", "width": "100%"}),
                     ],
                 ),
             ],
@@ -247,14 +281,19 @@ app.layout = dbc.Container(
 # -----------------------------------------------------------------------------
 # Handle controls
 # -----------------------------------------------------------------------------
-
+@app.callback(
+    Output('click-info-output', 'children'),
+    Input('vtk-view', 'clickInfo')
+)
+def display_clicked_content(click_info):
+    return json.dumps(click_info, indent=2)
 
 @app.callback(
     [
         Output("seed-line", "state"),
-        Output("tubes-mesh", "state"),
-        Output("tubes-rep", "colorDataRange"),
-        Output("tubes-rep", "colorMapPreset"),
+        # Output("tubes-mesh", "state"),
+        # Output("tubes-rep", "colorDataRange"),
+        # Output("tubes-rep", "colorMapPreset"),
         Output("vtk-view", "triggerRender"),
     ],
     [
@@ -270,23 +309,22 @@ app.layout = dbc.Container(
 def update_seeds(y1_drag, y2_drag, y1, y2, resolution, colorByField, presetName):
     triggered = dash.callback_context.triggered
 
-    # if triggered and "drag_value" in triggered[0]["prop_id"]:
-    #     viz.updateSeedPoints(y1_drag, y2_drag, resolution)
-    #     return [
-    #         viz.getSeedState(),
-    #         dash.no_update,
-    #         dash.no_update,
-    #         dash.no_update,
-    #         random.random(),  # trigger a render
-    #     ]
+    if triggered and "drag_value" in triggered[0]["prop_id"]:
+        viz.updateSeedPoints(y1_drag, y2_drag, resolution)
+        return [
+            viz.getSeedState(),
+            # dash.no_update,
+            # dash.no_update,
+            # dash.no_update,
+            random.random(),  # trigger a render
+        ]
 
     viz.updateSeedPoints(y1, y2, resolution)
-    print(viz.getSeedState())
     return [
         viz.getSeedState(),
-        viz.getTubesMesh("UAvg"),
-        viz.getColorRange(),
-        presetName,
+        # viz.getTubesMesh(colorByField),
+        # viz.getColorRange(),
+        # presetName,
         random.random(),  # trigger a render
     ]
 
@@ -294,4 +332,5 @@ def update_seeds(y1_drag, y2_drag, y1, y2, resolution, colorByField, presetName)
 # -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8888)
+
