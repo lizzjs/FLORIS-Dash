@@ -10,14 +10,14 @@ import apps.floris_data
 import apps.model_builder.review_callbacks
 
 
-display_json = html.Div(
-    json.dumps(
-        apps.floris_data.user_defined_dict,
-        indent = 4, 
-        # sort_keys=True
-    ),
-    style={'whiteSpace': 'pre-line'}
-)
+display_json = html.Pre(
+     json.dumps(
+         apps.floris_data.user_defined_dict,
+         indent = 2, 
+         # sort_keys=True
+     ),
+     # style={'whiteSpace': 'pre-line'}
+ )
 
 submit_button = html.Div([
     dbc.ListGroupItem(
