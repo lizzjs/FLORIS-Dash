@@ -9,8 +9,6 @@ import apps.model_builder.atmos_cond_callbacks
 
 wind_rose_table = dash_table.DataTable(
     id = 'wind-rose-datatable',
-    # data=dummy_df.to_dict("rows"),
-    # columns=[{"name": i, "id": i} for i in dummy_df.columns],
     editable=True,
     style_table={'height': '600px', 'overflowY': 'auto'},
 ),
