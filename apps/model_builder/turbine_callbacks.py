@@ -1,11 +1,12 @@
 
 from dash.dependencies import Input, Output
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objs as go
 
-from app import app
+from app import app, colors
 import apps.model_builder.import_callbacks
 import apps.floris_data
+from graph_generator import *
 
 
 ## Geometry inputs
@@ -73,26 +74,9 @@ def perimeter_points(value):
     Output('CtU', 'figure'),
     Input('turbine-performance-datatable', 'data')
 )
-def create_turbine_performance_plots(data):
-    df = pd.DataFrame(data)
-
-    cpu_graph = px.line(
-        x=df["Wind Speed"],
-        y=df["Cp"],
-        template="seaborn",
-        title="Power Curve",
-        labels={'x':'Wind Speed', 'y':'Cp'}
-    )
-
-    ctu_graph = px.line(
-        x=df["Wind Speed"],
-        y=df["Ct"],
-        template="seaborn",
-        title="Thrust Curve",
-        labels={'x':'Wind Speed', 'y':'Ct'}
-    )
-
-    return cpu_graph, ctu_graph
+def turbine_performance_plots(data):
+    df_turbine_performance = pd.DataFrame(data)
+    return create_turbine_performance_plots(df_turbine_performance)
 
 @app.callback(
     [Output('turbine-performance-datatable', 'data'),

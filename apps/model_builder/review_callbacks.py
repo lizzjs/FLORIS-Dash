@@ -7,6 +7,7 @@ import time
 
 from app import app, colors
 import apps.floris_data
+from graph_generator import *
 
 import floris.tools as ft
 from floris.tools.floris_interface import FlorisInterface
@@ -127,14 +128,9 @@ def run_floris(n, floris_output_data):
 )
 def return_review_page_graphs(floris_output_data):
     #Windrose
-    wind_rose_figure = px.bar_polar(
-        pd.DataFrame(apps.floris_data.wind_rose_data),
-        r="frequency",
-        theta="direction",
-        color="strength",
-        template="seaborn",
-        color_discrete_sequence=px.colors.sequential.Plasma_r,
-        title="Wind Rose",
+    df_windrose = pd.DataFrame(apps.floris_data.wind_rose_data)
+    wind_rose_figure = create_windrose_plot(df_windrose)
+    wind_rose_figure.update_layout(
         height=400,
         width=550
     )
@@ -153,127 +149,19 @@ def return_review_page_graphs(floris_output_data):
         }
     )
 
-    layout_plot_data = [
-        go.Scatter(
-            x=layout_data['layout_x'],
-            y=layout_data['layout_y'],
-            mode='markers',
-            name="Turbine Markers",
-        )
-    ]
+    df_farm = pd.DataFrame(layout_data)
 
-    if boundary_data is not None:
-        df_bf = boundary_data.append(boundary_data.iloc[0,:], ignore_index=True)
-        layout_plot_data.append(
-            go.Line(
-                x=df_bf['boundary_x'],
-                y=df_bf['boundary_y'],
-                name="Boundary"
-            )
-        )
-    wind_farm_figure = go.Figure(
-        data=layout_plot_data,
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            title= dict(
-                text="Wind Farm Layout",
-                x=0.5,
-                y=0.9,
-                font = dict(size=18)
-            ),
-            legend = dict(
-                font = dict(size=10, color="black"), 
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-            height=400
-        )
-    )
+    if boundary_data is not None: 
+        df_boundary = pd.DataFrame(boundary_data)
+        df_boundary = df_boundary.append(df_boundary.iloc[0,:], ignore_index=True)
+        
+    wind_farm_figure = create_farm_layout_plot(df_farm, df_boundary)
+    wind_farm_figure.update_layout(height=400)
 
     #Cp Ct
+    df_input = apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"] # Input
+    df_cp_ct = get_floris_calc_cp_ct() # Calculated
 
-    # Input
-    df_input = apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"]
-
-    # Calculated
-    df_cp_ct = get_floris_calc_cp_ct()
-
-    cp_plot_data = [
-        go.Line(
-            x=df_input["wind_speed"],
-            y=df_input["power"],
-            name="Input",
-            line = dict(color='rgb(204, 37, 8)')
-        ),
-        go.Line(
-            x=df_cp_ct["Wind Speed"],
-            y=df_cp_ct["Cp"],
-            name="FLORIS Calculated",
-            line = dict(shape='linear', color='rgb(255, 182, 56)', dash='dot')
-        )
-    ]
-    power_figure = go.Figure(
-        data=cp_plot_data,
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            title= dict(
-                text="Power Curve",
-                x=0.5,
-                y=0.9,
-                font = dict(size=18)
-            ),
-            xaxis_title="Wind Speed",
-            yaxis_title="Cp",
-            legend = dict(
-                font = dict(size=10, color="black"), 
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-            height=400
-        )
-    )
-
-    ct_plot_data = [
-        go.Line(
-            x=df_input["wind_speed"],
-            y=df_input["thrust"],
-            name="Input",
-            line = dict(color='rgb(69, 3, 252)')
-        ),
-        go.Line(
-            x=df_cp_ct["Wind Speed"],
-            y=df_cp_ct["Ct"],
-            name="FLORIS Calculated",
-            line = dict(shape='linear', color='rgb(3, 219, 252)', dash='dot') #'linear', 'spline', 'hv', 'vh', 'hvh', 'vhv'
-        )
-    ]
-    thrust_figure = go.Figure(
-        data=ct_plot_data,
-        layout=go.Layout(
-            title= dict(
-                text="Thrust Curve",
-                x=0.5,
-                y=0.9,
-                font = dict(size=18)
-            ),
-            xaxis_title='Wind Speed',
-            yaxis_title="Ct",
-            legend = dict(
-                font = dict(size=10, color="black"), #set font: family = "Courier", 
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1
-            ),
-            height=400
-        )
-    )
+    [power_figure, thrust_figure] = create_turbine_performance_comparison_plots(df_input, df_cp_ct)
 
     return wind_rose_figure, wind_farm_figure, power_figure, thrust_figure

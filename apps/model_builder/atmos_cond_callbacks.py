@@ -5,24 +5,21 @@ import plotly.express as px
 
 from app import app
 import apps.floris_data
+from graph_generator import *
 
 
 @app.callback(
     Output('wind-rose-graph', 'figure'),
     Input('wind-rose-datatable', 'data')
 )
-def create_wind_rose_plot(data):
-    df = pd.DataFrame(data)
-    fig = px.bar_polar(
-        df,
-        r="frequency",
-        theta="direction",
-        color="strength",
-        template="seaborn",
-        color_discrete_sequence=px.colors.sequential.Plasma_r,
-        title="Wind Rose"
+def atmos_cond_wind_rose_plot(data):
+    df_windrose = pd.DataFrame(data)
+    wind_rose_figure = create_windrose_plot(df_windrose)
+    wind_rose_figure.update_layout(
+        height=400,
+        width=550
     )
-    return fig
+    return wind_rose_figure
 
 @app.callback(
     Output('wind-rose-datatable', 'data'),
