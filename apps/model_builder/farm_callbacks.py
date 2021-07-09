@@ -42,8 +42,21 @@ def create_farm_layout_plots(farm_data, boundary_data):
         layout=go.Layout(
             plot_bgcolor=colors["graphBackground"],
             # paper_bgcolor=colors["graphBackground"]
+            title= dict(
+                text="Wind Farm Layout",
+                x=0.5,
+                y=0.9,
+            ),
+            legend = dict(
+                    font = dict(size=10, color="black"), 
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
+        ),
         )
-    )
     return wind_farm_layout
 
 
