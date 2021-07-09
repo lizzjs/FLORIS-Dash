@@ -4,21 +4,23 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
-from app import app
+from app import app, colors
+from apps.model_builder import review_layout
 import apps.floris_data
-
+import time
 
 @app.callback(
     Output('model-comparison-graph', 'figure'),
     Output('compute-time-graph', 'figure'),
     Output('aep-farm-graph', 'figure'),
     Output('aep-windrose-graph', 'figure'),
-    Input("floris-outputs", "data")
+    Input("floris-outputs", "data"),
 )
 def create_dashboard_plots(floris_output_data):
 
     model_name = apps.floris_data.default_input_dict["wake"]["properties"]["velocity_model"]
 
+    df = pd.DataFrame()
     df = pd.DataFrame(floris_output_data[model_name]["power_data"])
     df = df.groupby("wind_directions").sum().reset_index()
 
@@ -26,21 +28,40 @@ def create_dashboard_plots(floris_output_data):
         go.Line(
             x=df["wind_directions"],
             y=df["ideal_power"],
+            name='Ideal Power',
+            line=dict(shape='linear', dash='dash')
         ),
         go.Line(
             x=df["wind_directions"],
             y=df["baseline_power"],
+            name='Baseline Power',
+            line=dict(shape='linear', dash='dot')
         ),
         go.Line(
             x=df["wind_directions"],
             y=df["optimized_power"],
+            name='Optimized Power',
+            line=dict(shape='linear')
         )
     ]
     power_rose_figure = go.Figure(
         data=power_rose_data,
         layout=go.Layout(
-            # plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
+            plot_bgcolor=colors["graphBackground"],
+            title= dict(
+                text="Power Production",
+                x=0.5,
+                y=0.9,
+                font=dict(size=18)
+            ),
+            legend = dict(
+                font = dict(size=10, color="black"), 
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
         )
     )
 
@@ -54,7 +75,7 @@ def create_dashboard_plots(floris_output_data):
         x=columns_ct[0],
         y=columns_ct[1],
         template="seaborn",
-        title="Compute Time"
+        title='Compute Time',
     )
 
     # Wind farm layout
@@ -75,7 +96,8 @@ def create_dashboard_plots(floris_output_data):
         go.Scatter(
             x=layout_data['layout_x'],
             y=layout_data['layout_y'],
-            mode='markers'
+            mode='markers',
+            name="Turbine Markers",
         )
     ]
 
@@ -85,13 +107,26 @@ def create_dashboard_plots(floris_output_data):
             go.Line(
                 x=df_bf['boundary_x'],
                 y=df_bf['boundary_y'],
+                name="Boundary"
             )
         )
     layout_figure = go.Figure(
         data=layout_plot_data,
         layout=go.Layout(
-            # plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
+            plot_bgcolor=colors["graphBackground"],
+            title= dict(
+                text="Wind Farm Layout",
+                x=0.5,
+                y=0.9,
+            ),
+            legend = dict(
+                    font = dict(size=10, color="black"), 
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
         )
     )
 
