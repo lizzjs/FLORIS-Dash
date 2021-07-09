@@ -134,7 +134,9 @@ def return_review_page_graphs(floris_output_data):
         color="strength",
         template="seaborn",
         color_discrete_sequence=px.colors.sequential.Plasma_r,
-        title="Wind Rose"
+        title="Wind Rose",
+        height=400,
+        width=550
     )
 
     #Wind farm 
@@ -171,14 +173,23 @@ def return_review_page_graphs(floris_output_data):
         )
     wind_farm_figure = go.Figure(
         data=layout_plot_data,
-        # layout_title_text="Wind Farm Layout",
         layout=go.Layout(
             plot_bgcolor=colors["graphBackground"],
-            title={
-                'text': "Wind Farm Layout",
-                'x':0.45,
-                'y':0.88
-            },
+            title= dict(
+                text="Wind Farm Layout",
+                x=0.5,
+                y=0.9,
+                font = dict(size=18)
+            ),
+            legend = dict(
+                font = dict(size=10, color="black"), 
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=400
         )
     )
 
@@ -195,27 +206,36 @@ def return_review_page_graphs(floris_output_data):
             x=df_input["wind_speed"],
             y=df_input["power"],
             name="Input",
-            line = dict(color = 'rgb(204, 37, 8)')
+            line = dict(color='rgb(204, 37, 8)')
         ),
         go.Line(
             x=df_cp_ct["Wind Speed"],
             y=df_cp_ct["Cp"],
             name="FLORIS Calculated",
-            line = dict(shape = 'linear', color = 'rgb(255, 182, 56)', dash = 'dot')
+            line = dict(shape='linear', color='rgb(255, 182, 56)', dash='dot')
         )
     ]
     power_figure = go.Figure(
         data=cp_plot_data,
-        # layout_title_text="Power Curve"
         layout=go.Layout(
             plot_bgcolor=colors["graphBackground"],
-            title={
-                'text': "Power Curve",
-                'x':0.45,
-                'y':0.88
-            },
+            title= dict(
+                text="Power Curve",
+                x=0.5,
+                y=0.9,
+                font = dict(size=18)
+            ),
             xaxis_title="Wind Speed",
             yaxis_title="Cp",
+            legend = dict(
+                font = dict(size=10, color="black"), 
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=400
         )
     )
 
@@ -224,27 +244,35 @@ def return_review_page_graphs(floris_output_data):
             x=df_input["wind_speed"],
             y=df_input["thrust"],
             name="Input",
-            line = dict(color = 'rgb(69, 3, 252)')
+            line = dict(color='rgb(69, 3, 252)')
         ),
         go.Line(
             x=df_cp_ct["Wind Speed"],
             y=df_cp_ct["Ct"],
             name="FLORIS Calculated",
-            line = dict(shape = 'linear', color = 'rgb(3, 219, 252)', dash = 'dot')
+            line = dict(shape='linear', color='rgb(3, 219, 252)', dash='dot') #'linear', 'spline', 'hv', 'vh', 'hvh', 'vhv'
         )
     ]
     thrust_figure = go.Figure(
         data=ct_plot_data,
-        layout_title_text="Thrust Curve",
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            title={
-                # 'text': "Thrust Curve",
-                'x':0.45,
-                'y':0.88
-            },
-            xaxis_title="Wind Speed",
+            title= dict(
+                text="Thrust Curve",
+                x=0.5,
+                y=0.9,
+                font = dict(size=18)
+            ),
+            xaxis_title='Wind Speed',
             yaxis_title="Ct",
+            legend = dict(
+                font = dict(size=10, color="black"), #set font: family = "Courier", 
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=400
         )
     )
 

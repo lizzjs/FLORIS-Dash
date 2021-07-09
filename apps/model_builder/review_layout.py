@@ -23,16 +23,16 @@ submit_button = html.Div([
     dbc.ListGroupItem(
         dbc.Button("Submit", id="submit-floris-button", block=True, color="primary", href="/aep-results"),
     ),
-    dbc.Spinner(html.Div(id="loading-output")),
+    # dbc.Spinner(html.Div(id="loading-output")),
 ])
 
-layout = dbc.Container([
+layout = html.Div([
     dbc.Row([
         dbc.Col(
             [
                 dbc.Card(
                     dbc.CardBody(display_json),
-                    style={"maxHeight": "1785px","overflow": "scroll"},
+                    style={"maxHeight": "1587px","overflow": "scroll"},
                 ),
                 submit_button,
             ], width=4
@@ -46,6 +46,6 @@ layout = dbc.Container([
                     dcc.Graph(id='review-ct-comparison-graph'),
                 ]),
             ),
-        ], width=7)
+        ], width=6)
     ],justify="center")
 ])
