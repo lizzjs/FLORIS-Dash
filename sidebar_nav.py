@@ -10,45 +10,30 @@ import apps.floris_data
 from apps import home_layout
 
 SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 159,
-    "left": 0,
-    "bottom": 0,
-    "width": "20rem",
-    "height": "100%",
-    "z-index": 1,
-    "overflow-x": "hidden",
-    "transition": "all 0.5s",
-    "padding": "0.5rem 1rem",
+    # "position": "fixed",
+    # "width": "16rem",
+    "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
-SIDEBAR_HIDEN = {
-    "position": "fixed",
-    "top": 159,
+SIDEBAR_HIDDEN = {
+    # "position": "fixed",
+    # "width": "16rem",
     "left": "-20rem",
-    "bottom": 0,
-    "width": "20rem",
-    "height": "100%",
-    "z-index": 1,
-    "overflow-x": "hidden",
-    "transition": "all 0.5s",
-    "padding": "0rem 0rem",
+    "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
 CONTENT_STYLE = {
-    "transition": "margin-left .5s",
-    "margin-left": "18.5rem",
-    "margin-right": "0rem",
+    # "margin-left": "18.5rem",
+    # "margin-right": "0rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
 
 CONTENT_STYLE1 = {
-    "transition": "margin-left .5s",
-    "margin-left": "0rem",
-    "margin-right": "0rem",
+    "left": "-16rem",
+    # "margin-right": "0rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
@@ -97,21 +82,18 @@ submenu_1 = [
     html.H2("Home", style={'font-size':'14px'}),
     dbc.Collapse(
         home_page,
-        id="submenu-1-collapse",
         is_open=True
     ),
     html.Hr(),
     html.H2("Model Builder", style={'font-size':'14px'}),
     dbc.Collapse(
         model_builder_navigation_card,
-        id="submenu-2-collapse",
         is_open=True,
     ),
     html.Hr(),
     html.H2("Results Dashboard", style={'font-size':'14px'}),
     dbc.Collapse(
         FLORIS_dashboard,
-        id="submenu-3-collapse",
         is_open=True
     ),
 ]
@@ -126,7 +108,7 @@ submenu_1 = [
 def toggle_sidebar(n, nclick):
     if n:
         if nclick == "SHOW":
-            sidebar_style = SIDEBAR_HIDEN
+            sidebar_style = SIDEBAR_HIDDEN
             content_style = CONTENT_STYLE1
             cur_nclick = "HIDDEN"
         else:

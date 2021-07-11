@@ -25,6 +25,8 @@ navbar = dbc.NavbarSimple(
     dbc.Row(children=[
         dbc.Col(children=[
             sidebar_toggle,
+        ]),
+        dbc.Col(children=[
             nav_button
         ])
     ]),
@@ -44,10 +46,26 @@ content = dbc.Card(
 )
 
 app.layout = dbc.Container(children=[
-        dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3")),
-        navbar,
-        sidebar,
-        content,
+        dbc.Row(
+            dbc.Col(
+                dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3")),
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                navbar
+            )
+        ),
+        dbc.Row([
+            dbc.Col(
+                sidebar,
+                width=2
+            ),
+            dbc.Col(
+                content,
+                width=10
+            )
+        ]),
         dcc.Location(id="url"),
         dcc.Store(id='side_click'),
         dcc.Store(id='floris-inputs'),
