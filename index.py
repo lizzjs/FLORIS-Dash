@@ -1,14 +1,10 @@
 
 import dash_bootstrap_components as dbc
-from dash_bootstrap_components._components.CardBody import CardBody
-from dash_bootstrap_components._components.Row import Row
 import dash_core_components as dcc
 import dash_html_components as html
-from flask.globals import current_app
 
 from app import app
 from sidebar_nav import submenu_1, submenu_2, submenu_3, SIDEBAR_STYLE, CONTENT_STYLE
-import apps.floris_data
 
 nav_button = dbc.ButtonGroup(
     [

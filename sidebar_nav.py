@@ -1,16 +1,13 @@
 
 import dash_bootstrap_components as dbc
-import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from flask.globals import current_app
 
 from app import app
 from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout, import_layout  
 from apps.dashboard import aep_layout
 import apps.floris_data
-import dash
-from apps import home_layout, dashboard
+from apps import home_layout
 
 SIDEBAR_STYLE = {
     "position": "fixed",
