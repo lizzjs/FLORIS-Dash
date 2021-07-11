@@ -49,55 +49,6 @@ NAVIGATION_ITEMS = [
     "/aep-results"
 ]
 
-home_page = html.Div(
-    dbc.Nav(
-        dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
-        pills=True
-    ),
-)
-
-model_builder_navigation_card = html.Div(
-    dbc.Nav(
-        children=[
-            dbc.NavItem(dbc.NavLink("Getting Started", active="exact", href="/build/getting-started")),
-            dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
-            dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
-            dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  
-            dbc.NavItem(dbc.NavLink("Wake Model", active="exact", href="/build/wakemodel")),
-            dbc.NavItem(dbc.NavLink("Review", active="exact", href="/build/review")),
-        ],
-        vertical=True,
-        pills=True,
-    ),
-)
-
-FLORIS_dashboard = html.Div(
-    dbc.Nav(
-        dbc.NavItem(dbc.NavLink("AEP Results", active="exact", href="/aep-results")),
-        pills=True,
-    )
-)
-
-submenu_1 = [
-    html.H2("Home", style={'font-size':'14px'}),
-    dbc.Collapse(
-        home_page,
-        is_open=True
-    ),
-    html.Hr(),
-    html.H2("Model Builder", style={'font-size':'14px'}),
-    dbc.Collapse(
-        model_builder_navigation_card,
-        is_open=True,
-    ),
-    html.Hr(),
-    html.H2("Results Dashboard", style={'font-size':'14px'}),
-    dbc.Collapse(
-        FLORIS_dashboard,
-        is_open=True
-    ),
-]
-
 @app.callback(
     Output("sidebar", "style"),
     Output("page-content", "style"),
