@@ -38,7 +38,6 @@ sidebar = dbc.Card(
             dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
             html.Hr(),
             html.H2("Model Builder", style={'font-size':'14px'}),
-            dbc.NavItem(dbc.NavLink("Getting Started", active="exact", href="/build/getting-started")),
             dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
             dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
             dbc.NavItem(dbc.NavLink("Farm",  active="exact",href="/build/farm")),  

@@ -4,7 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 from app import app
-from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout, import_layout  
+from apps.model_builder import turbine_layout, farm_layout, atmos_cond_layout, wake_layout, review_layout  
 from apps.dashboard import aep_layout
 import apps.floris_data
 from apps import home_layout
@@ -40,7 +40,6 @@ CONTENT_STYLE1 = {
 
 NAVIGATION_ITEMS = [
     "/",
-    "/build/getting-started",
     "/build/windrose",
     "/build/turbine",
     "/build/farm",
@@ -125,10 +124,8 @@ def display_page(pathname):
     apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
     back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
-    
-    if pathname == '/build/getting-started':
-        layout = import_layout.layout
-    elif pathname == '/build/turbine':
+
+    if pathname == '/build/turbine':
         layout = turbine_layout.layout
     elif pathname == '/build/farm':
         layout = farm_layout.layout
