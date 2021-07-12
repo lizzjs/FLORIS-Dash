@@ -1,72 +1,125 @@
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import pandas as pd
-import plotly.graph_objs as go
 
 from app import app
-import apps.floris_data
 from graph_generator import *
 
 
-## Geometry inputs
+## Geometry
 
-@app.callback(Output('input-rotordiam', 'value'), Input('input-rotordiam', 'value'))
-def rotor_diameter(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["rotor_diameter"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["rotor_diameter"]
+def _get_turbine_definition_value(key, value, initial_input_store):
+    if initial_input_store is None:
+        # TODO: This is a fatal error. How to handle?
+        return None
 
-@app.callback(Output('input-hubheight', 'value'), Input('input-hubheight', 'value'))
-def hub_height(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["hub_height"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["hub_height"]
+    if value == None:
+        return initial_input_store["turbine"]["properties"][key]
 
-@app.callback(Output('slider-yawang', 'value'), Input('slider-yawang', 'value'))
-def yaw_angle(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["yaw_angle"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["yaw_angle"]
-
-@app.callback(Output('slider-tiltang', 'value'), Input('slider-tiltang', 'value'))
-def tilt_angle(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["tilt_angle"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["tilt_angle"]
-
-@app.callback(Output('input-TSR', 'value'), Input('input-TSR', 'value'))
-def tsr(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["TSR"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["TSR"]
-
-@app.callback(Output('input-genEff', 'value'), Input('input-genEff', 'value'))
-def generator_efficiency(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["generator_efficiency"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["generator_efficiency"]
-
-@app.callback(Output('input-pP', 'value'), Input('input-pP', 'value'))
-def pP(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["pP"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["pP"]
-
-@app.callback(Output('input-pT', 'value'), Input('input-pT', 'value'))
-def pT(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["pT"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["pT"]
-
-@app.callback(Output('slider-ngrid', 'value'), Input('slider-ngrid', 'value'))
-def ngrid(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["ngrid"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["ngrid"]
-
-@app.callback(Output('input-rloc', 'value'), Input('input-rloc', 'value'))
-def rloc(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["rloc"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["rloc"]
-
-@app.callback(Output('switch-perimeter-points', 'value'), Input('switch-perimeter-points', 'value'))
-def perimeter_points(value):
-    apps.floris_data.user_defined_dict["turbine"]["properties"]["use_points_on_perimeter"] = value
-    return apps.floris_data.user_defined_dict["turbine"]["properties"]["use_points_on_perimeter"]
+    return value
 
 
-# Performance inputs
+@app.callback(
+    Output('input-rotor-diameter', 'value'),
+    Input('input-rotor-diameter', 'value'),
+    State('initial-input-store', 'data')
+)
+def rotor_diameter(value, initial_input_store):
+    return _get_turbine_definition_value("rotor_diameter", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-hub-height', 'value'),
+    Input('input-hub-height', 'value'),
+    State('initial-input-store', 'data')
+)
+def hub_height(value, initial_input_store):
+        return _get_turbine_definition_value("hub_height", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-yaw-angle', 'value'),
+    Input('input-yaw-angle', 'value'),
+    State('initial-input-store', 'data')
+)
+def yaw_angle(value, initial_input_store):
+    return _get_turbine_definition_value("yaw_angle", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-tilt-angle', 'value'),
+    Input('input-tilt-angle', 'value'),
+    State('initial-input-store', 'data')
+)
+def tilt_angle(value, initial_input_store):
+    return _get_turbine_definition_value("tilt_angle", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-tip-speed-ratio', 'value'),
+    Input('input-tip-speed-ratio', 'value'),
+    State('initial-input-store', 'data')
+)
+def tip_speed_ratio(value, initial_input_store):
+    return _get_turbine_definition_value("TSR", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-generator-efficiency', 'value'),
+    Input('input-generator-efficiency', 'value'),
+    State('initial-input-store', 'data')
+)
+def generator_efficiency(value, initial_input_store):
+    return _get_turbine_definition_value("generator_efficiency", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-pP', 'value'),
+    Input('input-pP', 'value'),
+    State('initial-input-store', 'data')
+)
+def pP(value, initial_input_store):
+    return _get_turbine_definition_value("pP", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-pT', 'value'),
+    Input('input-pT', 'value'),
+    State('initial-input-store', 'data')
+)
+def pT(value, initial_input_store):
+    return _get_turbine_definition_value("pT", value, initial_input_store)
+
+
+@app.callback(
+    Output('slider-ngrid', 'value'),
+    Input('slider-ngrid', 'value'),
+    State('initial-input-store', 'data')
+)
+def ngrid(value, initial_input_store):
+    return _get_turbine_definition_value("ngrid", value, initial_input_store)
+
+
+@app.callback(
+    Output('input-rloc', 'value'),
+    Input('input-rloc', 'value'),
+    State('initial-input-store', 'data')
+)
+def rloc(value, initial_input_store):
+    return _get_turbine_definition_value("rloc", value, initial_input_store)
+
+
+@app.callback(
+    Output('switch-perimeter-points', 'value'),
+    Input('switch-perimeter-points', 'value'),
+    State('initial-input-store', 'data')
+)
+def perimeter_points(value, initial_input_store):
+    state = _get_turbine_definition_value("use_points_on_perimeter", value, initial_input_store)
+    return 1 if state == True else 0
+
+
+## Performance
 
 @app.callback(
     Output('CpU', 'figure'),
@@ -77,18 +130,25 @@ def turbine_performance_plots(data):
     df_turbine_performance = pd.DataFrame(data)
     return create_turbine_performance_plots(df_turbine_performance)
 
+
 @app.callback(
-    [Output('turbine-performance-datatable', 'data'),
-    Output('turbine-performance-datatable', 'columns')],
-    Input('turbine-performance-datatable', 'data')
+    Output('turbine-performance-datatable', 'data'),
+    Output('turbine-performance-datatable', 'columns'),
+    Input('turbine-performance-datatable', 'data'),
+    State('initial-input-store', 'data')
 )
-def get_performance_table_data(data):
-    if data is None:
+def get_performance_table_data(data, initial_input_store):
+
+    if initial_input_store is None:
+        # TODO: This is a fatal error. How to handle?
+        return None
+
+    if data == None:
         df = pd.DataFrame(
             {
-                'Wind Speed': apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"]["wind_speed"],
-                'Cp': apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"]["power"],
-                'Ct': apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"]["thrust"]
+                'Wind Speed': initial_input_store["turbine"]["properties"]["power_thrust_table"]["wind_speed"],
+                'Cp': initial_input_store["turbine"]["properties"]["power_thrust_table"]["power"],
+                'Ct': initial_input_store["turbine"]["properties"]["power_thrust_table"]["thrust"]
             }
         )
     else:

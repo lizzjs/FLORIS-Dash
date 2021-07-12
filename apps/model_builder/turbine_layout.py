@@ -3,7 +3,6 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-import apps.floris_data
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.turbine_callbacks
@@ -19,7 +18,6 @@ geometry_inputs = dbc.Card(
                     type="number",
                     min=0,
                     max=500,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["rotor_diameter"]
                 ),
             ]),
 
@@ -30,7 +28,6 @@ geometry_inputs = dbc.Card(
                     type="number",
                     min=0,
                     max=500,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["hub_height"]
                 ),
             ]),
             
@@ -42,7 +39,6 @@ geometry_inputs = dbc.Card(
                     min=0,
                     max=14,
                     step=0.01,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["yaw_angle"]
                 ),
             ]),
 
@@ -54,7 +50,6 @@ geometry_inputs = dbc.Card(
                     min=0,
                     max=14,
                     step=0.01,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["tilt_angle"]
                 )
             ]),
 
@@ -65,7 +60,6 @@ geometry_inputs = dbc.Card(
                     type="number",
                     min=0,
                     max=20,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["TSR"]
                 ),
             ]),
 
@@ -76,7 +70,6 @@ geometry_inputs = dbc.Card(
                     type="number",
                     min=0,
                     max=20,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["generator_efficiency"]
                 ),
             ]),
 
@@ -88,7 +81,6 @@ geometry_inputs = dbc.Card(
                     min=0,
                     max=3,
                     step=0.01,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["pP"]
                 ),
             ]),
 
@@ -100,7 +92,6 @@ geometry_inputs = dbc.Card(
                     min=0,
                     max=3,
                     step=0.01,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["pT"]
                 ),
             ]),
 
@@ -111,7 +102,6 @@ geometry_inputs = dbc.Card(
                     min=1,
                     max=9,
                     marks={i: '{}'.format(i) for i in range(10)},
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["ngrid"]
                 ),
             ]),
 
@@ -123,7 +113,6 @@ geometry_inputs = dbc.Card(
                     min=0,
                     max=3,
                     step=0.01,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["rloc"]
                 ),
             ]),
 
@@ -132,11 +121,10 @@ geometry_inputs = dbc.Card(
                     options=[{"label": "Use points on perimeter", "value": 1}],
                     id="switch-perimeter-points",
                     switch=True,
-                    value=apps.floris_data.user_defined_dict["turbine"]["properties"]["use_points_on_perimeter"]
                 ),
             ]),
         ]),
-    ], 
+    ],
     className="mt-3",
 )
 
