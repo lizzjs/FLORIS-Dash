@@ -58,7 +58,7 @@ fresh_start_card = dbc.Card(
     dbc.CardBody([
         html.H4("Start with defaults", className="card-title"),
         html.P("Load example input data into the Model Builder."),
-        dbc.Button("Continue", color="primary", href="/build/windrose"),
+        dbc.Button("Continue", id="button-load-defaults", color="primary", href="/build/windrose"),
     ]),
     className="mb-3",
 )
