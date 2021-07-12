@@ -1,5 +1,4 @@
 
-from typing import Text
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
@@ -15,7 +14,7 @@ import_json_card = dbc.Card(
             dbc.Col(
                 dcc.Upload(
                     dbc.Button( "Select File", color="primary" ),
-                    id='json-upload-input-file',
+                    id='upload-input-file',
                 ),
                 width=3
             ),
@@ -58,7 +57,12 @@ fresh_start_card = dbc.Card(
     dbc.CardBody([
         html.H4("Start with defaults", className="card-title"),
         html.P("Load example input data into the Model Builder."),
-        dbc.Button("Continue", id="button-load-defaults", color="primary", href="/build/windrose"),
+        dbc.Button(
+            "Continue",
+            id="button-load-defaults",
+            color="primary",
+            href="/build/windrose"
+        ),
     ]),
     className="mb-3",
 )
@@ -79,11 +83,7 @@ layout = html.Div([
     ),
     html.Br(),
     dbc.Row([
-        dbc.Col([
-            fresh_start_card,
-        ]),
-        dbc.Col([
-            import_json_card
-        ])
+        dbc.Col( fresh_start_card ),
+        dbc.Col( import_json_card )
     ])
 ])
