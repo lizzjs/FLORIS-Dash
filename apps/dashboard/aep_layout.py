@@ -6,28 +6,43 @@ import dash_html_components as html
 # Imported but not used. This loads the callback functions into the web page.
 import apps.dashboard.aep_callbacks
 
-
-layout = dbc.Container(
-    [
-        html.Div(id="floris-compute-time", style={"hidden": "true"}),
-        dbc.Row([
+graph_layout = html.Div([
+    dbc.Row([
             dbc.Col(dcc.Graph(id='model-comparison-graph')),
             dbc.Col(dcc.Graph(id='compute-time-graph'))
-        ]),
-     
-        # dbc.Row(
-        #     dbc.Col(dcc.Graph(id='energy-gain-graph')
-        # ),
-        # justify="center"
-        # ),
-   
+        ],
+        justify="around"
+    ),
+    # dbc.Row(
+    #     dbc.Col(dcc.Graph(id='energy-gain-graph')
+    # ),
+    # justify="center"
+    # ),
+    dbc.Row(
+        [
+            dbc.Col(dcc.Graph(id='aep-farm-graph')),
+            dbc.Col(dcc.Graph(id='aep-windrose-graph'))
+        ],
+        justify="around"
+    ),
+    
+
+])
+
+layout = html.Div(
+    [
+        dbc.Spinner(
+            [
+                # html.Div(id="floris-compute-time", style={"hidden": "true"}),
+                graph_layout
+            ],
+            id="results-spinner",
+            type="circle"
+        ),
         dbc.Row(
             [
-                dbc.Col(dcc.Graph(id='aep-farm-graph')),
-                dbc.Col(dcc.Graph(id='aep-windrose-graph'))
+                dbc.Button("Export to PDF", className="mb-3",style={'margin':'5rem'},id='js',n_clicks=0) 
             ],
-            justify="around"
-        )
-    ],
-    fluid=True,
-)
+            justify="center",
+        ),
+    ])

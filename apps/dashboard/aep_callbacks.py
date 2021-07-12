@@ -4,58 +4,23 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
-from app import app
+from app import app, colors
+from apps.model_builder import review_layout
 import apps.floris_data
-
+from graph_generator import *
 
 @app.callback(
     Output('model-comparison-graph', 'figure'),
     Output('compute-time-graph', 'figure'),
     Output('aep-farm-graph', 'figure'),
     Output('aep-windrose-graph', 'figure'),
-    Input("floris-outputs", "data")
+    Input("floris-outputs", "data"),
 )
 def create_dashboard_plots(floris_output_data):
 
-    model_name = apps.floris_data.default_input_dict["wake"]["properties"]["velocity_model"]
+    # Power Production & Compute Time 
+    [power_rose_figure, compute_time_figure] = create_aep_dashboard_plots(floris_output_data)
 
-    df = pd.DataFrame(floris_output_data[model_name]["power_data"])
-    df = df.groupby("wind_directions").sum().reset_index()
-
-    power_rose_data = [
-        go.Line(
-            x=df["wind_directions"],
-            y=df["ideal_power"],
-        ),
-        go.Line(
-            x=df["wind_directions"],
-            y=df["baseline_power"],
-        ),
-        go.Line(
-            x=df["wind_directions"],
-            y=df["optimized_power"],
-        )
-    ]
-    power_rose_figure = go.Figure(
-        data=power_rose_data,
-        layout=go.Layout(
-            # plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
-        )
-    )
-
-    # Compute time
-    columns_ct = ["Model Name", "Compute Time"]
-    values = [
-        [model_name, floris_output_data[model_name]["compute_time"]]
-    ]
-    compute_time_figure = px.bar(
-        pd.DataFrame(values, columns=columns_ct),
-        x=columns_ct[0],
-        y=columns_ct[1],
-        template="seaborn",
-        title="Compute Time"
-    )
 
     # Wind farm layout
     layout_data = pd.DataFrame(
@@ -71,44 +36,22 @@ def create_dashboard_plots(floris_output_data):
         }
     )
 
-    layout_plot_data = [
-        go.Scatter(
-            x=layout_data['layout_x'],
-            y=layout_data['layout_y'],
-            mode='markers'
-        )
-    ]
+    df_farm = pd.DataFrame(layout_data)
 
-    if boundary_data is not None:
-        df_bf = boundary_data.append(boundary_data.iloc[0,:], ignore_index=True)
-        layout_plot_data.append(
-            go.Line(
-                x=df_bf['boundary_x'],
-                y=df_bf['boundary_y'],
-            )
-        )
-    layout_figure = go.Figure(
-        data=layout_plot_data,
-        layout=go.Layout(
-            # plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
-        )
-    )
+    if boundary_data is not None: 
+        df_boundary = pd.DataFrame(boundary_data)
+        df_boundary = df_boundary.append(df_boundary.iloc[0,:], ignore_index=True)
+        
+    wind_farm_figure = create_farm_layout_plot(df_farm, df_boundary)    
 
     # Windrose
-    wind_rose_figure = px.bar_polar(
-        pd.DataFrame(apps.floris_data.wind_rose_data),
-        r="frequency",
-        theta="direction",
-        color="strength",
-        template="seaborn",
-        color_discrete_sequence=px.colors.sequential.Plasma_r,
-        title="Wind Rose"
-    )
+    wind_data = apps.floris_data.wind_rose_data
+    df_windrose = pd.DataFrame(wind_data)
+    wind_rose_figure = create_windrose_plot(df_windrose)
 
-    return power_rose_figure, compute_time_figure, layout_figure, wind_rose_figure
+    return power_rose_figure, compute_time_figure, wind_farm_figure, wind_rose_figure
 
-
+    #TODO: Energy plot
     # ax.plot(
     #     df.wd,
     #     df.energy_baseline / np.max(df.energy_opt),

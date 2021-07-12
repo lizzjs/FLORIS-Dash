@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 
 from app import app, colors
 import apps.floris_data
+from graph_generator import *
 
 
 @app.callback(
@@ -14,37 +15,13 @@ import apps.floris_data
     Input('farm-layout-datatable', 'data'),
     Input('boundary-layout-datatable', 'data'),
 )
-def create_farm_layout_plots(farm_data, boundary_data):
+def farm_layout(farm_data, boundary_data):
     df = pd.DataFrame(farm_data)
-
-    figure_data = [
-        go.Scatter(
-            x=df['layout_x'],
-            y=df['layout_y'],
-            mode='markers',
-            name='Wind turbines'
-        )
-    ]
-
     if boundary_data is not None: 
         df2 = pd.DataFrame(boundary_data)
         df2 = df2.append(df2.iloc[0,:], ignore_index=True)
-        figure_data.append(
-            go.Line(
-                x=df2['boundary_x'],
-                y=df2['boundary_y'],
-                name='Boundary'
-            )
-        )
-
-    wind_farm_layout = go.Figure(
-        data=figure_data,
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
-        )
-    )
-    return wind_farm_layout
+        
+    return create_farm_layout_plot(df, df2)
 
 
 @app.callback(

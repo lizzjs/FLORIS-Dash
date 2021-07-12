@@ -11,13 +11,13 @@ import apps.model_builder.farm_callbacks
 layout_table = dash_table.DataTable(
     id = 'farm-layout-datatable',
     editable=True,
-    style_table={'height': '300px', 'overflowY': 'auto'},
+    style_table={'overflowY': 'auto'},
 )
 
 boundary_table = dash_table.DataTable(
     id = 'boundary-layout-datatable',
     editable=True,
-    style_table={'height': '300px', 'overflowY': 'auto'}
+    style_table={'overflowY': 'auto'}
 )
 
 farm_layout_inputs = dbc.Card(
@@ -26,9 +26,9 @@ farm_layout_inputs = dbc.Card(
         dbc.Row([
             dbc.Col(
                 [
-                    html.H6("Boundary data", className="card-text"),
+                    html.H6("Boundary data", className="card-text", style={'margin':'2rem 0rem 1rem'}),
                     boundary_table,
-                    html.H6("Farm data", className="card-text"),
+                    html.H6("Farm data", className="card-text", style={'margin':'5rem 0rem 1rem'}),
                     layout_table
                 ], width=3
             ),

@@ -9,6 +9,25 @@ import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
 
 @app.callback(
+    Output("radio-deflection", "options"), 
+    Input("radio-deficit", "value"),
+)
+def update_deflection_radio(radio):
+    """
+    If multizone in velocity deificit is selected the gauss option in Ddeflection is disabled.
+    """
+    if "multizone" in radio:
+        return [
+             {"label": "Jimenez", "value": "jimenez"},
+            {"label": "Gauss", "value": "gauss", "disabled": True},
+        ]
+    else:
+        return [
+           {"label": "Jimenez", "value": "jimenez"},
+            {"label": "Gauss", "value": "gauss"},
+        ]
+
+@app.callback(
     Output('radio-deficit', 'value'),
     Output('radio-deflection', 'value'),
     Output('radio-turbulence', 'value'),
