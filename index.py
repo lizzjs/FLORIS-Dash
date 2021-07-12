@@ -13,15 +13,9 @@ nav_button = dbc.ButtonGroup(children=[
     size="md",
     className="mr-1",
 )
-sidebar_toggle = dbc.Button(
-    html.Img(src="/assets/bars.png", style={'width':'25px', "height": "20px"}),
-    className="btn-dark btn-sm",
-    id="btn_sidebar",
-)
 
 navigation_menu = dbc.NavbarSimple(
     children=[
-        sidebar_toggle,
         nav_button
     ],
     brand="FLORIS Dashboard",

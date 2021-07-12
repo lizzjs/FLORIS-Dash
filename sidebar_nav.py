@@ -16,23 +16,8 @@ SIDEBAR_STYLE = {
     "background-color": "#f8f9fa",
 }
 
-SIDEBAR_HIDDEN = {
-    # "position": "fixed",
-    # "width": "16rem",
-    "left": "-20rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-}
-
 CONTENT_STYLE = {
     # "margin-left": "18.5rem",
-    # "margin-right": "0rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-}
-
-CONTENT_STYLE1 = {
-    "left": "-16rem",
     # "margin-right": "0rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
@@ -47,43 +32,6 @@ NAVIGATION_ITEMS = [
     "/build/review",
     "/aep-results"
 ]
-
-@app.callback(
-    Output("sidebar", "style"),
-    Output("page-content", "style"),
-    Output("side_click", "data"),
-    Input("btn_sidebar", "n_clicks"),
-    State("side_click", "data"),
-)
-def toggle_sidebar(n, nclick):
-    if n:
-        if nclick == "SHOW":
-            sidebar_style = SIDEBAR_HIDDEN
-            content_style = CONTENT_STYLE1
-            cur_nclick = "HIDDEN"
-        else:
-            sidebar_style = SIDEBAR_STYLE
-            content_style = CONTENT_STYLE
-            cur_nclick = "SHOW"
-    else:
-        sidebar_style = SIDEBAR_STYLE
-        content_style = CONTENT_STYLE
-        cur_nclick = 'SHOW'
-
-    return sidebar_style, content_style, cur_nclick
-
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
-
-for i in [1,2,3]:
-    app.callback(
-        Output(f"submenu-{i}-collapse", "is_open"),
-        [Input(f"submenu-{i}", "n_clicks")],
-        [State(f"submenu-{i}-collapse", "is_open")],
-    )(toggle_collapse)
-
 
 @app.callback(
     Output('page-content', 'children'),
