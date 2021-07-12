@@ -63,15 +63,6 @@ fresh_start_card = dbc.Card(
     className="mb-3",
 )
 
-dashboard_card = dbc.Card(
-    dbc.CardBody([
-        html.H4("Review and analyze results", className="card-title"),
-        html.P("After importing, skip model builder and view results."),
-        dbc.Button("Continue", color="primary", href="/build/review"),
-    ]),
-    className="mb-3",
-)
-
 layout = html.Div([
     dbc.Row(
         dbc.Col(
@@ -94,6 +85,5 @@ layout = html.Div([
         dbc.Col([
             import_json_card
         ])
-    ]),
-    # dbc.Row( dbc.Col( dashboard_card ) ),
+    ])
 ])

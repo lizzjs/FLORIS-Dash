@@ -89,7 +89,7 @@ for i in [1,2,3]:
     Output('page-content', 'children'),
     Output('next-button', 'href'),
     Output('back-button', 'href'),
-    Input('url', 'pathname'), 
+    Input('url', 'pathname'),
 )
 def display_page(pathname):
     """
