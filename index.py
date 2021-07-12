@@ -94,7 +94,9 @@ app.layout = dbc.Container(children=[
         ),
         dcc.Location(id="url"),
         dcc.Store(id='side_click'),
-        dcc.Store(id='floris-inputs'),
+        dcc.Store(id='initial-input-store'),
+        dcc.Store(id='turbine-input-store'),
+        dcc.Store(id='final-input-store'),
         dcc.Store(id='floris-outputs'),
     ],
     fluid=True
