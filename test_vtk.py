@@ -47,27 +47,27 @@ fi.reinitialize_flow_field()
 fd = fi.get_flow_data()
 
 # compute dimensions, origins and spacing based on flow data
-origin = [axis.mean().round().astype(int) for axis in [fd.x, fd.y, fd.z]]
-ranges = np.array([axis.ptp().round().astype(int) for axis in [fd.x, fd.y, fd.z]])
-
-dimensions = np.array([np.unique(axis).shape[0] for axis in [fd.x, fd.y, fd.z]])
-
-x, y, z = dimensions
+axes = [fd.z, fd.y, fd.x]
+origin = [ axis.mean().round().astype(int) for axis in axes ]
+ranges = np.array( [ axis.ptp().round().astype(int) for axis in axes ] )
+dimensions = (fd.dimensions.x3, fd.dimensions.x2, fd.dimensions.x1)
 spacing = np.round(ranges / dimensions).astype(int)
 
-# Read volume
-vol = fd.u
-# dims = (fd.dimensions.x1, fd.dimensions.x2, fd.dimensions.x3)
-dims = (fd.dimensions.x3, fd.dimensions.x2, fd.dimensions.x1)
-vol = np.reshape(vol, dims)
-print(np.shape(vol))
-ori = origin
+volume = fd.u
+volume = np.reshape(volume, dimensions)
 
 # Create slicer objects
-slicer0 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=0)#, thumbnail=False, clim=None)
-slicer1 = VolumeSlicer(
-    app, vol, spacing=spacing, origin=ori, axis=1)#, thumbnail=8, reverse_y=False)
-slicer2 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=2)#, color="#00ff99")
+slicer0 = VolumeSlicer(
+    app,
+    volume,
+    axis=0
+)
+slicer2 = VolumeSlicer(
+    app,
+    volume,
+    axis=2,
+    reverse_y=False
+)
 
 # Put everything together in a 2x2 grid
 app.layout = html.Div(
@@ -87,15 +87,6 @@ app.layout = html.Div(
         ),
         html.Div(
             [
-                html.Center(html.H1("Axis 1")),
-                slicer1.graph,
-                html.Br(),
-                slicer1.slider,
-                *slicer1.stores,
-            ]
-        ),
-        html.Div(
-            [
                 html.Center(html.H1("Axis 2")),
                 slicer2.graph,
                 html.Br(),
@@ -107,14 +98,6 @@ app.layout = html.Div(
             [
                 html.Center(html.H1("3D")),
                 dcc.Graph(id="3Dgraph", figure=go.Figure()),
-            ]
-        ),
-        html.Div(
-            [
-                html.Div("Threshold level"),
-                dcc.Slider(id="level", max=2000, value=500),
-                html.Div("Contrast limits"),
-                dcc.RangeSlider(id="clim", max=2000, value=(0, 800)),
             ]
         ),
     ],
