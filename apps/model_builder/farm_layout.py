@@ -16,7 +16,7 @@ layout_table = dash_table.DataTable(
 )
 
 boundary_table = dash_table.DataTable(
-    id = 'boundary-layout-datatable',
+    id='boundary-layout-datatable',
     editable=True,
     row_deletable=True,
     style_table={'overflowY': 'auto'}
@@ -32,6 +32,7 @@ layout = html.Div(
                     dbc.Col(
                         children=[
                             html.H5("Wind turbine locations"),
+                            dbc.Button("Add row", id="button-add-layout-row", n_clicks=0),
                             layout_table,
                         ],
                         width=3

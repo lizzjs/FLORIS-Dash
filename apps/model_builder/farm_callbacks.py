@@ -1,5 +1,6 @@
 
-from dash.dependencies import Input, Output
+import dash
+from dash.dependencies import Input, Output, State
 import pandas as pd
 
 from app import app
@@ -12,7 +13,7 @@ from graph_generator import *
     Input('farm-layout-datatable', 'data'),
     Input('boundary-layout-datatable', 'data'),
 )
-def farm_layout(farm_data, boundary_data):
+def plot_layout_and_boundary(farm_data, boundary_data):
     df = pd.DataFrame(farm_data)
     if boundary_data is not None: 
         df2 = pd.DataFrame(boundary_data)
@@ -21,12 +22,17 @@ def farm_layout(farm_data, boundary_data):
     farm_layout_plot.update_layout(title="")
     return farm_layout_plot
 
+
 @app.callback(
-    [Output('farm-layout-datatable', 'data'),
-    Output('farm-layout-datatable', 'columns')],
-    Input('farm-layout-datatable', 'data')
+    Output('farm-layout-datatable', 'data'),
+    Output('farm-layout-datatable', 'columns'),
+    Input('farm-layout-datatable', 'data'),
+    Input('button-add-layout-row', 'n_clicks'),
+    State('farm-layout-datatable', 'data'),
+    State('farm-layout-datatable', 'columns')
 )
-def get_layout_table_data(data):
+def get_layout_table_data(data, n_clicks, rows, columns):
+    # On page load
     if data is None:
         df_farm = pd.DataFrame(
             {
@@ -34,15 +40,26 @@ def get_layout_table_data(data):
                 'layout_y': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_y"]
             }
         )
-    else:
-        df_farm = pd.DataFrame(data)
+        columns = [{"name": i, "id": i} for i in df_farm.columns]
+        return df_farm.to_dict("rows"), columns
 
-    columns = [{"name": i, "id": i} for i in df_farm.columns]
-    return df_farm.to_dict("rows"), columns
+    # Otherwise, handle add row and data change
+    ctx = dash.callback_context
+    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if trigger_id == "farm-layout-datatable":
+        df_farm = pd.DataFrame(data)
+        columns = [{"name": i, "id": i} for i in df_farm.columns]
+        return df_farm.to_dict("rows"), columns
+
+    elif trigger_id == "button-add-layout-row":
+        rows.append({c['id']: '' for c in columns})
+        return rows, columns
+
 
 @app.callback(
-    [Output('boundary-layout-datatable', 'data'),
-    Output('boundary-layout-datatable', 'columns')],
+    Output('boundary-layout-datatable', 'data'),
+    Output('boundary-layout-datatable', 'columns'),
     Input('boundary-layout-datatable', 'data')
 )
 def get_boundary_table_data(boundary_data):
