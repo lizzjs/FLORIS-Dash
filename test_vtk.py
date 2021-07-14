@@ -31,10 +31,22 @@ from dash.dependencies import Input, Output, State, ALL
 import imageio
 from skimage import measure
 
+import plotly.express as px
+
 app = dash.Dash(__name__, update_title=None)
 server = app.server
 
-#Need this for the customsidebar
+# R, G, B = "#FF0000", "#00FF00", "#0000FF"
+# R, G, B = (255, 0, 0), (0, 255, 0), (0, 0, 255)
+# COLORMAP = [R, G, B]
+# colorscales = px.colors.named_colorscales()
+COLORMAP = px.colors.sequential.Turbo
+
+# If the px color maps uses RBG values, then enable this to convert to tuples of ints
+# for i, c in enumerate(COLORMAP):
+#     COLORMAP[i] = c.strip("rgb(").strip(')').split(',')
+
+
 fi = wfct.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
 fi.floris.farm.set_wake_model("jensen")
 fi.reinitialize_flow_field()
@@ -150,14 +162,31 @@ function update_3d_figure(states, ori_figure) {
 )
 
 
-# # Callback to add overlay in axis 1
-# @app.callback(
-#     Output(slicer1.overlay_data.id, "data"),
-#     [Input("level", "value")],
-# )
-# def update_overlay(level):
-#     return slicer1.create_overlay_data(vol > level, "#ffff00")
+@app.callback(
+    Output(slicer0.overlay_data.id, "data"),
+    Output(slicer2.overlay_data.id, "data"),
+    Input({"scene": slicer0.scene_id, "context": ALL, "name": "state"}, "data"),
+)
+def update_overlay(_):
+    mask = np.zeros(volume.shape, np.uint8)
 
+    data_range = volume.max() - volume.min()
+
+    # lower = vol.min() + data_range / 3.0
+    # mid = vol.min() + 2 * data_range / 3.0
+    # upper = vol.min() + data_range
+    # mask += vol < lower
+    # mask += vol < mid
+    # mask += vol < upper
+
+    thresholds = [ volume.min() + i * data_range / len(COLORMAP) for i in range(1,len(COLORMAP) + 1) ]
+
+    for i in range(len(COLORMAP)):
+        mask += volume < thresholds[i]
+
+    slicer0_overlay = slicer0.create_overlay_data(mask, COLORMAP)
+    sliver2_overlay = slicer2.create_overlay_data(mask, COLORMAP)
+    return slicer0_overlay, sliver2_overlay
 
 # # Callback to add contours in axes 2
 # @app.callback(
