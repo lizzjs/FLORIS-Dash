@@ -11,12 +11,14 @@ import apps.model_builder.farm_callbacks
 layout_table = dash_table.DataTable(
     id = 'farm-layout-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'overflowY': 'auto'},
 )
 
 boundary_table = dash_table.DataTable(
     id = 'boundary-layout-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'overflowY': 'auto'}
 )
 
