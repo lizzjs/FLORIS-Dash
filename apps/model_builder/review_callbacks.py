@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import time
 
-from app import app, colors
+from app import app
 import apps.floris_data
 from graph_generator import *
 
@@ -15,9 +15,6 @@ from floris.tools.optimization.scipy.yaw_wind_rose import YawOptimizationWindRos
 import floris.tools.power_rose as pr
 import floris.tools.wind_rose as rose
 
-import plotly.graph_objs as go
-import plotly.express as px
-import matplotlib.pyplot as plt
 
 def get_floris_calc_cp_ct():
     # Initialize the FLORIS interface fi

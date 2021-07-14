@@ -1,10 +1,8 @@
 
 from dash.dependencies import Input, Output, State
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
 
-from app import app, colors
+from app import app
 from apps.model_builder import review_layout
 import apps.floris_data
 from graph_generator import *

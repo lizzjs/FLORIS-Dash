@@ -5,7 +5,7 @@ import io
 import pandas as pd
 import plotly.graph_objs as go
 
-from app import app, colors
+from app import app
 import apps.floris_data
 from graph_generator import *
 
