@@ -142,6 +142,7 @@ geometry_inputs = dbc.Card(
 table = dash_table.DataTable(
     id = 'turbine-performance-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'height': '800px', 'overflowY': 'auto'},
 )
 

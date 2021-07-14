@@ -15,14 +15,14 @@ SIDEBAR_STYLE = {
     # "position": "fixed",
     # "width": "16rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+    # "background-color": "#f8f9fa",
 }
 
 CONTENT_STYLE = {
     # "margin-left": "18.5rem",
     # "margin-right": "0rem",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+    # "background-color": "#f8f9fa",
 }
 
 NAVIGATION_ITEMS = [

@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
 
-from app import app, colors
 import apps.floris_data
 import apps
 
@@ -17,7 +16,6 @@ def create_turbine_performance_plots(df):
     power_figure = go.Figure(
         data=cp_plot_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
             title= dict(
                 text="Power Curve",
                 x=0.5,
@@ -38,7 +36,6 @@ def create_turbine_performance_plots(df):
     thrust_figure = go.Figure(
         data=ct_plot_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
             title= dict(
                 text="Thrust Curve",
                 x=0.5,
@@ -88,8 +85,6 @@ def create_farm_layout_plot(df, df2):
     wind_farm_layout = go.Figure(
         data=figure_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            # paper_bgcolor=colors["graphBackground"]
             title= dict(
                 text="Wind Farm Layout",
                 x=0.5,
@@ -125,7 +120,6 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
     power_figure = go.Figure(
         data=cp_plot_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
             title= dict(
                 text="Power Curve",
                 x=0.5,
@@ -135,7 +129,6 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
             xaxis_title="Wind Speed",
             yaxis_title="Cp",
             legend = dict(
-                font = dict(size=10, color="black"), 
                 orientation="h",
                 yanchor="bottom",
                 y=1.02,
@@ -151,7 +144,6 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
             x=df_input["wind_speed"],
             y=df_input["thrust"],
             name="Input",
-            line = dict(color='rgb(69, 3, 252)')
         ),
         go.Line(
             x=df_cp_ct["Wind Speed"],
@@ -163,7 +155,6 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
     thrust_figure = go.Figure(
         data=ct_plot_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
             title= dict(
                 text="Thrust Curve",
                 x=0.5,
@@ -173,7 +164,6 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
             xaxis_title='Wind Speed',
             yaxis_title="Ct",
             legend = dict(
-                font = dict(size=10, color="black"), #set font: family = "Courier", 
                 orientation="h",
                 yanchor="bottom",
                 y=1.02,
@@ -213,7 +203,6 @@ def create_aep_dashboard_plots(floris_output_data):
     power_rose_figure = go.Figure(
         data=power_rose_data,
         layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
             title= dict(
                 text="Power Production",
                 x=0.5,
@@ -221,7 +210,6 @@ def create_aep_dashboard_plots(floris_output_data):
                 font=dict(size=18)
             ),
             legend = dict(
-                font = dict(size=10, color="black"), 
                 orientation="h",
                 yanchor="bottom",
                 y=1.02,

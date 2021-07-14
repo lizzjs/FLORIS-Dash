@@ -1,6 +1,6 @@
 
 import dash_bootstrap_components as dbc
-from dash_bootstrap_components._components.Card import Card
+
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -11,31 +11,50 @@ import apps.model_builder.farm_callbacks
 layout_table = dash_table.DataTable(
     id = 'farm-layout-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'overflowY': 'auto'},
 )
 
 boundary_table = dash_table.DataTable(
-    id = 'boundary-layout-datatable',
+    id='boundary-layout-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'overflowY': 'auto'}
 )
 
-farm_layout_inputs = dbc.Card(
-    dbc.CardBody([
-        html.H3("Wind farm layout.", className="card-text mb-3"),
-        dbc.Row([
-            dbc.Col(
-                [
-                    html.H6("Boundary data", className="card-text", style={'margin':'2rem 0rem 1rem'}),
-                    boundary_table,
-                    html.H6("Farm data", className="card-text", style={'margin':'5rem 0rem 1rem'}),
-                    layout_table
-                ], width=3
-            ),
-            dbc.Col([dcc.Graph(id="farm-layout-graph")], )
+layout = html.Div(
+    children=[
+        html.H3("Farm definition"),
+        html.Br(),
+        dbc.Card([
+            dbc.CardBody(
+                dbc.Row([
+                    dbc.Col(
+                        children=[
+                            html.H5("Wind turbine locations"),
+                            dbc.Button("Add row", id="button-add-layout-row", n_clicks=0),
+                            layout_table,
+                        ],
+                        width=3
+                    ),
+                    dbc.Col(
+                        children=[
+                            html.H5("Boundary points"),
+                            boundary_table
+                        ],
+                        width=3
+                    ),
+                    dbc.Col(
+                        children=[
+                            dbc.Card([
+                                dbc.CardHeader("Layout visualization"),
+                                dbc.CardBody(dcc.Graph(id='farm-layout-graph')),
+                            ])
+                        ],
+                        width=6
+                    ),
+                ])
+            )
         ])
-    ]),
-    className="mt-3",
+    ]
 )
-
-layout = html.Div([farm_layout_inputs])

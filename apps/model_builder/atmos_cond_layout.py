@@ -10,6 +10,7 @@ import apps.model_builder.atmos_cond_callbacks
 wind_rose_table = dash_table.DataTable(
     id = 'wind-rose-datatable',
     editable=True,
+    row_deletable=True,
     style_table={'height': '600px', 'overflowY': 'auto'},
 ),
 
