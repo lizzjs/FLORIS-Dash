@@ -167,14 +167,14 @@ def update_overlay(_):
 
 # # Callback to add contours in axes 2
 # @app.callback(
-#     Output(slicer2.extra_traces.id, "data"),
-#     [Input(slicer2.state.id, "data"), Input("level", "value")],
+#     Output(slicer0.extra_traces.id, "data"),
+#     Input(slicer0.state.id, "data")
 # )
-# def update_contour(state, level):
+# def update_contour(state):
 #     if not state:
 #         return dash.no_update
-#     slice = vol[:, :, state["index"]]
-#     contours = measure.find_contours(slice, level)
+#     slice = volume[:, :, state["index"]]
+#     contours = measure.find_contours(slice)
 #     traces = []
 #     for contour in contours:
 #         traces.append(
@@ -182,8 +182,8 @@ def update_overlay(_):
 #                 "type": "scatter",
 #                 "mode": "lines",
 #                 "line": {"color": "yellow", "width": 3},
-#                 "x": contour[:, 1] * spacing[1] + ori[1],
-#                 "y": contour[:, 0] * spacing[0] + ori[0],
+#                 "x": contour[:, 1], # * spacing[1], # + origin[1],
+#                 "y": contour[:, 0], # * spacing[0], # + origin[0],
 #                 "hoverinfo": "skip",
 #                 "showlegend": False,
 #             }
