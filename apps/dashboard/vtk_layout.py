@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Row import Row
 import dash_core_components as dcc
 import dash_html_components as html
 
@@ -14,8 +15,8 @@ from dash_slicer import VolumeSlicer
 from dash.dependencies import Input, Output, State, ALL
 
 fi = wfct.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
-# fi.floris.farm.set_wake_model("gauss_legacy")
-# fi.reinitialize_flow_field()
+fi.floris.farm.set_wake_model("gauss_legacy")
+fi.reinitialize_flow_field()
 fd = fi.get_flow_data()
 
 # compute dimensions, origins and spacing based on flow data
@@ -86,6 +87,34 @@ controls = [
     # CustomSlider(data=fd.z, id="slider-slice-k", label="Slice k"),
 ]
 
+vtk_view_horizontal = dbc.Row(
+    [
+        dbc.Col(
+            width=9,
+                children=[
+                    dbc.Card(
+                        [
+                            dbc.CardHeader("Flow Visualization"),
+                            dbc.CardBody(vtk_view, style={"height": "100%"}),
+                        ],
+                        style={"height": "70vh"},
+                    ),
+            ]
+        ),
+        dbc.Col(
+            width=3,
+            children=dbc.Card(
+                [
+                    dbc.CardHeader("Flow Visualization Controls"), 
+                    dbc.CardBody(controls)
+                ],
+                style={"height": "70vh"},
+            ),
+        ),
+    ],
+    no_gutters=True
+)
+
 # Read volume
 vol = fd.u
 # dims = (fd.dimensions.x1, fd.dimensions.x2, fd.dimensions.x3)
@@ -94,93 +123,67 @@ vol = np.reshape(vol, dims)
 print(np.shape(vol))
 ori = origin
 
-# Create slicer objects
-slicer0 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=0, thumbnail=False)#, clim=None)
-slicer1 = VolumeSlicer(
-    app, vol, spacing=spacing, origin=ori, axis=1)#, thumbnail=8, reverse_y=False)
-slicer2 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=2)#, color="#00ff99")
 
-# Put everything together in a 2x2 grid
-slice_layout = dbc.Card(
-    # style={
-    #     "display": "grid",
-    #     "gridTemplateColumns": "33% 33% 33%",
-    # },
+slicer0 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=0, thumbnail=False, clim=None, reverse_y=False,)
+slicer0_graph = slicer0.graph.figure
+slicer0_graph.update_layout(margin={'pad': 0})
+
+slicer2 = VolumeSlicer(app, vol, spacing=spacing, origin=ori, axis=2, reverse_y=False, color="#00ff99")
+slicer2_graph = slicer0.graph.figure
+slicer2_graph.update_layout(margin={'pad': 0})
+
+slicers = html.Div(
+    style={
+        "display": "grid",
+        "gridTemplateColumns": "40% 40% 20%",
+    },
     children=[
         html.Div(
             [
-                html.Center(html.H5("Axis 0")),
-                slicer0.slider,
+                html.Center(html.H1("Elevation")),
                 slicer0.graph,
-                # html.Br(),
+                html.Br(),
+                slicer0.slider,
                 *slicer0.stores,
             ]
         ),
         html.Div(
             [
-                html.Center(html.H5("Axis 1")),
-                slicer1.slider,
-                slicer1.graph,
-                # html.Br(),
-                *slicer1.stores,
+                html.Center(html.H1("Streamwise")),
+                slicer2.graph,
+                html.Br(),
+                slicer2.slider,
+                *slicer2.stores,
             ]
         ),
         html.Div(
             [
-                html.Center(html.H5("Axis 2")),
-                slicer2.slider,
-                slicer2.graph,
-                # html.Br(),
-                *slicer2.stores,
-            ]
+                html.Center(html.H1("3D")),
+                dcc.Graph(id="3Dgraph", figure=go.Figure(layout=dict(margin={'b': 50, 'l': 0, 'pad': 0, 'r': 0, 't': 0}))),
+            ],
         ),
-        # html.Div(
-        #     [
-        #         html.Center(html.H5("3D")),
-        #         dcc.Graph(id="3Dgraph", figure=go.Figure()),
-        #     ]
-        # ),
-    ])
-threeD_layout= dbc.Card(
-            [
-                html.Center(html.H5("3D")),
-                dcc.Graph(id="3Dgraph", figure=go.Figure()),
-            ]
-        ),
+    ]
+),
 
-layout = dbc.Container(
-    fluid=True,
-    # style={"height": "100vh"},
+slicer_layout_horizontal = dbc.Row(
+    dbc.Col(
+        children=dbc.Card(
+            [
+                dbc.CardHeader("Slicer View"), 
+                dbc.CardBody(slicers)
+            ]
+        ),
+        width=12
+    )
+)
+
+
+layout = html.Div(
     children=[
         dbc.Row([dbc.Col(html.H1("Flow Visualization with FLORIS and VTK"), md=8)], align="center"),
         html.Hr(),
-        dbc.Row(
-            [
-                dbc.Col(
-                    width=4,
-                    children=dbc.Card(
-                        [dbc.CardHeader("Controls"), dbc.CardBody(controls)]
-                    ),
-                ),
-                dbc.Col(
-                    width=8,
-                    children=dbc.Card(
-                        [
-                            dbc.CardHeader("Flow Visualization"),
-                            dbc.CardBody(vtk_view, style={"height": "100%"}),
-                        ],
-                        style={"height": "80vh"},
-                    ),
-                ),
-                dbc.Col([
-                    slice_layout
-                ],width=4),
-                dbc.Col(
-                    threeD_layout
-                )
-
-            ],
-        ),
+        slicer_layout_horizontal,
+        vtk_view_horizontal,
     ]
 )
 
