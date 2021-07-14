@@ -8,12 +8,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash_slicer import VolumeSlicer
 from dash.dependencies import Input, Output, State, ALL
-import imageio
-from skimage import measure
 
-
-import dash_bootstrap_components as dbc
-import dash_vtk
 import dash_core_components as dcc
 import dash_html_components as html
 
@@ -28,7 +23,6 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash_slicer import VolumeSlicer
 from dash.dependencies import Input, Output, State, ALL
-import imageio
 from skimage import measure
 
 import plotly.express as px
@@ -212,19 +206,6 @@ def update_overlay(_):
 #             }
 #         )
 #     return traces
-
-
-# # Callback to set contrast limits
-# @app.callback(
-#     [
-#         Output(slicer0.clim.id, "data"),
-#         Output(slicer1.clim.id, "data"),
-#         Output(slicer2.clim.id, "data"),
-#     ],
-#     [Input("clim", "value")],
-# )
-# def update_clim(clim):
-#     return [clim, clim, clim]
 
 
 if __name__ == "__main__":
