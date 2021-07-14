@@ -1,9 +1,6 @@
 
-import dash
-from dash.dependencies import Input, Output, State
-import io
+from dash.dependencies import Input, Output
 import pandas as pd
-import plotly.graph_objs as go
 
 from app import app
 import apps.floris_data
@@ -20,9 +17,9 @@ def farm_layout(farm_data, boundary_data):
     if boundary_data is not None: 
         df2 = pd.DataFrame(boundary_data)
         df2 = df2.append(df2.iloc[0,:], ignore_index=True)
-        
-    return create_farm_layout_plot(df, df2)
-
+    farm_layout_plot = create_farm_layout_plot(df, df2)
+    farm_layout_plot.update_layout(title="")
+    return farm_layout_plot
 
 @app.callback(
     [Output('farm-layout-datatable', 'data'),
