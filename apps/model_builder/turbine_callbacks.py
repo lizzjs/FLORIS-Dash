@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 
 from app import app
 import apps.floris_data
-from graph_generator import *
+from apps.graph_generator import *
 
 
 ## Geometry inputs

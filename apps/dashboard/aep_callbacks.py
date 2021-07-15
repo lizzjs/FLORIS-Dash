@@ -5,7 +5,7 @@ import pandas as pd
 from app import app
 from apps.model_builder import review_layout
 import apps.floris_data
-from graph_generator import *
+from apps.graph_generator import *
 
 @app.callback(
     Output('model-comparison-graph', 'figure'),

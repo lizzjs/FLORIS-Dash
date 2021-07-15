@@ -7,7 +7,7 @@ import time
 
 from app import app
 import apps.floris_data
-from graph_generator import *
+from apps.graph_generator import *
 
 import floris.tools as ft
 from floris.tools.floris_interface import FlorisInterface
