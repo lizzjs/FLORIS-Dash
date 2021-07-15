@@ -12,17 +12,30 @@ wind_rose_table = dash_table.DataTable(
     editable=True,
     row_deletable=True,
     style_table={'height': '600px', 'overflowY': 'auto'},
-),
-
-atmos_cond_inputs = dbc.Card(
-    dbc.CardBody([
-        html.H3("Wind farm atmospheric conditions.", className="card-text mb-3"),
-        dbc.Row([
-            dbc.Col(wind_rose_table),
-            dbc.Col( dcc.Graph(id="wind-rose-graph") )
-        ])
-    ]),
-    className="mt-3",
 )
 
-layout = html.Div([atmos_cond_inputs])
+wind_rose_graph = dcc.Graph(id="wind-rose-graph")
+
+layout = html.Div(
+    children=[
+        html.H3("Wind Rose"),
+        html.Br(),
+        dbc.Card([
+            dbc.CardBody(
+                dbc.Row([
+                    dbc.Col(
+                        children=[
+                            wind_rose_table
+                        ],
+                        width=4
+                    ),
+                    dbc.Col(
+                        children=[
+                            wind_rose_graph
+                        ],
+                    )
+                ])
+            )
+        ])
+    ]
+)

@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
 
+from floris.tools.floris_interface import FlorisInterface
+import numpy as np
 import apps.floris_data
 import apps
 
@@ -101,6 +103,28 @@ def create_farm_layout_plot(df, df2):
         ),
         )
     return wind_farm_layout
+
+def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
+
+    # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
+    fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
+    fi.calculate_wake(yaw_angles=[10.0, 0.0])
+    horizontal_slice = fi.get_hor_plane()
+
+    minSpeed = horizontal_slice.df.u.min()
+    maxSpeed = horizontal_slice.df.u.max()
+
+    # Reshape to 2d for plotting
+    # x1_mesh = horizontal_slice.df.x1.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
+    # x2_mesh = horizontal_slice.df.x2.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
+    u_mesh = horizontal_slice.df.u.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0]).astype(np.float64)
+
+    wake_contour_graph = go.Figure(
+        data=go.Contour(
+            z = u_mesh
+        )
+    )
+    return wake_contour_graph
 
 def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
     cp_plot_data = [

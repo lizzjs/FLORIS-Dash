@@ -19,7 +19,11 @@ def plot_layout_and_boundary(farm_data, boundary_data):
         df2 = pd.DataFrame(boundary_data)
         df2 = df2.append(df2.iloc[0,:], ignore_index=True)
     farm_layout_plot = create_farm_layout_plot(df, df2)
-    farm_layout_plot.update_layout(title="")
+    farm_layout_plot.update_layout(
+        title="",
+        height=550,
+        width=825
+        )
     return farm_layout_plot
 
 

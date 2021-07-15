@@ -12,19 +12,19 @@ layout_table = dash_table.DataTable(
     id = 'farm-layout-datatable',
     editable=True,
     row_deletable=True,
-    style_table={'overflowY': 'auto'},
+    style_table={'overflowY': 'auto', 'maxHeight':'550px'},
 )
 
 boundary_table = dash_table.DataTable(
     id='boundary-layout-datatable',
     editable=True,
     row_deletable=True,
-    style_table={'overflowY': 'auto'}
+    style_table={'overflowY': 'auto', 'maxHeight':'550px'}
 )
 
 layout = html.Div(
     children=[
-        html.H3("Farm definition"),
+        html.H3("Farm Definition"),
         html.Br(),
         dbc.Card([
             dbc.CardBody(
@@ -32,26 +32,25 @@ layout = html.Div(
                     dbc.Col(
                         children=[
                             html.H5("Wind turbine locations"),
-                            dbc.Button("Add row", id="button-add-layout-row", n_clicks=0),
+                            dbc.Button("Add row", id="button-add-layout-row", className='mb-3 btn-sm', n_clicks=0),
                             layout_table,
                         ],
-                        width=3
                     ),
                     dbc.Col(
                         children=[
                             html.H5("Boundary points"),
+                            html.Br(),
                             boundary_table
                         ],
-                        width=3
                     ),
                     dbc.Col(
                         children=[
                             dbc.Card([
-                                dbc.CardHeader("Layout visualization"),
+                                dbc.CardHeader("Layout Visualization"),
                                 dbc.CardBody(dcc.Graph(id='farm-layout-graph')),
                             ])
                         ],
-                        width=6
+                        width=7
                     ),
                 ])
             )

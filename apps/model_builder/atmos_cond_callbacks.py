@@ -16,8 +16,9 @@ def atmos_cond_wind_rose_plot(data):
     df_windrose = pd.DataFrame(data)
     wind_rose_figure = create_windrose_plot(df_windrose)
     wind_rose_figure.update_layout(
-        height=400,
-        width=550
+        title="",
+        height=600,
+        width=750
     )
     return wind_rose_figure
 

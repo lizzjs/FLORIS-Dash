@@ -7,6 +7,7 @@ import numpy as np
 from app import app
 import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
+from graph_generator import *
 
 @app.callback(
     Output("radio-deflection", "options"), 
@@ -14,16 +15,16 @@ from floris.tools.floris_interface import FlorisInterface
 )
 def update_deflection_radio(radio):
     """
-    If multizone in velocity deificit is selected the gauss option in Ddeflection is disabled.
+    If multizone in velocity deificit is selected the gauss option in deflection is disabled.
     """
     if "multizone" in radio:
         return [
-             {"label": "Jimenez", "value": "jimenez"},
+            {"label": "Jimenez", "value": "jimenez"},
             {"label": "Gauss", "value": "gauss", "disabled": True},
         ]
     else:
         return [
-           {"label": "Jimenez", "value": "jimenez"},
+            {"label": "Jimenez", "value": "jimenez"},
             {"label": "Gauss", "value": "gauss"},
         ]
 
@@ -63,6 +64,9 @@ def toggle_model(n, velocity_value, deflection_value, turbulence_value, combinat
     Output('turbulence-parameter-datatable', 'data'),
     Output('turbulence-parameter-datatable', 'columns'),
     Output("collapse-parameters", "is_open"),
+    Output('velocity-param-label', 'children'),
+    Output('deflection-param-label', 'children'),
+    Output('turbulence-param-label', 'children'),
     Input("collapse-parameter-button", "n_clicks"),
     Input('radio-deficit', 'value'),
     Input('radio-deflection', 'value'),
@@ -71,6 +75,9 @@ def toggle_model(n, velocity_value, deflection_value, turbulence_value, combinat
     State("collapse-parameters", "is_open"),
 )
 def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, combination_value, is_open):
+    velocity_label = velocity_value.capitalize()
+    deflection_label = deflection_value.capitalize()
+    turbulence_label = turbulence_value.capitalize()
 
     fi = FlorisInterface(input_dict=apps.floris_data.default_input_dict)
     params = fi.get_model_parameters()
@@ -89,7 +96,7 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     if trigger_id == "collapse-parameter-button":
         is_open = not is_open
 
-    return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open
+    return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open, velocity_label, deflection_label, turbulence_label
 
 @app.callback(
     Output("wake-model-preview-graph", "figure"),
@@ -99,23 +106,7 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     Input('radio-combination', 'value'),
 )
 def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
-
-    # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
-    fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
-    fi.calculate_wake(yaw_angles=[10.0, 0.0])
-    horizontal_slice = fi.get_hor_plane()
-
-    minSpeed = horizontal_slice.df.u.min()
-    maxSpeed = horizontal_slice.df.u.max()
-
-    # Reshape to 2d for plotting
-    # x1_mesh = horizontal_slice.df.x1.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
-    # x2_mesh = horizontal_slice.df.x2.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0])
-    u_mesh = horizontal_slice.df.u.values.reshape(horizontal_slice.resolution[1], horizontal_slice.resolution[0]).astype(np.float64)
-
-    wake_contour_graph = go.Figure(
-        data=go.Contour(
-            z = u_mesh
-        )
-    )
+   
+    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value)
+    
     return wake_contour_graph
