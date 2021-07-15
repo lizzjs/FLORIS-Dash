@@ -7,7 +7,7 @@ import numpy as np
 from app import app
 import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
-from graph_generator import *
+from apps.graph_generator import *
 
 @app.callback(
     Output("radio-deflection", "options"), 
