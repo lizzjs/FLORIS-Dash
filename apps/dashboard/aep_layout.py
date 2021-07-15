@@ -30,19 +30,27 @@ graph_layout = html.Div([
 ])
 
 layout = html.Div(
-    [
-        dbc.Spinner(
-            [
-                # html.Div(id="floris-compute-time", style={"hidden": "true"}),
-                graph_layout
-            ],
-            id="results-spinner",
-            type="circle"
-        ),
-        dbc.Row(
-            [
-                dbc.Button("Export to PDF", className="mb-3",style={'margin':'5rem'},id='js',n_clicks=0) 
-            ],
-            justify="center",
-        ),
-    ])
+    children=[
+        html.H2("Annual Energy Production Dashboard"),
+        html.Br(),
+        dbc.Card([
+            dbc.CardBody(
+                [
+                    dbc.Spinner(
+                        [
+                            graph_layout
+                        ],
+                        id="results-spinner",
+                        type="circle"
+                    ),
+                    # dbc.Row(
+                    #     [
+                    #         dbc.Button("Export to PDF", className="mb-3",style={'margin':'5rem'},id='js',n_clicks=0) 
+                    #     ],
+                    #     justify="center",
+                    # ),
+                ]
+            )
+        ])
+    ]
+)

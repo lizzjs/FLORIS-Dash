@@ -56,98 +56,158 @@ combination_radio = dbc.FormGroup([
     ),
 ])
 
-velocity_datatable = dt.DataTable(
-    id = 'velocity-parameter-datatable',
-    editable=True,
-    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+velocity_datatable = html.Div(
+    [
+        dbc.Label(id="velocity-param-label"),
+        dt.DataTable(
+            id = 'velocity-parameter-datatable',
+            editable=True,
+            style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+        )
+    ]
 )
 
-deflection_datatable = dt.DataTable(
-    id = 'deflection-parameter-datatable',
-    editable=True,
-    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+deflection_datatable = html.Div(
+    [
+        dbc.Label(id="deflection-param-label"),
+        dt.DataTable(
+            id = 'deflection-parameter-datatable',
+            editable=True,
+            style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+         )
+    ]
 )
 
-turbulence_datatable = dt.DataTable(
-    id = 'turbulence-parameter-datatable',
-    editable=True,
-    style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+turbulence_datatable = html.Div(
+    [
+        dbc.Label(id="turbulence-param-label"),
+        dt.DataTable(
+            id = 'turbulence-parameter-datatable',
+            editable=True,
+            style_cell={'overflow': 'hidden','textOverflow': 'ellipsis','maxWidth': 0}
+        )
+    ]
 )
 
-layout = html.Div([
-    dbc.Row(
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(
-                    dbc.Button(
-                        "Define the wake model",
-                        id="collapse-model-button",
-                        # block=True,
-                    )
-                ),
-                dbc.Collapse(
-                    dbc.CardBody(
-                        dbc.Row([
-                            dbc.Col( velocity_radio),
-                            dbc.Col( deflection_radio),
-                            dbc.Col( turbulance_radio ),
-                            dbc.Col( combination_radio),
-                        ]),
-                    ),
-                    id="collapse-models",
-                    is_open=True,
-                )
-            ])
+wake_options_collapse = dbc.Collapse(
+    dbc.CardBody(
+        dbc.Row([
+            dbc.Col( velocity_radio),
+            dbc.Col( deflection_radio),
+            dbc.Col( turbulance_radio),
+            dbc.Col( combination_radio),
+        ]),
+    ),
+    id="collapse-models",
+    is_open=True,
+)
+wake_parameters_collapse = dbc.Collapse(
+    dbc.CardBody(
+        dbc.Row(
+            [
+                dbc.Col( velocity_datatable, width=3),
+                dbc.Col( deflection_datatable, width=3),
+                dbc.Col( turbulence_datatable, width=3),
+                dbc.Col(width=3)
+            ], 
+        ),
+    ),
+    id="collapse-parameters",
+    is_open=True,
+)
+
+flow_field_preview_collapse = dbc.Collapse(
+    dbc.CardBody(
+        dbc.Row(
+            dbc.Col( dcc.Graph(id="wake-model-preview-graph") )
         )
     ),
-    html.Br(),
+    id="collapse-preview",
+    is_open=True,
+)
+
+collapse_layout = html.Div([
     dbc.Row(
         dbc.Col(
             dbc.Card([
                 dbc.CardHeader(
-                    dbc.Button(
-                        "Wake model parameters",
-                        id="collapse-parameter-button",
-                        # block=True,
-                        # style={'text-align': 'left'}
-                    )
-                ),
-                dbc.Collapse(
-                    dbc.CardBody(
-                        dbc.Row([
-                            dbc.Col( velocity_datatable, width=3,),
-                            dbc.Col( deflection_datatable, width=3),
-                            dbc.Col( turbulence_datatable, width=3),
-                            dbc.Col( width=3,),
-                        ]),
-                    ),
-                    id="collapse-parameters",
-                    is_open=True,
-                )
-            ])
-        )
-    ),
-    html.Br(),
-    dbc.Row(
-        dbc.Col(
-            dbc.Card([
-                dbc.CardHeader(
-                    dbc.Button(
-                        "Flow field preview",
-                        id="collapse-preview-button",
-                        # block=True,
-                    )
-                ),
-                dbc.Collapse(
-                    dbc.CardBody(
-                        dbc.Row(
-                            dbc.Col( dcc.Graph(id="wake-model-preview-graph") )
+                    [
+                        dbc.Label("Model Options", className='mr-1'),
+                        dbc.Button(
+                            children=[
+                                html.Img(
+                                    src="/assets/carrot-arrow.png", 
+                                    style={'width':'10px', 'align':'center'}
+                                )
+                            ], 
+                            className="btn-light btn-sm", 
+                            style={'width':'30px', 'height':'30px'},
+                            id="collapse-model-button",
                         )
-                    ),
-                    id="collapse-preview",
-                    is_open=True,
+                    ]
                 ),
+                wake_options_collapse
+            ])
+        )
+    ),
+    html.Br(),
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader(
+                    [
+                        dbc.Label("Model Paramters", className='mr-1'),
+                        dbc.Button(
+                            children=[
+                                html.Img(
+                                    src="/assets/carrot-arrow.png", 
+                                    style={'width':'10px', 'align':'center'}
+                                )
+                            ], 
+                            className="btn-light btn-sm", 
+                            style={'width':'30px', 'height':'30px'},
+                            id="collapse-parameter-button",
+                        )
+                    ]
+                ),
+                wake_parameters_collapse
+            ])
+        )
+    ),
+    html.Br(),
+    dbc.Row(
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader(
+                    [
+                        dbc.Label("Flow Field Preview", className='mr-1'),
+                            # dbc.Button(
+                            #     children=[
+                            #         html.Img(
+                            #             src="/assets/carrot-arrow.png", 
+                            #             style={'width':'10px', 'align':'center'}
+                            #         )
+                            #     ], 
+                            #     className="btn-light btn-sm", 
+                            #     style={'width':'30px', 'height':'30px'},
+                            #     id="collapse-preview-button",
+                            # )
+                    ]
+                ),
+                flow_field_preview_collapse
             ])
         )
     )
-],)
+])
+
+layout = html.Div(
+    children=[
+        html.H3("Model Definition"),
+        html.Br(),
+        dbc.Card([
+            dbc.CardBody(
+                collapse_layout
+            )
+        ])
+    ]
+)

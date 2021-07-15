@@ -63,16 +63,19 @@ app.layout = dbc.Container(children=[
                 navigation_menu
             )
         ),
-        dbc.Row([
-            dbc.Col(
-                sidebar,
-                width=2
-            ),
-            dbc.Col(
-                content,
-                width=10
-            )
-        ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    sidebar,
+                    width=2
+                ),
+                dbc.Col(
+                    content,
+                    width=10
+                )
+            ],
+            no_gutters=True #we can remove this if anything
+        ),
         dcc.Location(id="url"),
         dcc.Store(id='side_click'),
         dcc.Store(id='floris-inputs'),
