@@ -7,6 +7,26 @@ from apps.model_builder import review_layout
 import apps.floris_data
 from graph_generator import *
 
+app.clientside_callback(
+    """
+    function(n_clicks){
+        if(n_clicks > 0){
+            var opt = {
+                margin: 1,
+                filename: 'Results_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3},
+                jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
+                pagebreak: { mode: ['avoid-all'] }
+            };
+            html2pdf().from(document.getElementById("print")).set(opt).save();
+        }
+    }
+    """,
+    Output('js','n_clicks'),
+    Input('js','n_clicks')
+)
+
 @app.callback(
     Output('model-comparison-graph', 'figure'),
     Output('compute-time-graph', 'figure'),

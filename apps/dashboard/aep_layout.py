@@ -1,5 +1,6 @@
 
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Row import Row
 import dash_core_components as dcc
 import dash_html_components as html
 
@@ -31,26 +32,42 @@ graph_layout = html.Div([
 
 layout = html.Div(
     children=[
-        html.H2("Annual Energy Production Dashboard"),
-        html.Br(),
-        dbc.Card([
-            dbc.CardBody(
+        #This row will overlap the content below it in order to avoid having the 
+        #download button included in the pdf export
+        dbc.Row([ 
+            dbc.Col(width=11),
+            dbc.Col(
+                dbc.Button(
+                    children=[
+                            html.Img(
+                                src="/assets/file-download.png", 
+                                style={'width':'30px', 'align':'center'}
+                            )
+                        ], 
+                        className="btn-light", id='js', n_clicks=0
+                ), 
+                style={'margin':'25px 0px 0px 30px'}
+            ),
+        ],style={'height':'0px'},),
+        html.Div([
+            dbc.Row(
+                dbc.Col(html.H2("Annual Energy Production Dashboard")), 
+                style={'height':'55px'},
+            ),
+            html.Br(),
+            dbc.Card(
                 [
-                    dbc.Spinner(
+                    dbc.CardBody(
                         [
-                            graph_layout
-                        ],
-                        id="results-spinner",
-                        type="circle"
-                    ),
-                    # dbc.Row(
-                    #     [
-                    #         dbc.Button("Export to PDF", className="mb-3",style={'margin':'5rem'},id='js',n_clicks=0) 
-                    #     ],
-                    #     justify="center",
-                    # ),
-                ]
+                            dbc.Spinner(
+                                graph_layout,
+                                id="results-spinner",
+                                type="circle"
+                            ),
+                        ]
+                    )
+                ], className='cardDesign'
             )
-        ])
-    ]
+        ], id='print')
+    ], id='main'
 )
