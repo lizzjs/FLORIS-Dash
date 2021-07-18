@@ -1,5 +1,6 @@
 
 from dash.dependencies import Input, Output, State
+import dash_core_components as dcc
 import pandas as pd
 
 from app import app
@@ -28,10 +29,10 @@ app.clientside_callback(
 )
 
 @app.callback(
-    Output('model-comparison-graph', 'figure'),
-    Output('compute-time-graph', 'figure'),
-    Output('aep-farm-graph', 'figure'),
-    Output('aep-windrose-graph', 'figure'),
+    Output('model-comparison-graph-div', 'children'),
+    Output('compute-time-graph-div', 'children'),
+    Output('aep-farm-graph-div', 'children'),
+    Output('aep-windrose-graph-div', 'children'),
     Input("floris-outputs", "data"),
 )
 def create_dashboard_plots(floris_output_data):
@@ -67,7 +68,7 @@ def create_dashboard_plots(floris_output_data):
     df_windrose = pd.DataFrame(wind_data)
     wind_rose_figure = create_windrose_plot(df_windrose)
 
-    return power_rose_figure, compute_time_figure, wind_farm_figure, wind_rose_figure
+    return dcc.Graph(figure=power_rose_figure), dcc.Graph(figure=compute_time_figure), dcc.Graph(figure=wind_farm_figure), dcc.Graph(figure=wind_rose_figure)
 
     #TODO: Energy plot
     # ax.plot(
