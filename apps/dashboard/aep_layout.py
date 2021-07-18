@@ -9,17 +9,28 @@ import apps.dashboard.aep_callbacks
 
 graph_layout = html.Div([
     dbc.Row(
+        dbc.Col(
+            html.Div(
+                children=[
+                    dbc.Spinner(),
+                    "FLORIS simulation is running. AEP results will update here shortly.",
+                ],
+                id="loading-spinner"
+            )
+        )
+    ),
+    dbc.Row(
         children=[
             dbc.Col(
                 html.Div(
-                    dbc.Spinner(),
+                    # dbc.Spinner(),
                     id="model-comparison-graph-div"
                 ),
                 # dcc.Graph(id='model-comparison-graph')
             ),
             dbc.Col(
                 html.Div(
-                    dbc.Spinner(),
+                    # dbc.Spinner(),
                     id="compute-time-graph-div"
                 ),
                 # dcc.Graph(id='compute-time-graph')
@@ -31,14 +42,14 @@ graph_layout = html.Div([
         children=[
             dbc.Col(
                 html.Div(
-                    dbc.Spinner(),
+                    # dbc.Spinner(),
                     id="aep-farm-graph-div"
                 ),
                 # dcc.Graph(id='aep-farm-graph')
             ),
             dbc.Col(
                 html.Div(
-                    dbc.Spinner(),
+                    # dbc.Spinner(),
                     id="aep-windrose-graph-div"
                 ),
                 # dcc.Graph(id='aep-windrose-graph')

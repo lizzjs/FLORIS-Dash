@@ -29,6 +29,7 @@ app.clientside_callback(
 )
 
 @app.callback(
+    Output('loading-spinner', 'children'),
     Output('model-comparison-graph-div', 'children'),
     Output('compute-time-graph-div', 'children'),
     Output('aep-farm-graph-div', 'children'),
@@ -68,7 +69,7 @@ def create_dashboard_plots(floris_output_data):
     df_windrose = pd.DataFrame(wind_data)
     wind_rose_figure = create_windrose_plot(df_windrose)
 
-    return dcc.Graph(figure=power_rose_figure), dcc.Graph(figure=compute_time_figure), dcc.Graph(figure=wind_farm_figure), dcc.Graph(figure=wind_rose_figure)
+    return None, dcc.Graph(figure=power_rose_figure), dcc.Graph(figure=compute_time_figure), dcc.Graph(figure=wind_farm_figure), dcc.Graph(figure=wind_rose_figure)
 
     #TODO: Energy plot
     # ax.plot(
