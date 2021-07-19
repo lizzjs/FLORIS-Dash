@@ -7,10 +7,7 @@ import apps.floris_data
 from graph_generator import *
 
 
-## Geometry
-
-def _get_turbine_definition_value(key, value, initial_input_store, turbine_store=None):
-    
+def _get_turbine_definition_value(key, value, initial_input_store, turbine_store):
     # On first load
     if value is None:
         if turbine_store is not None:
@@ -25,6 +22,7 @@ def _get_turbine_definition_value(key, value, initial_input_store, turbine_store
     # On every other call, return the value in the field
     return value
 
+## Geometry
 
 @app.callback(
     Output('input-rotor-diameter', 'value'),
