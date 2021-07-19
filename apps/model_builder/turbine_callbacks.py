@@ -137,13 +137,14 @@ def rloc(value, initial_input_store, turbine_store):
 
 
 @app.callback(
-    Output('switch-perimeter-points', 'value'),
-    Input('switch-perimeter-points', 'value'),
-    State('initial-input-store', 'data')
+    Output('switch-perimeter-points', 'on'),
+    Input('switch-perimeter-points', 'on'),
+    State('initial-input-store', 'data'),
+    State('turbine-input-store', 'data')
 )
-def perimeter_points(value, initial_input_store):
-    state = _get_turbine_definition_value("use_points_on_perimeter", value, initial_input_store)
-    return 1 if state == True else 0
+def perimeter_points(value, initial_input_store, turbine_store):
+    key = "use_points_on_perimeter"
+    return _get_turbine_definition_value(key, value, initial_input_store, turbine_store)
 
 
 ## Performance

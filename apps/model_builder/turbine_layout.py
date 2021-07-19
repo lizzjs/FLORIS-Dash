@@ -1,6 +1,7 @@
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
+import dash_daq as daq
 import dash_html_components as html
 import dash_table
 
@@ -117,10 +118,9 @@ geometry_inputs = dbc.Card(
             ]),
 
             dbc.FormGroup([
-                dbc.Checklist(
-                    options=[{"label": "Use points on perimeter", "value": 1}],
-                    id="switch-perimeter-points",
-                    switch=True,
+                daq.BooleanSwitch(
+                    id='switch-perimeter-points',
+                    label='Use points on perimeter'
                 ),
             ]),
         ]),
