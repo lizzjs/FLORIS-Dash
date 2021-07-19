@@ -24,21 +24,17 @@ def store_input_data(_, contents, filename):
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
     if trigger_id == "button-load-defaults":
-        initial_data = apps.floris_data.default_input_dict
-        initial_data["use_defaults"] = True
-        return initial_data, "No input file selected.", True, True
+        return apps.floris_data.default_input_dict, "No input file selected.", True, True
 
     elif trigger_id == "upload-input-file":
         if filename is None:
-            return {}, "No input file selected.", True, True
+            return None, "No input file selected.", True, True
 
         content_type, content_string = contents.split(',')
         try:
-            time.sleep(1)
             decoded = base64.b64decode(content_string).decode('utf-8')
             data = json.loads(decoded)
-            data["use_defaults"] = False
             return data, filename, False, False
         except Exception as e:
             print(e)
-            return {}, e, False, False
+            return None, e, False, False
