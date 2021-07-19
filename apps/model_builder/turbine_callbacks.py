@@ -163,27 +163,24 @@ def turbine_performance_plots(data):
     Output('turbine-performance-datatable', 'data'),
     Output('turbine-performance-datatable', 'columns'),
     Input('turbine-performance-datatable', 'data'),
-    State('initial-input-store', 'data')
+    State('initial-input-store', 'data'),
+    State('turbine-input-store', 'data')
 )
-def get_performance_table_data(data, initial_input_store):
-
-    if initial_input_store is None:
-        # TODO: This is a fatal error. How to handle?
-        return None
-
-    if data == None:
-        df = pd.DataFrame(
-            {
-                'Wind Speed': initial_input_store["turbine"]["properties"]["power_thrust_table"]["wind_speed"],
-                'Cp': initial_input_store["turbine"]["properties"]["power_thrust_table"]["power"],
-                'Ct': initial_input_store["turbine"]["properties"]["power_thrust_table"]["thrust"]
-            }
-        )
-    else:
-        df = pd.DataFrame(data)
-
+def get_performance_table_data(data, initial_input_store, turbine_store):
+    key = "power_thrust_table"
+    table = _get_turbine_definition_value(key, data, initial_input_store, turbine_store)
+    df = pd.DataFrame(table)
     columns = [{"name": i, "id": i} for i in df.columns]
+    temp_column = columns.copy()
+
+    # Rearrange columns in the final table
+    columns[0] = temp_column[2] # Wind speed
+    columns[1] = temp_column[0] # Power
+    columns[2] = temp_column[1] # Thrust
+
     return df.to_dict("rows"), columns
+
+
 ## Turbine definition store
 
 @app.callback(

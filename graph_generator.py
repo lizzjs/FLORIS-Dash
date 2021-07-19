@@ -10,8 +10,8 @@ import apps
 
 def create_turbine_performance_plots(df):
     cp_plot_data = go.Line(
-        x=df["Wind Speed"],
-        y=df["Cp"],
+        x=df["wind_speed"],
+        y=df["power"],
         name="Input",
         line = dict(color='rgb(204, 37, 8)')
     ),
@@ -30,8 +30,8 @@ def create_turbine_performance_plots(df):
     )
 
     ct_plot_data = go.Line(
-        x=df["Wind Speed"],
-        y=df["Ct"],
+        x=df["wind_speed"],
+        y=df["thrust"],
         name="Input",
         line = dict(color='rgb(69, 3, 252)')
     ),
