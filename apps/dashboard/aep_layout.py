@@ -34,21 +34,21 @@ layout = html.Div(
     children=[
         #This row will overlap the content below it in order to avoid having the 
         #download button included in the pdf export
-        dbc.Row([ 
-            dbc.Col(width=11),
-            dbc.Col(
-                dbc.Button(
-                    children=[
-                            html.Img(
-                                src="/assets/file-download.png", 
-                                style={'width':'30px', 'align':'center'}
-                            )
-                        ], 
-                        className="btn-light", id='js', n_clicks=0
-                ), 
-                style={'margin':'25px 0px 0px 30px'}
-            ),
-        ],style={'height':'0px'},),
+        # dbc.Row([ 
+        #     dbc.Col(width=11),
+        #     dbc.Col(
+        #         dbc.Button(
+        #             children=[
+        #                     html.Img(
+        #                         src="/assets/file-download.png", 
+        #                         style={'width':'30px', 'align':'center'}
+        #                     )
+        #                 ], 
+        #                 className="btn-light", id='js', n_clicks=0
+        #         ), 
+        #         style={'margin':'25px 0px 0px 30px'}
+        #     ),
+        # ],style={'height':'0px'},),
         html.Div([
             dbc.Row(
                 dbc.Col(html.H2("Annual Energy Production Dashboard")), 
@@ -68,6 +68,19 @@ layout = html.Div(
                     )
                 ], className='cardDesign'
             )
-        ], id='print')
+        ], id='print'),
+        dbc.Row([
+                dbc.Button(
+                    children=[
+                            "Export to PDF ",
+                            html.Img(
+                                src="/assets/file-download.png", 
+                                style={'width':'20px'}
+                            )
+                        ], 
+                        className="btn-dark", id='js', n_clicks=0
+                ), 
+                # style={'margin':'25px 0px 0px 30px'} 
+            ], justify='center'),
     ], id='main'
 )
