@@ -14,7 +14,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Rotor diameter"),
                 dbc.Input(
-                    id="input-rotordiam",
+                    id="input-rotor-diameter",
                     type="number",
                     min=0,
                     max=500,
@@ -24,7 +24,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Hub height"),
                 dbc.Input(
-                    id="input-hubheight",
+                    id="input-hub-height",
                     type="number",
                     min=0,
                     max=500,
@@ -34,7 +34,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Yaw angle"),
                 dbc.Input(
-                    id="input-yawangle",
+                    id="input-yaw-angle",
                     type="number",
                     min=0,
                     max=14,
@@ -45,7 +45,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Tilt angle"),
                 dbc.Input(
-                    id="input-tiltangle",
+                    id="input-tilt-angle",
                     type="number",
                     min=0,
                     max=14,
@@ -56,7 +56,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Tip speed ratio"),
                 dbc.Input(
-                    id="input-TSR",
+                    id="input-tip-speed-ratio",
                     type="number",
                     min=0,
                     max=20,
@@ -66,7 +66,7 @@ geometry_inputs = dbc.Card(
             dbc.FormGroup([
                 dbc.Label("Generator efficiency"),
                 dbc.Input(
-                    id="input-genEff",
+                    id="input-generator-efficiency",
                     type="number",
                     min=0,
                     max=20,
@@ -129,26 +129,26 @@ geometry_inputs = dbc.Card(
 )
 
 performance_datatable = dash_table.DataTable(
-    id = 'turbine-performance-datatable',
+    id='turbine-performance-datatable',
     editable=True,
     row_deletable=True,
     style_table={'height': '970px', 'overflowY': 'auto'},
 )
 
 performance_inputs = dbc.Row([
-            dbc.Col(
-                [
-                    performance_datatable,
-                ],
-                width=4
-            ),
-            dbc.Col(
-                [
-                    dcc.Graph(id="CpU"),
-                    dcc.Graph(id="CtU"),
-                ],
-            )
-        ])
+    dbc.Col(
+        children=[
+            performance_datatable,
+        ],
+        width=4
+    ),
+    dbc.Col(
+        children=[
+            dcc.Graph(id="CpU"),
+            dcc.Graph(id="CtU"),
+        ],
+    )
+])
 
 layout = html.Div(
     children=[
