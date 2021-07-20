@@ -13,8 +13,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 import numpy as np
-import apps.dashboard.vtk_callbacks
 import floris.tools as wfct
+import apps.floris_data
 from app import app
 
 import plotly.graph_objects as go
