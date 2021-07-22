@@ -104,9 +104,33 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     Input('radio-deflection', 'value'),
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
+    # Input('velocity-parameter-datatable', 'data'),
+    # Input('radio-deficit', 'value'),
+
 )
-def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
-   
+def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):#, velocity_table_data, velocity_model):
+    #TODO connect the datatables to the preview figure
+
+    # #convert list data from datatable to dictionary
+    # velocity_parameters = {k:v for e in velocity_table_data for (k,v) in e.items()}
+    # print(velocity_table_data['Value'])
+
+    # #assign updated values to floris input data
+    # apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
+    # apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
+
+    # print(apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"])
+
+    # #attempting to only update when change in the datatable is a trigger
+    # # ctx = dash.callback_context
+    # # trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    # # if trigger_id == "velocity-parameter-datatable": 
+        
+    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
+    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
+
+
+
     wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value)
     
     return wake_contour_graph

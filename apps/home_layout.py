@@ -77,7 +77,7 @@ layout = html.Div([
             ),
         )
     ),
-    
+    html.Br(),
     dbc.Row([
         dbc.Col([
             fresh_start_card,

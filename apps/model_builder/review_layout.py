@@ -23,7 +23,6 @@ submit_button = html.Div([
     dbc.ListGroupItem(
         dbc.Button("Submit", id="submit-floris-button", block=True, color="primary", href="/aep-results"),
     ),
-    # dbc.Spinner(html.Div(id="loading-output")),
 ])
 
 layout = html.Div([

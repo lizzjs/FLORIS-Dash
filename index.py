@@ -16,6 +16,18 @@ nav_button = dbc.ButtonGroup(children=[
 
 navigation_menu = dbc.NavbarSimple(
     children=[
+        dbc.Button(
+            children=[
+                html.Img(
+                    src="/assets/home.png", 
+                    style={'width':'30px', 'align':'center'}
+                )
+            ], 
+            # className="btn-sm mr-1 btn-outline-light btn-dark", 
+            className="btn-sm mr-1 btn-light", 
+            href="/",
+            id="home-button",
+        ),
         nav_button
     ],
     brand="FLORIS Dashboard",
@@ -28,9 +40,6 @@ navigation_menu = dbc.NavbarSimple(
 sidebar = dbc.Card(
     dbc.Nav(
         children=[
-            html.H2("Home", style={'font-size':'14px'}),
-            dbc.NavItem(dbc.NavLink("Home", active="exact", href="/")),
-            html.Hr(),
             html.H2("Model Builder", style={'font-size':'14px'}),
             dbc.NavItem(dbc.NavLink("Atmospheric Conditions",  active="exact",href="/build/windrose")),
             dbc.NavItem(dbc.NavLink("Turbine", active="exact", href="/build/turbine")),
@@ -56,8 +65,15 @@ content = dbc.Card(
 app.layout = dbc.Container(children=[
         dbc.Row(
             dbc.Col(
-                dbc.Jumbotron( html.H1("FLORIS Dashboard", className="display-3") ),
-            )
+                dbc.Jumbotron( 
+                    [   
+                       dbc.Row([
+                            html.H1("FLORIS Dashboard", className="display-3 mr-3", style={'color':'white'}),
+                       ]),
+                    ],
+                    style={'background-image':'url("/assets/banner.png")', 'background-repeat':'no-repeat', 'background-position':'top left'}       
+                ),
+            ),
         ),
         dbc.Row(
             dbc.Col(

@@ -1,5 +1,6 @@
 
 from dash.dependencies import Input, Output, State
+import dash_core_components as dcc
 import pandas as pd
 
 from app import app
@@ -7,11 +8,32 @@ from apps.model_builder import review_layout
 import apps.floris_data
 from apps.graph_generator import *
 
+app.clientside_callback(
+    """
+    function(n_clicks){
+        if(n_clicks > 0){
+            var opt = {
+                margin: 1,
+                filename: 'Results_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3},
+                jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
+                pagebreak: { mode: ['avoid-all'] }
+            };
+            html2pdf().from(document.getElementById("print")).set(opt).save();
+        }
+    }
+    """,
+    Output('js','n_clicks'),
+    Input('js','n_clicks')
+)
+
 @app.callback(
-    Output('model-comparison-graph', 'figure'),
-    Output('compute-time-graph', 'figure'),
-    Output('aep-farm-graph', 'figure'),
-    Output('aep-windrose-graph', 'figure'),
+    Output('loading-spinner', 'children'),
+    Output('model-comparison-graph-div', 'children'),
+    Output('compute-time-graph-div', 'children'),
+    Output('aep-farm-graph-div', 'children'),
+    Output('aep-windrose-graph-div', 'children'),
     Input("floris-outputs", "data"),
 )
 def create_dashboard_plots(floris_output_data):
@@ -47,7 +69,7 @@ def create_dashboard_plots(floris_output_data):
     df_windrose = pd.DataFrame(wind_data)
     wind_rose_figure = create_windrose_plot(df_windrose)
 
-    return power_rose_figure, compute_time_figure, wind_farm_figure, wind_rose_figure
+    return None, dcc.Graph(figure=power_rose_figure), dcc.Graph(figure=compute_time_figure), dcc.Graph(figure=wind_farm_figure), dcc.Graph(figure=wind_rose_figure)
 
     #TODO: Energy plot
     # ax.plot(
