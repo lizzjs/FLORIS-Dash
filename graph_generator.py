@@ -71,6 +71,9 @@ def create_farm_layout_plot(df, df2):
             x=df['layout_x'],
             y=df['layout_y'],
             mode='markers',
+            marker_symbol='y-down',
+            marker_line_width=2, 
+            marker_size=15,
             name='Wind turbines'
         )
     ]
