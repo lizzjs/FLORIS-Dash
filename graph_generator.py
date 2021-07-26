@@ -111,7 +111,7 @@ def create_preview_wake_model(velocity_value, deflection_value, turbulence_value
 
     # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
     fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
-    fi.calculate_wake(yaw_angles=[10.0, 0.0])
+    fi.calculate_wake(yaw_angles=[20.0, 0.0])
     horizontal_slice = fi.get_hor_plane()
 
     minSpeed = horizontal_slice.df.u.min()

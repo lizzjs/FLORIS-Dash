@@ -322,5 +322,5 @@ wind_rose_data = {
 }
 
 wake_model_preview_dict = default_input_dict
-wake_model_preview_dict['farm']['properties']['layout_x'] = [0.0, 1260.0, 300]
-wake_model_preview_dict['farm']['properties']['layout_y'] = [0.0, 0.0, 1000]
+wake_model_preview_dict['farm']['properties']['layout_x'] = [0.0, 630.0, 0.0]
+wake_model_preview_dict['farm']['properties']['layout_y'] = [0.0, 0.0, 630]
