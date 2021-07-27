@@ -214,8 +214,8 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
     )
     return power_figure, thrust_figure
 
-def create_aep_dashboard_plots(floris_output_data):
-    model_name = apps.floris_data.default_input_dict["wake"]["properties"]["velocity_model"]
+def create_aep_dashboard_plots(final_input_store, floris_output_data):
+    model_name = final_input_store["wake"]["properties"]["velocity_model"]
     df = pd.DataFrame(floris_output_data[model_name]["power_data"])
     df = df.groupby("wind_directions").sum().reset_index()
 

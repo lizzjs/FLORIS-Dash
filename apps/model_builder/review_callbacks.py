@@ -68,13 +68,13 @@ def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, 
 
 def get_floris_calc_cp_ct(input_dict):
     # Initialize the FLORIS interface fi
-    fi = ft.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+    fi = ft.floris_interface.FlorisInterface(input_dict=input_dict)
 
     fi.reinitialize_flow_field(layout_array=([0], [0]))
     cp_return_array = np.array([])
     ct_return_array = np.array([])
 
-    wind_speeds = np.array(apps.floris_data.default_input_dict["turbine"]["properties"]["power_thrust_table"]["wind_speed"])
+    wind_speeds = np.array(input_dict["turbine"]["properties"]["power_thrust_table"]["wind_speed"])
 
     for ws in wind_speeds:
         fi.reinitialize_flow_field(wind_speed=ws)
@@ -94,18 +94,19 @@ def get_floris_calc_cp_ct(input_dict):
 
     return df
 
+
 @app.callback(
     # Output("loading-output", "children"),
     Output("floris-outputs", "data"),
     Input("submit-floris-button", "n_clicks"),
-    State("floris-outputs", "data")
+    State('final-input-store', 'data'),
 )
-def run_floris(n, floris_output_data):
+def run_floris(n, final_input_store):
 
     if not n:
         return
 
-    fi = FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+    fi = FlorisInterface(input_dict=final_input_store)
 
     wd = np.arange(0.0, 360.0, 15.0)
     np.random.seed(1)
@@ -150,7 +151,7 @@ def run_floris(n, floris_output_data):
 
     end = time.perf_counter()
 
-    model_name = apps.floris_data.default_input_dict["wake"]["properties"]["velocity_model"]
+    model_name = final_input_store["wake"]["properties"]["velocity_model"]
     compute_time = end - start
 
     floris_output_data = {
@@ -166,15 +167,18 @@ def run_floris(n, floris_output_data):
     }
     return floris_output_data
 
+
 @app.callback(
     Output('review-windrose-graph', 'figure'),
     Output('review-wind-farm-layout', 'figure'),
     Output('review-cp-comparison-graph', 'figure'),
     Output('review-ct-comparison-graph', 'figure'),
-    Input("floris-outputs", "data")
+    Input("floris-outputs", "data"),
+    State('final-input-store', 'data'),
 )
-def return_review_page_graphs(floris_output_data):
-    #Windrose
+def return_review_page_graphs(floris_output_data, final_input_store):
+
+    # Windrose
     df_windrose = pd.DataFrame(apps.floris_data.wind_rose_data)
     wind_rose_figure = create_windrose_plot(df_windrose)
     wind_rose_figure.update_layout(
@@ -182,22 +186,21 @@ def return_review_page_graphs(floris_output_data):
         width=550
     )
 
-    #Wind farm 
+    # Wind farm 
     layout_data = pd.DataFrame(
         {
-            'layout_x': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_x"],
-            'layout_y': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_y"]
+            'layout_x': final_input_store["farm"]["properties"]["layout_x"],
+            'layout_y': final_input_store["farm"]["properties"]["layout_y"]
         }
     )
     boundary_data = pd.DataFrame(
         {
-            'boundary_x': apps.floris_data.boundary_data["boundary_x"],
-            'boundary_y': apps.floris_data.boundary_data["boundary_y"]
+            'boundary_x': final_input_store["farm"]["properties"]["boundary_x"],
+            'boundary_y': final_input_store["farm"]["properties"]["boundary_y"]
         }
     )
 
     df_farm = pd.DataFrame(layout_data)
-
     if boundary_data is not None: 
         df_boundary = pd.DataFrame(boundary_data)
         df_boundary = df_boundary.append(df_boundary.iloc[0,:], ignore_index=True)
@@ -205,9 +208,9 @@ def return_review_page_graphs(floris_output_data):
     wind_farm_figure = create_farm_layout_plot(df_farm, df_boundary)
     wind_farm_figure.update_layout(height=400)
 
-    #Cp Ct
-    df_input = apps.floris_data.user_defined_dict["turbine"]["properties"]["power_thrust_table"] # Input
-    df_cp_ct = get_floris_calc_cp_ct() # Calculated
+    # Cp Ct
+    df_input = final_input_store["turbine"]["properties"]["power_thrust_table"] # Input
+    df_cp_ct = get_floris_calc_cp_ct(final_input_store)                         # Calculated
 
     [power_figure, thrust_figure] = create_turbine_performance_comparison_plots(df_input, df_cp_ct)
 
