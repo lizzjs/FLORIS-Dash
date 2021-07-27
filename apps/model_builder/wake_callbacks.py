@@ -9,24 +9,20 @@ import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
 from graph_generator import *
 
-@app.callback(
-    Output("radio-deflection", "options"), 
-    Input("radio-deficit", "value"),
-)
-def update_deflection_radio(radio):
-    """
-    If multizone in velocity deificit is selected the gauss option in deflection is disabled.
-    """
-    if "multizone" in radio:
-        return [
-            {"label": "Jimenez", "value": "jimenez"},
-            {"label": "Gauss", "value": "gauss", "disabled": True},
-        ]
-    else:
-        return [
-            {"label": "Jimenez", "value": "jimenez"},
-            {"label": "Gauss", "value": "gauss"},
-        ]
+def _get_wake_definition(key, value, initial_input_store, wake_store):
+    # On first load
+    if value is None:
+        if wake_store is not None:
+            if key in wake_store:
+                return wake_store[key]
+
+        if initial_input_store is None:
+            # TODO: Do we leave this? This handles the situation when the input store is not available for any reason.
+            initial_input_store = apps.floris_data.default_input_dict
+        return initial_input_store["wake"]["properties"][key]
+    # On every other call, return the value in the field
+    return value
+
 
 @app.callback(
     Output('radio-deficit', 'value'),
@@ -40,13 +36,14 @@ def update_deflection_radio(radio):
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
     State("collapse-models", "is_open"),
+    State('initial-input-store', 'data'),
+    State('wake-input-store', 'data')
 )
-def toggle_model(n, velocity_value, deflection_value, turbulence_value, combination_value, is_open):
-
-    apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["deflection_model"] = deflection_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["turbulence_model"] = turbulence_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["combination_model"] = combination_value
+def toggle_model(n, velocity_value, deflection_value, turbulence_value, combination_value, is_open, initial_input_store, wake_store):
+    velocity_value = _get_wake_definition("velocity_model", velocity_value, initial_input_store, wake_store)
+    deflection_value = _get_wake_definition("deflection_model", deflection_value, initial_input_store, wake_store)
+    turbulence_value = _get_wake_definition("turbulence_model", turbulence_value, initial_input_store, wake_store)
+    combination_value = _get_wake_definition("combination_model", combination_value, initial_input_store, wake_store)
 
     ctx = dash.callback_context
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
@@ -80,6 +77,10 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     turbulence_label = turbulence_value.capitalize()
 
     fi = FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+    fi.floris.farm.wake.velocity_model = velocity_value
+    fi.floris.farm.wake.deflection_model = deflection_value
+    fi.floris.farm.wake.turbulence_model = turbulence_value
+    fi.floris.farm.wake.combination_model = combination_value
     params = fi.get_model_parameters()
 
     vel_columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
@@ -98,39 +99,47 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
 
     return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open, velocity_label, deflection_label, turbulence_label
 
+
 @app.callback(
     Output("wake-model-preview-graph", "figure"),
     Input('radio-deficit', 'value'),
     Input('radio-deflection', 'value'),
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
-    # Input('velocity-parameter-datatable', 'data'),
-    # Input('radio-deficit', 'value'),
-
+    Input('velocity-parameter-datatable', 'data'),
+    Input('deflection-parameter-datatable', 'data'),
 )
-def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):#, velocity_table_data, velocity_model):
-    #TODO connect the datatables to the preview figure
+def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_table_data, deflection_table_data):
+    model_parameters_dict = {
+        "Wake Velocity Parameters": {},
+        "Wake Deflection Parameters": {}
+    }
+    if velocity_table_data is not None:
+        for row in velocity_table_data:
+            model_parameters_dict["Wake Velocity Parameters"][row["Parameter"]] = row["Value"]
+    if deflection_table_data is not None:
+        for row in deflection_table_data:
+            model_parameters_dict["Wake Deflection Parameters"][row["Parameter"]] = row["Value"]
 
-    # #convert list data from datatable to dictionary
-    # velocity_parameters = {k:v for e in velocity_table_data for (k,v) in e.items()}
-    # print(velocity_table_data['Value'])
+    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, model_parameters_dict)
 
-    # #assign updated values to floris input data
-    # apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
-    # apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
-
-    # print(apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"])
-
-    # #attempting to only update when change in the datatable is a trigger
-    # # ctx = dash.callback_context
-    # # trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    # # if trigger_id == "velocity-parameter-datatable": 
-        
-    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
-    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
-
-
-
-    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value)
-    
     return wake_contour_graph
+
+
+## Wake definition store
+
+@app.callback(
+    Output('wake-input-store', 'data'),
+    Input('radio-deficit', 'value'),
+    Input('radio-deflection', 'value'),
+    Input('radio-turbulence', 'value'),
+    Input('radio-combination', 'value'),
+)
+def store_turbine_definition(velocity_value, deflection_value, turbulence_value, combination_value):
+    wake_data = {
+        "velocity_model": velocity_value,
+        "combination_model": combination_value,
+        "deflection_model": deflection_value,
+        "turbulence_model": turbulence_value,
+    }
+    return wake_data

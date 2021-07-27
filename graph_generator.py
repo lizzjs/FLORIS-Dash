@@ -2,6 +2,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
+import copy
 
 from floris.tools.floris_interface import FlorisInterface
 import numpy as np
@@ -10,8 +11,8 @@ import apps
 
 def create_turbine_performance_plots(df):
     cp_plot_data = go.Line(
-        x=df["Wind Speed"],
-        y=df["Cp"],
+        x=df["wind_speed"],
+        y=df["power"],
         name="Input",
         line = dict(color='rgb(204, 37, 8)')
     ),
@@ -30,8 +31,8 @@ def create_turbine_performance_plots(df):
     )
 
     ct_plot_data = go.Line(
-        x=df["Wind Speed"],
-        y=df["Ct"],
+        x=df["wind_speed"],
+        y=df["thrust"],
         name="Input",
         line = dict(color='rgb(69, 3, 252)')
     ),
@@ -71,6 +72,9 @@ def create_farm_layout_plot(df, df2):
             x=df['layout_x'],
             y=df['layout_y'],
             mode='markers',
+            marker_symbol='y-down',
+            marker_line_width=2, 
+            marker_size=15,
             name='Wind turbines'
         )
     ]
@@ -104,10 +108,21 @@ def create_farm_layout_plot(df, df2):
         )
     return wind_farm_layout
 
-def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
+def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, model_parameters):
 
     # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
-    fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
+    wake_model_preview_dict = copy.deepcopy(apps.floris_data.default_input_dict)
+    wake_model_preview_dict['farm']['properties']['layout_x'] = [0.0, 630.0, 0.0]
+    wake_model_preview_dict['farm']['properties']['layout_y'] = [0.0, 0.0, 630]
+
+    fi = FlorisInterface(input_dict=wake_model_preview_dict)
+
+    fi.floris.farm.wake.velocity_model = velocity_value
+    fi.floris.farm.wake.deflection_model = deflection_value
+    fi.floris.farm.wake.turbulence_model = turbulence_value
+    fi.floris.farm.wake.combination_model = combination_value
+    fi.set_model_parameters(model_parameters, verbose=True)
+
     fi.calculate_wake(yaw_angles=[20.0, 0.0])
     horizontal_slice = fi.get_hor_plane()
 
@@ -199,8 +214,8 @@ def create_turbine_performance_comparison_plots(df_input, df_cp_ct):
     )
     return power_figure, thrust_figure
 
-def create_aep_dashboard_plots(floris_output_data):
-    model_name = apps.floris_data.default_input_dict["wake"]["properties"]["velocity_model"]
+def create_aep_dashboard_plots(final_input_store, floris_output_data):
+    model_name = final_input_store["wake"]["properties"]["velocity_model"]
     df = pd.DataFrame(floris_output_data[model_name]["power_data"])
     df = df.groupby("wind_directions").sum().reset_index()
 

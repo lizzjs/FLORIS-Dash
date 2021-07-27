@@ -4,7 +4,6 @@ import dash_core_components as dcc
 import pandas as pd
 
 from app import app
-from apps.model_builder import review_layout
 import apps.floris_data
 from graph_generator import *
 
@@ -35,24 +34,25 @@ app.clientside_callback(
     Output('aep-farm-graph-div', 'children'),
     Output('aep-windrose-graph-div', 'children'),
     Input("floris-outputs", "data"),
+    State("final-input-store", 'data')
 )
-def create_dashboard_plots(floris_output_data):
+def create_dashboard_plots(floris_output_data, final_input_store):
 
     # Power Production & Compute Time 
-    [power_rose_figure, compute_time_figure] = create_aep_dashboard_plots(floris_output_data)
+    [power_rose_figure, compute_time_figure] = create_aep_dashboard_plots(final_input_store, floris_output_data)
 
 
     # Wind farm layout
     layout_data = pd.DataFrame(
         {
-            'layout_x': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_x"],
-            'layout_y': apps.floris_data.user_defined_dict["farm"]["properties"]["layout_y"]
+            'layout_x': final_input_store["farm"]["properties"]["layout_x"],
+            'layout_y': final_input_store["farm"]["properties"]["layout_y"]
         }
     )
     boundary_data = pd.DataFrame(
         {
-            'boundary_x': apps.floris_data.boundary_data["boundary_x"],
-            'boundary_y': apps.floris_data.boundary_data["boundary_y"]
+            'boundary_x': final_input_store["farm"]["properties"]["boundary_x"],
+            'boundary_y': final_input_store["farm"]["properties"]["boundary_y"]
         }
     )
 
