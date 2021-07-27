@@ -1,0 +1,16 @@
+graph TD;
+
+id1[Default inputs]-.->mb1[Model Builder]
+id2[User-given JSON input file]-.->mb1[Model Builder]
+mb1[Model Builder]-->mb2[FLORIS input file]
+mb2[FLORIS input file]-->id3((FLORIS Calculation))
+id3([FLORIS Calculation])-->mb3[Annual Energy Production Dashboard]
+id3([FLORIS Calculation])-->mb4[3D Visualization Dashboard]
+
+style id1 fill:#a6e5dd,stroke:#32a3c3,stroke-width:1px
+style id2 fill:#a6e5dd,stroke:#32a3c3,stroke-width:1px
+style id3 fill:#9ccbcc,stroke:#49aeb0,stroke-width:1px
+style mb2 fill:#a6e5dd,stroke:#32a3c3,stroke-width:1px
+style mb1 fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style mb3 fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style mb4 fill:#87d2e7,stroke:#32a3c3,stroke-width:1px

@@ -1,0 +1,18 @@
+
+graph TD;
+
+A{{Load page}}-->B{Initialized?}
+B{Initialized?}--No-->D[Initialize with input data]-->F[Store inputs]
+B{Initialized?}--Yes-->I[Get data from data store]-->F[Store inputs]
+G{{User modified model parameters}}-->F[Save inputs in data store]
+F[Store inputs]-->E[Generate graph]
+E[Generate graph]-->J([Render HTML])
+
+style A fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style B fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style D fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style E fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style F fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style G fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style I fill:#87d2e7,stroke:#32a3c3,stroke-width:1px
+style J fill:#87d2e7,stroke:#32a3c3,stroke-width:1px

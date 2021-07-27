@@ -13,9 +13,10 @@ graph_layout = html.Div([
             html.Div(
                 children=[
                     dbc.Spinner(),
-                    "FLORIS simulation is running. AEP results will update here shortly.",
+                    " FLORIS simulation is running. AEP results will update here shortly.",
                 ],
-                id="loading-spinner"
+                id="loading-spinner",
+
             )
         )
     ),
@@ -66,6 +67,58 @@ graph_layout = html.Div([
 
 layout = html.Div(
     children=[
+#         #This row will overlap the content below it in order to avoid having the 
+#         #download button included in the pdf export
+#         # dbc.Row([ 
+#         #     dbc.Col(width=11),
+#         #     dbc.Col(
+#         #         dbc.Button(
+#         #             children=[
+#         #                     html.Img(
+#         #                         src="/assets/file-download.png", 
+#         #                         style={'width':'30px', 'align':'center'}
+#         #                     )
+#         #                 ], 
+#         #                 className="btn-light", id='js', n_clicks=0
+#         #         ), 
+#         #         style={'margin':'25px 0px 0px 30px'}
+#         #     ),
+#         # ],style={'height':'0px'},),
+#         html.Div([
+#             dbc.Row(
+#                 dbc.Col(html.H2("Annual Energy Production Dashboard")), 
+#                 style={'height':'55px'},
+#             ),
+#             html.Br(),
+#             dbc.Card(
+#                 [
+#                     dbc.CardBody(
+#                         [
+#                             dbc.Spinner(
+#                                 graph_layout,
+#                                 id="results-spinner",
+#                                 type="circle"
+#                             ),
+#                         ]
+#                     )
+#                 ], className='cardDesign'
+#             )
+#         ], id='print'),
+#         dbc.Row([
+#                 dbc.Button(
+#                     children=[
+#                             "Export to PDF ",
+#                             html.Img(
+#                                 src="/assets/file-download.png", 
+#                                 style={'width':'20px'}
+#                             )
+#                         ], 
+#                         className="btn-dark", id='js', n_clicks=0
+#                 ), 
+#                 # style={'margin':'25px 0px 0px 30px'} 
+#             ], justify='center'),
+#     ], id='main'
+# )
         # This row will overlap the content below it in order to avoid having the download button included in the pdf export
         dbc.Row(
             children=[ 
