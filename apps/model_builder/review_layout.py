@@ -2,22 +2,12 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import json
 
 import apps.floris_data
 
 # Imported but not used. This loads the callback functions into the web page.
 import apps.model_builder.review_callbacks
 
-
-display_json = html.Pre(
-    json.dumps(
-        apps.floris_data.user_defined_dict,
-        indent = 2, 
-        # sort_keys=True
-    ),
-    # style={'whiteSpace': 'pre-line'}
-)
 
 submit_button = html.Div([
     dbc.ListGroupItem(
@@ -28,12 +18,17 @@ submit_button = html.Div([
 layout = html.Div([
     dbc.Row([
         dbc.Col(
-            [
-                dbc.Card(
-                    dbc.CardBody(display_json),
-                    style={"maxHeight": "1587px","overflow": "scroll"},
-                ),
+            children=[
                 submit_button,
+                dbc.Card(
+                    dbc.CardBody(
+                        html.Pre(id="json-preformatted")
+                    ),
+                    style={
+                        # "maxHeight": "1587px",
+                        "overflow": "scroll"
+                    },
+                ),
             ], width=4
         ),
         dbc.Col([

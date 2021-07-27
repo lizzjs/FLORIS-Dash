@@ -71,8 +71,6 @@ def display_page(pathname):
         next_nav = NAVIGATION_ITEMS[0]
         return layout, next_nav, back_nav
 
-    # TODO: REMOVE THIS
-    apps.floris_data.user_defined_dict = apps.floris_data.default_input_dict
     back_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) - 1 ]
     next_nav = NAVIGATION_ITEMS[ NAVIGATION_ITEMS.index(pathname) + 1 ]
 
