@@ -108,7 +108,7 @@ def create_farm_layout_plot(df, df2):
         )
     return wind_farm_layout
 
-def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_parameters):
+def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, model_parameters):
 
     # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
     wake_model_preview_dict = copy.deepcopy(apps.floris_data.default_input_dict)
@@ -118,10 +118,10 @@ def create_preview_wake_model(velocity_value, deflection_value, turbulence_value
     fi = FlorisInterface(input_dict=wake_model_preview_dict)
 
     fi.floris.farm.wake.velocity_model = velocity_value
-    fi.set_model_parameters(velocity_parameters, verbose=True)
     fi.floris.farm.wake.deflection_model = deflection_value
     fi.floris.farm.wake.turbulence_model = turbulence_value
     fi.floris.farm.wake.combination_model = combination_value
+    fi.set_model_parameters(model_parameters, verbose=True)
 
     fi.calculate_wake(yaw_angles=[20.0, 0.0])
     horizontal_slice = fi.get_hor_plane()

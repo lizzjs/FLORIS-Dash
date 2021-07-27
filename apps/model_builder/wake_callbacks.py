@@ -107,26 +107,21 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
     Input('velocity-parameter-datatable', 'data'),
+    Input('deflection-parameter-datatable', 'data'),
 )
-def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_table_data):
-    #TODO connect the datatables to the preview figure
-
-    # #convert list data from datatable to dictionary
-    # velocity_parameters = {k:v for e in velocity_table_data for (k,v) in e.items()}
-    # print(velocity_table_data['Value'])
-
-    # #assign updated values to floris input data
-    # apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
-    # apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
-
-    # print(apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"])
-    velocity_model_dict = {
+def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_table_data, deflection_table_data):
+    model_parameters_dict = {
         "Wake Velocity Parameters": {},
+        "Wake Deflection Parameters": {}
     }
-    for row in velocity_table_data:
-        velocity_model_dict["Wake Velocity Parameters"][row["Parameter"]] = row["Value"]
+    if velocity_table_data is not None:
+        for row in velocity_table_data:
+            model_parameters_dict["Wake Velocity Parameters"][row["Parameter"]] = row["Value"]
+    if deflection_table_data is not None:
+        for row in deflection_table_data:
+            model_parameters_dict["Wake Deflection Parameters"][row["Parameter"]] = row["Value"]
 
-    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_model_dict)
+    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, model_parameters_dict)
 
     return wake_contour_graph
 
