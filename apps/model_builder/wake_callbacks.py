@@ -77,6 +77,10 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     turbulence_label = turbulence_value.capitalize()
 
     fi = FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+    fi.floris.farm.wake.velocity_model = velocity_value
+    fi.floris.farm.wake.deflection_model = deflection_value
+    fi.floris.farm.wake.turbulence_model = turbulence_value
+    fi.floris.farm.wake.combination_model = combination_value
     params = fi.get_model_parameters()
 
     vel_columns = [{"name": i, "id": i} for i in ["Parameter", "Value"]]
@@ -102,11 +106,9 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
     Input('radio-deflection', 'value'),
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
-    # Input('velocity-parameter-datatable', 'data'),
-    # Input('radio-deficit', 'value'),
-
+    Input('velocity-parameter-datatable', 'data'),
 )
-def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):#, velocity_table_data, velocity_model):
+def preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_table_data):
     #TODO connect the datatables to the preview figure
 
     # #convert list data from datatable to dictionary
@@ -118,14 +120,15 @@ def preview_wake_model(velocity_value, deflection_value, turbulence_value, combi
     # apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
 
     # print(apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"])
+    velocity_model_dict = {
+        "Wake Velocity Parameters": {},
+    }
+    for row in velocity_table_data:
+        velocity_model_dict["Wake Velocity Parameters"][row["Parameter"]] = row["Value"]
 
-    # #attempting to only update when change in the datatable is a trigger
-    # # ctx = dash.callback_context
-    # # trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    # # if trigger_id == "velocity-parameter-datatable": 
-        
-    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_model
-    # #     apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
+    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_model_dict)
+
+    return wake_contour_graph
 
 
 ## Wake definition store

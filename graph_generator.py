@@ -2,6 +2,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
+import copy
 
 from floris.tools.floris_interface import FlorisInterface
 import numpy as np
@@ -107,10 +108,21 @@ def create_farm_layout_plot(df, df2):
         )
     return wind_farm_layout
 
-def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value):
+def create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value, velocity_parameters):
 
     # Using a FLORIS model with two turbines in tandem, show a preview of the wake model settings
-    fi = FlorisInterface(input_dict=apps.floris_data.wake_model_preview_dict)
+    wake_model_preview_dict = copy.deepcopy(apps.floris_data.default_input_dict)
+    wake_model_preview_dict['farm']['properties']['layout_x'] = [0.0, 630.0, 0.0]
+    wake_model_preview_dict['farm']['properties']['layout_y'] = [0.0, 0.0, 630]
+
+    fi = FlorisInterface(input_dict=wake_model_preview_dict)
+
+    fi.floris.farm.wake.velocity_model = velocity_value
+    fi.set_model_parameters(velocity_parameters, verbose=True)
+    fi.floris.farm.wake.deflection_model = deflection_value
+    fi.floris.farm.wake.turbulence_model = turbulence_value
+    fi.floris.farm.wake.combination_model = combination_value
+
     fi.calculate_wake(yaw_angles=[20.0, 0.0])
     horizontal_slice = fi.get_hor_plane()
 
