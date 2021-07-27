@@ -93,11 +93,10 @@ app.layout = dbc.Container(children=[
             no_gutters=True #we can remove this if anything
         ),
         dcc.Location(id="url"),
-        dcc.Store(id='side_click'),
         dcc.Store(id='initial-input-store'),
         dcc.Store(id='turbine-input-store'),
         dcc.Store(id='wind-rose-input-store'),
-        dcc.Store(id="farm-input-store"),
+        dcc.Store(id='farm-input-store'),
         dcc.Store(id='final-input-store'),
         dcc.Store(id='floris-outputs'),
     ],
