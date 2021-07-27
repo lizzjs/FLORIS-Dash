@@ -16,6 +16,13 @@ import floris.tools.power_rose as pr
 import floris.tools.wind_rose as rose
 
 
+def dict_to_list(table_dict, key):
+    l = [] 
+    for row in table_dict:
+        l.append(row[key])
+    return l
+
+
 @app.callback(
     Output("json-preformatted", "children"),
     Output('final-input-store', 'data'),
@@ -27,8 +34,20 @@ import floris.tools.wind_rose as rose
 def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, farm_input_store):
 
     final_dict = copy.deepcopy(apps.floris_data.default_input_dict)
+
     for key in turbine_input_store:
-        final_dict["turbine"]["properties"][key] = turbine_input_store[key]
+        if key == "power_thrust_table":
+            power = dict_to_list(turbine_input_store[key], "power")
+            thrust = dict_to_list(turbine_input_store[key], "thrust")
+            wind_speed = dict_to_list(turbine_input_store[key], "wind_speed")
+            table_dict = {
+                "power": [float(x) for x in power],
+                "thrust": [float(x) for x in thrust],
+                "wind_speed": [float(x) for x in wind_speed]
+            }
+            final_dict["turbine"]["properties"][key] = table_dict
+        else:
+            final_dict["turbine"]["properties"][key] = turbine_input_store[key]
 
     # for key in wind_rose_input_store:
     #     final_dict["turbine"]["properties"][key] = turbine_input_store[key]
