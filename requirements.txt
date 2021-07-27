@@ -1,5 +1,6 @@
 dash
 dash-vtk==0.0.6
+dash_daq
 dash-bootstrap-components
 floris
 openpyxl
