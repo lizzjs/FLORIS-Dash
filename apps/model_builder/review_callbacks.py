@@ -31,9 +31,10 @@ def dict_to_list(table_dict, key):
     Input("json-preformatted", "children"),
     State('turbine-input-store', 'data'),
     State('wind-rose-input-store', 'data'),
-    State('farm-input-store', 'data')
+    State('farm-input-store', 'data'),
+    State('wake-input-store', 'data'),
 )
-def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, farm_input_store):
+def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, farm_input_store, wake_input_store):
 
     final_dict = copy.deepcopy(apps.floris_data.default_input_dict)
 
@@ -58,6 +59,9 @@ def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, 
         # These are all lists of floats (layout and boundary), so cast to float
         float_list = [float(x) for x in farm_input_store[key]]
         final_dict["farm"]["properties"][key] = float_list
+
+    for key in wake_input_store:
+        final_dict["wake"]["properties"][key] = wake_input_store[key]
 
     pre = json.dumps(
          final_dict,
