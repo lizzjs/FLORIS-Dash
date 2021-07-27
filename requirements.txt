@@ -4,10 +4,11 @@ dash_daq
 dash-bootstrap-components
 floris
 openpyxl
+dash_slicer
+
 #requirements for dash vtk
 dash-vtk
 dash[dev]>=1.15.0
--e .
+# -e .
 vtk
-dash_slicer
 scikit-image
