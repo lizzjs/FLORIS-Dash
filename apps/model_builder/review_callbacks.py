@@ -16,7 +16,36 @@ import floris.tools.power_rose as pr
 import floris.tools.wind_rose as rose
 
 
-def get_floris_calc_cp_ct():
+@app.callback(
+    Output("json-preformatted", "children"),
+    Output('final-input-store', 'data'),
+    Input("json-preformatted", "children"),
+    State('turbine-input-store', 'data'),
+    State('wind-rose-input-store', 'data'),
+    State('farm-input-store', 'data')
+)
+def build_final_input_dictionary(_, turbine_input_store, wind_rose_input_store, farm_input_store):
+
+    final_dict = copy.deepcopy(apps.floris_data.default_input_dict)
+    for key in turbine_input_store:
+        final_dict["turbine"]["properties"][key] = turbine_input_store[key]
+
+    # for key in wind_rose_input_store:
+    #     final_dict["turbine"]["properties"][key] = turbine_input_store[key]
+
+    for key in farm_input_store:
+        # These are all lists of floats (layout and boundary), so cast to float
+        float_list = [float(x) for x in farm_input_store[key]]
+        final_dict["farm"]["properties"][key] = float_list
+
+    pre = json.dumps(
+         final_dict,
+         indent = 2,
+     ) 
+    return pre, final_dict
+
+
+def get_floris_calc_cp_ct(input_dict):
     # Initialize the FLORIS interface fi
     fi = ft.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
 
