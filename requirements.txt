@@ -8,3 +8,5 @@ dash-vtk
 dash[dev]>=1.15.0
 -e .
 vtk
+dash_slicer
+scikit-image
