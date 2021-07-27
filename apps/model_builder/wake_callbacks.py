@@ -9,24 +9,20 @@ import apps.floris_data
 from floris.tools.floris_interface import FlorisInterface
 from graph_generator import *
 
-@app.callback(
-    Output("radio-deflection", "options"), 
-    Input("radio-deficit", "value"),
-)
-def update_deflection_radio(radio):
-    """
-    If multizone in velocity deificit is selected the gauss option in deflection is disabled.
-    """
-    if "multizone" in radio:
-        return [
-            {"label": "Jimenez", "value": "jimenez"},
-            {"label": "Gauss", "value": "gauss", "disabled": True},
-        ]
-    else:
-        return [
-            {"label": "Jimenez", "value": "jimenez"},
-            {"label": "Gauss", "value": "gauss"},
-        ]
+def _get_wake_definition(key, value, initial_input_store, wake_store):
+    # On first load
+    if value is None:
+        if wake_store is not None:
+            if key in wake_store:
+                return wake_store[key]
+
+        if initial_input_store is None:
+            # TODO: Do we leave this? This handles the situation when the input store is not available for any reason.
+            initial_input_store = apps.floris_data.default_input_dict
+        return initial_input_store["wake"]["properties"][key]
+    # On every other call, return the value in the field
+    return value
+
 
 @app.callback(
     Output('radio-deficit', 'value'),
@@ -40,13 +36,14 @@ def update_deflection_radio(radio):
     Input('radio-turbulence', 'value'),
     Input('radio-combination', 'value'),
     State("collapse-models", "is_open"),
+    State('initial-input-store', 'data'),
+    State('wake-input-store', 'data')
 )
-def toggle_model(n, velocity_value, deflection_value, turbulence_value, combination_value, is_open):
-
-    apps.floris_data.user_defined_dict["wake"]["properties"]["velocity_model"] = velocity_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["deflection_model"] = deflection_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["turbulence_model"] = turbulence_value
-    apps.floris_data.user_defined_dict["wake"]["properties"]["combination_model"] = combination_value
+def toggle_model(n, velocity_value, deflection_value, turbulence_value, combination_value, is_open, initial_input_store, wake_store):
+    velocity_value = _get_wake_definition("velocity_model", velocity_value, initial_input_store, wake_store)
+    deflection_value = _get_wake_definition("deflection_model", deflection_value, initial_input_store, wake_store)
+    turbulence_value = _get_wake_definition("turbulence_model", turbulence_value, initial_input_store, wake_store)
+    combination_value = _get_wake_definition("combination_model", combination_value, initial_input_store, wake_store)
 
     ctx = dash.callback_context
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
@@ -98,6 +95,7 @@ def toggle_parameters(n, velocity_value, deflection_value, turbulence_value, com
 
     return vel_values, vel_columns, def_values, def_columns, turb_values, turb_columns, is_open, velocity_label, deflection_label, turbulence_label
 
+
 @app.callback(
     Output("wake-model-preview-graph", "figure"),
     Input('radio-deficit', 'value'),
@@ -130,7 +128,20 @@ def preview_wake_model(velocity_value, deflection_value, turbulence_value, combi
     # #     apps.floris_data.user_defined_dict["wake"]["properties"]["parameters"]["wake_velocity_parameters"] = velocity_parameters
 
 
+## Wake definition store
 
-    wake_contour_graph = create_preview_wake_model(velocity_value, deflection_value, turbulence_value, combination_value)
-    
-    return wake_contour_graph
+@app.callback(
+    Output('wake-input-store', 'data'),
+    Input('radio-deficit', 'value'),
+    Input('radio-deflection', 'value'),
+    Input('radio-turbulence', 'value'),
+    Input('radio-combination', 'value'),
+)
+def store_turbine_definition(velocity_value, deflection_value, turbulence_value, combination_value):
+    wake_data = {
+        "velocity_model": velocity_value,
+        "combination_model": combination_value,
+        "deflection_model": deflection_value,
+        "turbulence_model": turbulence_value,
+    }
+    return wake_data

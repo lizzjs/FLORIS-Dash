@@ -14,9 +14,8 @@ velocity_radio = dbc.FormGroup([
         options=[
             {"label": "Jensen", "value": "jensen"},
             {"label": "Multizone", "value": "multizone"},
-            {"label": "Gauss", "value": "gauss"},
+            {"label": "Gauss", "value": "gauss_legacy"},
         ],
-        value="jensen",
         id="radio-deficit",
     ),
 ])
@@ -28,7 +27,6 @@ deflection_radio = dbc.FormGroup([
             {"label": "Jimenez", "value": "jimenez"},
             {"label": "Gauss", "value": "gauss"},
         ],
-        value="jimenez",
         id="radio-deflection",
     ),
 ])
@@ -39,7 +37,6 @@ turbulance_radio = dbc.FormGroup([
         options=[
             {"label": "Crespo-Hernandez", "value": "crespo_hernandez"},
         ],
-        value="crespo_hernandez",
         id="radio-turbulence",
     ),
 ])
@@ -51,7 +48,6 @@ combination_radio = dbc.FormGroup([
             {"label": "SOSFS", "value": "sosfs"},
             {"label": "FLS", "value": "fls"},
         ],
-        value="sosfs",
         id="radio-combination",
     ),
 ])
