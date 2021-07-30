@@ -9,7 +9,10 @@ import apps.floris_data
 from app import app
 
 # Initialize the FLORIS interface fi
-fi = wfct.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
+fi = wfct.floris_interface.FlorisInterface(input_file=apps.floris_data.default_input_dict)
+fi.floris.farm.set_wake_model("gauss_legacy")
+fi.floris.farm.set_yaw_angles([20.0, 0, 0])
+fi.reinitialize_flow_field()
 fd = fi.get_flow_data()
 
 # compute dimensions, origins and spacing based on flow data

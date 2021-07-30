@@ -16,6 +16,7 @@ from dash.dependencies import Input, Output, State, ALL
 
 fi = wfct.floris_interface.FlorisInterface(input_dict=apps.floris_data.default_input_dict)
 fi.floris.farm.set_wake_model("gauss_legacy")
+fi.floris.farm.set_yaw_angles([20.0, 0, 0])
 fi.reinitialize_flow_field()
 fd = fi.get_flow_data()
 
